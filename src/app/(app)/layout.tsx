@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -28,7 +29,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="p-4">
+      <div className="p-4 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
           <Logo className="w-8 h-8" />
           <span className="text-lg font-bold">Internship Aligner</span>
@@ -49,6 +50,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
         ))}
       </nav>
+      <div className="mt-auto p-4">
+        <ThemeToggle />
+      </div>
     </div>
   );
 
@@ -76,10 +80,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               {sidebarContent}
             </SheetContent>
           </Sheet>
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Logo className="h-6 w-6 text-primary" />
-            <span className="">Internship Aligner</span>
-          </Link>
+          <div className="flex-1 flex justify-end">
+            <ThemeToggle />
+          </div>
         </header>
         <main className="flex-1 p-4 sm:p-6 bg-background/95">
           {children}
