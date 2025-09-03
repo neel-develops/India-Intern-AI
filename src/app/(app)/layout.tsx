@@ -7,6 +7,7 @@ import {
   Briefcase,
   Home,
   PanelLeft,
+  ShieldCheck,
   User,
   Users,
 } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: '/internships', icon: Briefcase, label: 'Internships' },
     { href: '/profile', icon: User, label: 'My Profile' },
     { href: '/recruiter', icon: Users, label: 'Recruiter View' },
+    { href: '/eligibility', icon: ShieldCheck, label: 'Eligibility' },
   ];
 
   const sidebarContent = (
