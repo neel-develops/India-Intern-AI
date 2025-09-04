@@ -35,30 +35,7 @@ export function StudentCard({ student }: StudentCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
-        <div className="flex flex-wrap gap-2 text-xs">
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Badge variant="outline">{student.affirmativeAction.socialCategory}</Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Social Category</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            {student.affirmativeAction.isFromAspirationalDistrict && (
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Badge variant="outline" className="text-primary border-primary">Aspirational District</Badge>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Candidate is from an aspirational district.</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            )}
-        </div>
+        
         <p className="text-sm text-muted-foreground line-clamp-3">
             {student.resumeSummary}
         </p>
