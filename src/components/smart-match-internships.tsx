@@ -33,7 +33,6 @@ export function SmartMatchInternships() {
         skills: profile.skills,
         preferences: profile.preferences,
         resumeText: profile.resumeSummary,
-        affirmativeAction: profile.affirmativeAction,
       };
 
       const result = await suggestRelevantInternships({
@@ -95,7 +94,7 @@ export function SmartMatchInternships() {
             AI-Powered Internship Matches
           </CardTitle>
           <CardDescription>
-            Based on your complete profile, including affirmative action details, our AI will find the most suitable internships for you.
+            Based on your profile, our AI will find the most suitable internships for you.
           </CardDescription>
         </CardHeader>
         <CardContent>

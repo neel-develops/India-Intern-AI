@@ -148,11 +148,6 @@ export const studentProfiles: StudentProfile[] = [
       hasNoGovtJobFamily: true,
       experienceMonths: 12,
     },
-    affirmativeAction: {
-        socialCategory: 'General',
-        isFromAspirationalDistrict: false,
-        hasParticipatedBefore: false,
-    }
   },
   {
     personalInfo: {
@@ -174,11 +169,6 @@ export const studentProfiles: StudentProfile[] = [
       hasNoGovtJobFamily: true,
       experienceMonths: 14,
     },
-    affirmativeAction: {
-        socialCategory: 'OBC',
-        isFromAspirationalDistrict: true,
-        hasParticipatedBefore: false,
-    }
   },
   {
     personalInfo: {
@@ -200,11 +190,6 @@ export const studentProfiles: StudentProfile[] = [
       hasNoGovtJobFamily: true,
       experienceMonths: 18,
     },
-    affirmativeAction: {
-        socialCategory: 'SC',
-        isFromAspirationalDistrict: false,
-        hasParticipatedBefore: true,
-    }
   },
   {
     personalInfo: {
@@ -226,10 +211,5 @@ export const studentProfiles: StudentProfile[] = [
       hasNoGovtJobFamily: true,
       experienceMonths: 24,
     },
-    affirmativeAction: {
-        socialCategory: 'General',
-        isFromAspirationalDistrict: false,
-        hasParticipatedBefore: false,
-    }
   },
 ];
