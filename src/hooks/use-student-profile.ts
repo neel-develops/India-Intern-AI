@@ -5,26 +5,23 @@ import { useState, useEffect, useCallback } from 'react';
 import type { StudentProfile } from '@/lib/types';
 import { studentProfiles } from '@/lib/data';
 
-export function useStudentProfile(userId?: string) {
+const STORAGE_KEY = 'student-profile';
+
+export function useStudentProfile() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const STORAGE_KEY = userId ? `student-profile-${userId}` : '';
-
   useEffect(() => {
-    if (!userId) {
-      setIsLoading(false);
-      setProfile(null);
-      return;
-    }
-    
     setIsLoading(true);
     try {
       const item = window.localStorage.getItem(STORAGE_KEY);
       if (item) {
         setProfile(JSON.parse(item));
       } else {
-        setProfile(null);
+        // To demonstrate, we can load a default profile if none exists
+        const defaultProfile = studentProfiles[0];
+        setProfile(defaultProfile);
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultProfile));
       }
     } catch (error) {
       console.error('Failed to load profile from local storage:', error);
@@ -33,10 +30,9 @@ export function useStudentProfile(userId?: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [STORAGE_KEY, userId]);
+  }, []);
 
   const saveProfile = useCallback((newProfile: StudentProfile) => {
-    if (!userId) return;
     try {
       const profileToSave = { ...newProfile, resumeFilename: newProfile.resumeFilename || 'resume.pdf' };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(profileToSave));
@@ -44,7 +40,7 @@ export function useStudentProfile(userId?: string) {
     } catch (error) {
       console.error('Failed to save profile to local storage:', error);
     }
-  }, [STORAGE_KEY, userId]);
+  }, []);
 
   return { profile, saveProfile, isLoading };
 }

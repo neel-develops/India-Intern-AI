@@ -14,7 +14,7 @@ import { Briefcase, Calendar, Info } from 'lucide-react';
 
 export default function ApplicationsPage() {
   const { profile } = useStudentProfile();
-  const { applications, updateApplicationStatus, isLoading } = useApplications(profile?.personalInfo.email);
+  const { applications, updateApplicationStatus, isLoading } = useApplications();
 
   if (isLoading) {
     return <div>Loading applications...</div>

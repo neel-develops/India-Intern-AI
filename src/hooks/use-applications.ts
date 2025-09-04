@@ -3,17 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Application } from '@/lib/types';
 
-export function useApplications(userEmail?: string) {
+const STORAGE_KEY = 'applications';
+
+export function useApplications() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const STORAGE_KEY = userEmail ? `applications-${userEmail}` : '';
-
   useEffect(() => {
-    if (!userEmail) {
-        setIsLoading(false);
-        return;
-    };
     try {
       const item = window.localStorage.getItem(STORAGE_KEY);
       if (item) {
@@ -25,17 +21,16 @@ export function useApplications(userEmail?: string) {
     } finally {
         setIsLoading(false);
     }
-  }, [STORAGE_KEY, userEmail]);
+  }, []);
 
   const saveApplications = useCallback((updatedApplications: Application[]) => {
-    if (!userEmail) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedApplications));
       setApplications(updatedApplications);
     } catch (error) {
       console.error('Failed to save applications to local storage:', error);
     }
-  }, [STORAGE_KEY, userEmail]);
+  }, []);
 
   const addApplication = useCallback((newApplication: Application) => {
     const updatedApplications = [...applications, newApplication];

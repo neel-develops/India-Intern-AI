@@ -17,7 +17,7 @@ export default function InternshipDetailsPage() {
   const params = useParams();
   const { id } = params;
   const { profile } = useStudentProfile();
-  const { applications, addApplication } = useApplications(profile?.personalInfo.email);
+  const { applications, addApplication } = useApplications();
   const { addNotification } = useNotifications();
   const { toast } = useToast();
 

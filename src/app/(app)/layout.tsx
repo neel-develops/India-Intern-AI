@@ -37,8 +37,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { useNotifications } from '@/hooks/use-notifications';
-import { AuthProvider } from '@/components/auth-provider';
-import { UserNav } from '@/components/user-nav';
 
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -123,47 +121,45 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </DropdownMenuContent>
         </DropdownMenu>
         <ThemeToggle />
-        <UserNav />
+         <Button>Login / Register</Button>
     </>
   );
 
   return (
-    <AuthProvider>
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r bg-muted/40 md:block">
-            <div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
-            {sidebarContent}
-            </div>
-        </div>
-        <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-            <Sheet>
-                <SheetTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 md:hidden"
-                >
-                    <PanelLeft className="h-5 w-5" />
-                    <span className="sr-only">Toggle navigation menu</span>
-                </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="flex flex-col p-0 md:hidden">
+      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <div className="hidden border-r bg-muted/40 md:block">
+          <div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
+          {sidebarContent}
+          </div>
+      </div>
+      <div className="flex flex-col">
+          <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <Sheet>
+              <SheetTrigger asChild>
+              <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0 md:hidden"
+              >
+                  <PanelLeft className="h-5 w-5" />
+                  <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="flex flex-col p-0 md:hidden">
                     <SheetHeader>
                         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     </SheetHeader>
-                    {sidebarContent}
-                </SheetContent>
-            </Sheet>
-            <div className="w-full flex-1 flex justify-end items-center gap-4">
-                {isClient && headerContent}
-            </div>
-            </header>
-            <main className="flex-1 p-4 sm:p-6 bg-background/95">
-            {children}
-            </main>
-        </div>
-        </div>
-    </AuthProvider>
+                  {sidebarContent}
+              </SheetContent>
+          </Sheet>
+          <div className="w-full flex-1 flex justify-end items-center gap-4">
+              {isClient && headerContent}
+          </div>
+          </header>
+          <main className="flex-1 p-4 sm:p-6 bg-background/95">
+          {children}
+          </main>
+      </div>
+      </div>
   );
 }
