@@ -14,10 +14,12 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InternshipCard } from '@/components/internship-card';
 import { useToast } from '@/hooks/use-toast';
 import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships';
+import type { Internship } from '@/lib/types';
+
 
 export function SmartMatchInternships() {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
-  const [suggestedInternships, setSuggestedInternships] = useState<SuggestRelevantInternshipsOutput>([]);
+  const [suggestedInternships, setSuggestedInternships] = useState<(Internship & { matchReason: string })[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const { toast } = useToast();
 
@@ -35,21 +37,20 @@ export function SmartMatchInternships() {
         resumeText: profile.resumeSummary,
       };
 
-      const result = await suggestRelevantInternships({
+      const result: SuggestRelevantInternshipsOutput = await suggestRelevantInternships({
         studentProfile: studentProfileForAI,
         internshipListings: allInternships.map(i => ({...i, description: i.longDescription})),
       });
 
-      // The AI result now directly matches what InternshipCard needs, including the matchReason.
-      // We just need to find the original image for each suggested internship.
       const enrichedInternships = result.map(suggested => {
         const originalInternship = allInternships.find(i => i.id === suggested.id);
+        if (!originalInternship) return null;
         return {
-          ...suggested,
-          image: originalInternship?.image || 'https://picsum.photos/600/400', // fallback image
-          longDescription: suggested.description,
+          ...originalInternship,
+          matchReason: suggested.matchReason,
         };
-      });
+      }).filter((i): i is Internship & { matchReason: string } => i !== null);
+
 
       setSuggestedInternships(enrichedInternships);
     } catch (error) {

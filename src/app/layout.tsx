@@ -118,6 +118,26 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
     </>
   );
 
+  const isLandingPage = pathname === '/';
+  
+  if (isLandingPage && !user) {
+    return (
+        <div className="flex flex-col min-h-screen">
+            <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30 w-full">
+                 <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
+                    <Logo className="w-8 h-8" />
+                    <span className="text-lg font-bold">intern.ai</span>
+                </Link>
+                 <div className="w-full flex-1 flex justify-end items-center gap-4">
+                    {isClient && headerContent}
+                </div>
+            </header>
+            <main className="flex-1">{children}</main>
+            <Footer />
+        </div>
+    )
+  }
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
@@ -181,12 +201,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
             >
-                <StudentProfileProvider>
-                  <AuthProvider>
-                    <AppLayoutContent>{children}</AppLayoutContent>
-                  </AuthProvider>
-                </StudentProfileProvider>
-                <Toaster />
+              <StudentProfileProvider>
+                <AuthProvider>
+                  <AppLayoutContent>{children}</AppLayoutContent>
+                </AuthProvider>
+              </StudentProfileProvider>
+              <Toaster />
             </ThemeProvider>
         </body>
     </html>
