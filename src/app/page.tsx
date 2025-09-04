@@ -25,7 +25,7 @@ const InfoCard = ({ icon, title, description }: InfoCardProps) => (
   <Card className="text-center flex flex-col items-center p-6 bg-background/50 backdrop-blur-sm">
     <div className="mb-4 text-primary">{icon}</div>
     <h3 className="text-xl font-semibold mb-2">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
+    <div className="text-muted-foreground">{description}</div>
   </Card>
 );
 
@@ -186,7 +186,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-
       </main>
     </div>
   )
