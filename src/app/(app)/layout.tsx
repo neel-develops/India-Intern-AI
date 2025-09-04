@@ -37,6 +37,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
@@ -138,7 +143,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1 flex justify-end items-center gap-4">
-             {headerContent}
+             {isClient && headerContent}
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6 bg-background/95">
