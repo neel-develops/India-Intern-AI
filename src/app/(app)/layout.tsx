@@ -88,7 +88,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
         <UserNav user={user} profile={profile} />
       ) : (
         <Button asChild>
-          <Link href="/login">Login / Register</Link>
+          <Link href="/login">Login</Link>
         </Button>
       )}
     </>

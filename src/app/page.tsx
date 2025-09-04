@@ -16,6 +16,9 @@ export default function LandingPage() {
           >
             Login
           </Link>
+          <Button asChild>
+            <Link href="/register">Register</Link>
+          </Button>
         </nav>
       </header>
       <main className="flex-1">
@@ -32,7 +35,7 @@ export default function LandingPage() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/login">Get Started</Link>
+                  <Link href="/register">Get Started</Link>
                 </Button>
               </div>
             </div>

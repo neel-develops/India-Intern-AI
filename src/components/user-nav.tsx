@@ -27,12 +27,12 @@ function getInitials(name: string) {
 }
 
 export function UserNav({ user, profile }: UserNavProps) {
-  const { signInWithGoogle, signOut: logOut } = useAuth();
+  const { signOut: logOut } = useAuth();
 
   if (!user) {
     return (
-      <Button onClick={signInWithGoogle}>
-        Login with Google
+      <Button asChild>
+        <Link href="/login">Login</Link>
       </Button>
     );
   }
