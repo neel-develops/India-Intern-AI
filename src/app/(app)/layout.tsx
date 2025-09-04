@@ -1,10 +1,14 @@
+
 'use client';
 
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  Bell,
   Briefcase,
+  Building2,
+  FileText,
   Home,
   PanelLeft,
   ShieldCheck,
@@ -17,13 +21,28 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
 import { ThemeToggle } from '@/components/theme-toggle';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { useNotifications } from '@/hooks/use-notifications';
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { notifications } = useNotifications();
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const navItems = [
     { href: '/', icon: Home, label: 'Dashboard' },
     { href: '/internships', icon: Briefcase, label: 'Internships' },
+    { href: '/companies', icon: Building2, label: 'Companies' },
+    { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
     { href: '/recruiter', icon: Users, label: 'Recruiter View' },
     { href: '/eligibility', icon: ShieldCheck, label: 'Eligibility' },
@@ -58,6 +77,42 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </div>
   );
 
+  const headerContent = (
+    <>
+         <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="relative">
+                    <Bell className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                        <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{unreadCount}</Badge>
+                    )}
+                    <span className="sr-only">Toggle notifications</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {notifications.length > 0 ? (
+                    notifications.slice(0, 5).map(n => (
+                         <DropdownMenuItem key={n.id} asChild>
+                            <Link href={n.link || '/notifications'} className={cn(!n.read && 'font-bold')}>
+                                {n.message}
+                            </Link>
+                        </DropdownMenuItem>
+                    ))
+                ) : (
+                    <DropdownMenuItem disabled>No new notifications</DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                   <Link href="/notifications">View all</Link>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+        <ThemeToggle />
+    </>
+  );
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -66,24 +121,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 md:hidden">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0"
+                className="shrink-0 md:hidden"
               >
                 <PanelLeft className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col p-0">
+            <SheetContent side="left" className="flex flex-col p-0 md:hidden">
               {sidebarContent}
             </SheetContent>
           </Sheet>
-          <div className="flex-1 flex justify-end">
-            <ThemeToggle />
+          <div className="w-full flex-1 flex justify-end items-center gap-4">
+             {headerContent}
           </div>
         </header>
         <main className="flex-1 p-4 sm:p-6 bg-background/95">

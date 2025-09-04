@@ -1,4 +1,6 @@
+
 import Image from 'next/image';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,7 +58,9 @@ export function InternshipCard({ internship, matchReason }: InternshipCardProps)
       </CardContent>
       <Separator />
       <CardFooter className="pt-6">
-        <Button className="w-full">View Details</Button>
+        <Button asChild className="w-full">
+            <Link href={`/internships/${internship.id}`}>View Details</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
