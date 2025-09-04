@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -91,7 +92,7 @@ export function SmartMatchInternships() {
             AI-Powered Internship Matches
           </CardTitle>
           <CardDescription>
-            Based on your profile, here are some internships we think you'll love. Click the button to get your personalized suggestions.
+            Based on your complete profile, including affirmative action details, our AI will find the most suitable internships for you.
           </CardDescription>
         </CardHeader>
         <CardContent>

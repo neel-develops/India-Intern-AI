@@ -42,7 +42,12 @@ const profileSchema = z.object({
     familyIncome: z.coerce.number().max(799999, 'Family income must be less than 8 Lakhs PA.'),
     hasNoGovtJobFamily: z.boolean().refine(val => val === true, { message: 'No family member should have a government job.' }),
     experienceMonths: z.coerce.number().min(12, 'At least 12 months of experience is required.'),
-  })
+  }),
+  affirmativeAction: z.object({
+    socialCategory: z.enum(['General', 'OBC', 'SC', 'ST', 'EWS']),
+    isFromAspirationalDistrict: z.boolean().default(false),
+    hasParticipatedBefore: z.boolean().default(false),
+  }),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -76,6 +81,11 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
           familyIncome: profile?.eligibility.familyIncome || 0,
           hasNoGovtJobFamily: profile?.eligibility.hasNoGovtJobFamily || false,
           experienceMonths: profile?.eligibility.experienceMonths || 0,
+      },
+      affirmativeAction: {
+        socialCategory: profile?.affirmativeAction.socialCategory || 'General',
+        isFromAspirationalDistrict: profile?.affirmativeAction.isFromAspirationalDistrict || false,
+        hasParticipatedBefore: profile?.affirmativeAction.hasParticipatedBefore || false,
       }
     },
   });
@@ -272,7 +282,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         <Card>
             <CardHeader>
                 <CardTitle>Eligibility Criteria</CardTitle>
-                <CardDescription>Please confirm you meet the following criteria.</CardDescription>
+                <CardDescription>Please confirm you meet the following criteria for the PM Internship Scheme.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                  <FormField
@@ -345,6 +355,68 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 />
             </CardContent>
         </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Affirmative Action Details</CardTitle>
+                <CardDescription>This information helps ensure equitable opportunity distribution.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <FormField
+                    control={form.control}
+                    name="affirmativeAction.socialCategory"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Social Category</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select your social category" />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            <SelectItem value="General">General</SelectItem>
+                            <SelectItem value="OBC">OBC</SelectItem>
+                            <SelectItem value="SC">SC</SelectItem>
+                            <SelectItem value="ST">ST</SelectItem>
+                            <SelectItem value="EWS">EWS</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="affirmativeAction.isFromAspirationalDistrict"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                            <FormLabel>I belong to an aspirational district.</FormLabel>
+                        </div>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="affirmativeAction.hasParticipatedBefore"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                            <FormLabel>I have not participated in this scheme before.</FormLabel>
+                        </div>
+                        </FormItem>
+                    )}
+                />
+            </CardContent>
+        </Card>
+
 
         <Button type="submit" size="lg">Save Profile</Button>
       </form>

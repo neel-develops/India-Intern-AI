@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -37,6 +38,7 @@ export function SmartMatchCandidates() {
             skills: p.skills,
             preferences: [`Domain: ${p.preferences.domain}`, `Type: ${p.preferences.internshipType}`],
             resumeSummary: p.resumeSummary,
+            affirmativeAction: p.affirmativeAction,
         }));
 
       const result = await suggestSuitableCandidates({
@@ -44,7 +46,10 @@ export function SmartMatchCandidates() {
         studentProfiles: profilesForAI,
       });
 
-      setSuggestedCandidates(result);
+      // Sort results by match score descending
+      const sortedResult = result.sort((a, b) => b.matchScore - a.matchScore);
+      setSuggestedCandidates(sortedResult);
+
     } catch (error) {
       console.error('AI match error:', error);
       toast({
@@ -66,7 +71,7 @@ export function SmartMatchCandidates() {
             Find Top Talent with AI
           </CardTitle>
           <CardDescription>
-            Paste your internship description below to find the most suitable candidates from our talent pool.
+            Paste your internship description below to find the most suitable candidates from our talent pool, based on skills and affirmative action criteria.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -104,7 +109,7 @@ export function SmartMatchCandidates() {
 
       {!isAiLoading && suggestedCandidates.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Suggested Candidates</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Suggested Candidates (Ranked)</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {suggestedCandidates.map((candidate) => {
               const studentProfile = allStudentProfiles.find(p => p.personalInfo.name === candidate.studentName);
@@ -114,9 +119,7 @@ export function SmartMatchCandidates() {
                 <StudentCard
                   key={candidate.studentName}
                   student={{
-                    personalInfo: studentProfile.personalInfo,
-                    skills: studentProfile.skills,
-                    resumeSummary: studentProfile.resumeSummary,
+                    ...studentProfile,
                     matchScore: candidate.matchScore,
                     reasons: candidate.reasons,
                   }}

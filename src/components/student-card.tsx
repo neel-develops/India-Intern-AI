@@ -1,13 +1,15 @@
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { StudentProfile } from '@/lib/types';
-import { Mail, MapPin, Star, User } from 'lucide-react';
+import { Mail, MapPin, Star, User, ShieldQuestion } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface StudentCardProps {
-  student: Pick<StudentProfile, 'personalInfo' | 'skills' | 'resumeSummary'> & {
+  student: StudentProfile & {
     matchScore?: number;
     reasons?: string[];
   };
@@ -20,12 +22,12 @@ function getInitials(name: string) {
 export function StudentCard({ student }: StudentCardProps) {
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg">
-      <CardHeader className="flex flex-row items-center gap-4">
+      <CardHeader className="flex flex-row items-start gap-4">
         <Avatar className="h-12 w-12">
             <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${student.personalInfo.name}`} />
             <AvatarFallback>{getInitials(student.personalInfo.name)}</AvatarFallback>
         </Avatar>
-        <div>
+        <div className="flex-grow">
             <CardTitle>{student.personalInfo.name}</CardTitle>
             <CardDescription className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" /> {student.personalInfo.location}
@@ -33,12 +35,36 @@ export function StudentCard({ student }: StudentCardProps) {
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
+        <div className="flex flex-wrap gap-2 text-xs">
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Badge variant="outline">{student.affirmativeAction.socialCategory}</Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Social Category</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            {student.affirmativeAction.isFromAspirationalDistrict && (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Badge variant="outline" className="text-primary border-primary">Aspirational District</Badge>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Candidate is from an aspirational district.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )}
+        </div>
         <p className="text-sm text-muted-foreground line-clamp-3">
             {student.resumeSummary}
         </p>
         <div className="flex flex-wrap gap-2">
           {student.skills.slice(0, 5).map((skill) => (
-            <Badge key={skill} variant="outline">{skill}</Badge>
+            <Badge key={skill} variant="secondary">{skill}</Badge>
           ))}
         </div>
         {student.matchScore !== undefined && student.reasons && (

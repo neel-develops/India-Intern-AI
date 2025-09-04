@@ -34,6 +34,11 @@ export interface StudentProfile {
     hasNoGovtJobFamily: boolean;
     experienceMonths: number;
   };
+  affirmativeAction: {
+    socialCategory: 'General' | 'OBC' | 'SC' | 'ST' | 'EWS';
+    isFromAspirationalDistrict: boolean;
+    hasParticipatedBefore: boolean;
+  };
 }
 
 export interface Company {

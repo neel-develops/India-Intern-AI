@@ -147,6 +147,11 @@ export const studentProfiles: StudentProfile[] = [
       familyIncome: 600000,
       hasNoGovtJobFamily: true,
       experienceMonths: 12,
+    },
+    affirmativeAction: {
+        socialCategory: 'General',
+        isFromAspirationalDistrict: false,
+        hasParticipatedBefore: false,
     }
   },
   {
@@ -168,6 +173,11 @@ export const studentProfiles: StudentProfile[] = [
       familyIncome: 750000,
       hasNoGovtJobFamily: true,
       experienceMonths: 14,
+    },
+    affirmativeAction: {
+        socialCategory: 'OBC',
+        isFromAspirationalDistrict: true,
+        hasParticipatedBefore: false,
     }
   },
   {
@@ -189,6 +199,11 @@ export const studentProfiles: StudentProfile[] = [
       familyIncome: 500000,
       hasNoGovtJobFamily: true,
       experienceMonths: 18,
+    },
+    affirmativeAction: {
+        socialCategory: 'SC',
+        isFromAspirationalDistrict: false,
+        hasParticipatedBefore: true,
     }
   },
   {
@@ -210,6 +225,11 @@ export const studentProfiles: StudentProfile[] = [
       familyIncome: 700000,
       hasNoGovtJobFamily: true,
       experienceMonths: 24,
+    },
+    affirmativeAction: {
+        socialCategory: 'General',
+        isFromAspirationalDistrict: false,
+        hasParticipatedBefore: false,
     }
   },
 ];

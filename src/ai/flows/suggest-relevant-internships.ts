@@ -1,3 +1,4 @@
+
 // src/ai/flows/suggest-relevant-internships.ts
 'use server';
 
@@ -29,6 +30,11 @@ const SuggestRelevantInternshipsInputSchema = z.object({
         .describe('The preferred type of internship.'),
     }),
     resumeText: z.string().describe('The text content of the student resume.'),
+    affirmativeAction: z.object({
+        socialCategory: z.string().describe("The student's social category (e.g., General, OBC, SC, ST, EWS)."),
+        isFromAspirationalDistrict: z.boolean().describe("Whether the student is from an aspirational district."),
+        hasParticipatedBefore: z.boolean().describe("Whether the student has participated in this scheme before."),
+    }).describe('Information for affirmative action considerations.'),
   }).describe('The student profile data.'),
   internshipListings: z.array(z.object({
       title: z.string(),
@@ -37,7 +43,6 @@ const SuggestRelevantInternshipsInputSchema = z.object({
       skills: z.array(z.string()),
       domain: z.string(),
       location: z.string(),
-      // Other internship details
     })).describe('A list of available internship listings.'),
 });
 
@@ -53,7 +58,7 @@ const SuggestRelevantInternshipsOutputSchema = z.array(z.object({
   skills: z.array(z.string()),
   domain: z.string(),
   location: z.string(),
-  matchReason: z.string().describe('The reason why this internship is a good match for the student.'),
+  matchReason: z.string().describe('The reason why this internship is a good match for the student, considering all factors including affirmative action.'),
 }));
 
 export type SuggestRelevantInternshipsOutput = z.infer<
@@ -65,21 +70,29 @@ const suggestRelevantInternshipsPrompt = ai.definePrompt({
   name: 'suggestRelevantInternshipsPrompt',
   input: {schema: SuggestRelevantInternshipsInputSchema},
   output: {schema: SuggestRelevantInternshipsOutputSchema},
-  prompt: `You are an AI assistant that suggests relevant internships to students based on their profile data and a list of available internship listings.
+  prompt: `You are an AI assistant for the PM Internship Scheme, tasked with suggesting relevant internships to students.
 
-      Analyze the student's profile, including their skills, preferences, and resume, and match them with the most suitable internships from the provided list.
-      
-      Consider the student's preferred domain, skills, and location when making your suggestions.
+Your goal is to provide the most suitable matches based on the student's profile and the available internship listings.
 
-      Explain the reason why each suggested internship is a good match for the student in the matchReason field.
+You must consider the following factors in order:
+1.  **Primary Matching Criteria:**
+    *   Match the student's skills with the skills required for the internship.
+    *   Match the student's preferred domain and internship type.
+    *   Consider the student's location preferences.
+2.  **Affirmative Action and Scheme Rules:**
+    *   Give preference to candidates from aspirational districts.
+    *   Give preference to candidates from under-represented social categories (SC, ST, OBC, EWS).
+    *   Give lower preference to candidates who have participated in the scheme before.
 
-      Student Profile:
-      {{studentProfile}}
+For each suggested internship, you must provide a clear 'matchReason' that explains why it's a good fit, referencing the student's skills, preferences, and any affirmative action criteria that apply.
 
-      Internship Listings:
-      {{internshipListings}}
+Student Profile:
+{{studentProfile}}
 
-      Output a JSON array of internship objects that best match the student's profile.
+Internship Listings:
+{{internshipListings}}
+
+Output a JSON array of internship objects that best match the student's profile based on the criteria above.
       `,
 });
 

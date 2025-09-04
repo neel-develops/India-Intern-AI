@@ -1,7 +1,9 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import type { StudentProfile } from '@/lib/types';
+import { studentProfiles } from '@/lib/data';
 
 const STORAGE_KEY = 'student-profile';
 
@@ -15,6 +17,9 @@ export function useStudentProfile() {
       const item = window.localStorage.getItem(STORAGE_KEY);
       if (item) {
         setProfile(JSON.parse(item));
+      } else {
+        // For demonstration, pre-populate with the first sample profile if none exists
+        setProfile(studentProfiles[0]);
       }
     } catch (error) {
       console.error('Failed to load profile from local storage:', error);
