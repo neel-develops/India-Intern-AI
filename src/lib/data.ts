@@ -186,6 +186,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 22,
       email: 'priya.sharma@example.com',
       location: 'Mumbai',
+      linkedin: 'https://linkedin.com/in/priya-sharma-example',
     },
     skills: ['Python', 'Machine Learning', 'Data Analysis', 'Pandas'],
     preferences: {
@@ -207,6 +208,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 21,
       email: 'rohan.verma@example.com',
       location: 'Remote',
+      linkedin: 'https://linkedin.com/in/rohan-verma-example',
     },
     skills: ['React', 'TypeScript', 'Node.js', 'Tailwind CSS'],
     preferences: {
@@ -228,6 +230,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 23,
       email: 'anika.singh@example.com',
       location: 'Bangalore',
+      linkedin: 'https://linkedin.com/in/anika-singh-example',
     },
     skills: ['Figma', 'UI Design', 'UX Research', 'Adobe XD'],
     preferences: {
@@ -249,6 +252,7 @@ export const studentProfiles: StudentProfile[] = [
         age: 24,
         email: 'arjun.reddy@example.com',
         location: 'Pune',
+        linkedin: 'https://linkedin.com/in/arjun-reddy-example',
     },
     skills: ['Flutter', 'Dart', 'Firebase', 'GetX'],
     preferences: {
@@ -270,6 +274,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 22,
       email: 'sneha.gupta@example.com',
       location: 'Delhi',
+      linkedin: 'https://linkedin.com/in/sneha-gupta-example',
     },
     skills: ['Financial Modeling', 'Excel', 'Valuation', 'Accounting'],
     preferences: {
@@ -291,6 +296,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 23,
       email: 'vikram.singh@example.com',
       location: 'Pune',
+      linkedin: 'https://linkedin.com/in/vikram-singh-example',
     },
     skills: ['SEO', 'Content Marketing', 'Google Analytics', 'Social Media'],
     preferences: {
@@ -312,6 +318,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 22,
       email: 'pooja.desai@example.com',
       location: 'Mumbai',
+      linkedin: 'https://linkedin.com/in/pooja-desai-example',
     },
     skills: ['AutoCAD', 'Structural Analysis', 'STAAD Pro', 'Project Management'],
     preferences: {
@@ -333,6 +340,7 @@ export const studentProfiles: StudentProfile[] = [
       age: 21,
       email: 'rajesh.kumar@example.com',
       location: 'Hyderabad',
+      linkedin: 'https://linkedin.com/in/rajesh-kumar-example',
     },
     skills: ['Agronomy', 'Supply Chain Management', 'Rural Marketing', 'Data Collection'],
     preferences: {

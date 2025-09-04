@@ -19,6 +19,7 @@ export interface StudentProfile {
     age: number;
     email: string;
     location: string;
+    linkedin?: string;
   };
   skills: string[];
   preferences: {

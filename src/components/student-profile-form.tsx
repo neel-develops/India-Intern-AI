@@ -28,6 +28,7 @@ const profileSchema = z.object({
     age: z.coerce.number().min(21, "Must be at least 21").max(24, "Must be at most 24"),
     email: z.string().email('Invalid email address.'),
     location: z.string().min(2, 'Location is required.'),
+    linkedin: z.string().url().optional().or(z.literal('')),
   }),
   skills: z.string().min(1, 'Please list at least one skill.'),
   preferences: z.object({
@@ -63,6 +64,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         age: profile?.personalInfo.age || 21,
         email: profile?.personalInfo.email || '',
         location: profile?.personalInfo.location || '',
+        linkedin: profile?.personalInfo.linkedin || '',
       },
       skills: profile?.skills.join(', ') || '',
       preferences: {
@@ -151,6 +153,19 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                   <FormLabel>Location</FormLabel>
                   <FormControl>
                     <Input placeholder="e.g. Mumbai, India" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="personalInfo.linkedin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn Profile</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
