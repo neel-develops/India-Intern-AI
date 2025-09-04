@@ -1,6 +1,5 @@
 
 import Link from 'next/link';
-import { Logo } from './icons';
 import Image from 'next/image';
 
 export function Footer() {
@@ -9,7 +8,6 @@ export function Footer() {
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Logo className="w-8 h-8 text-orange-500" />
             <h3 className="text-xl font-bold">intern.ai</h3>
           </div>
           <p className="text-sm text-blue-200">
@@ -40,3 +38,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

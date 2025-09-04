@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -7,6 +8,8 @@ import { internships as allInternships } from '@/lib/data';
 import type { Internship } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Briefcase } from 'lucide-react';
+import { SmartMatchInternships } from '@/components/smart-match-internships';
+import { Separator } from '@/components/ui/separator';
 
 export default function InternshipsPage() {
   const [filters, setFilters] = useState<Filters>({ domain: 'all', location: 'all', skills: '' });
@@ -31,35 +34,43 @@ export default function InternshipsPage() {
   }, []);
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
-      <div className="space-y-4 mb-8">
+    <div className="container mx-auto py-8 px-4 md:px-6 space-y-8">
+      <div className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Find Your Training Program
         </h1>
         <p className="text-lg text-muted-foreground">
-          Browse and filter through our curated list of training programs.
+          Use our AI-powered matchmaking or browse and filter through our curated list of training programs.
         </p>
       </div>
 
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm -mx-6 px-6 py-4 mb-8">
-        <InternshipFilters onFilterChange={handleFilterChange} uniqueDomains={uniqueDomains} uniqueLocations={uniqueLocations} />
-      </div>
+      <SmartMatchInternships />
+      
+      <Separator />
 
-      {filteredInternships.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredInternships.map((internship) => (
-            <InternshipCard key={internship.id} internship={internship} />
-          ))}
+      <div>
+        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm -mx-6 px-6 py-4 mb-8">
+          <InternshipFilters onFilterChange={handleFilterChange} uniqueDomains={uniqueDomains} uniqueLocations={uniqueLocations} />
         </div>
-      ) : (
-        <Alert>
-            <Briefcase className="h-4 w-4" />
-            <AlertTitle>No Programs Found</AlertTitle>
-            <AlertDescription>
-                No training programs match your current filter criteria. Try adjusting your filters.
-            </AlertDescription>
-        </Alert>
-      )}
+
+        {filteredInternships.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredInternships.map((internship) => (
+              <InternshipCard key={internship.id} internship={internship} />
+            ))}
+          </div>
+        ) : (
+          <Alert>
+              <Briefcase className="h-4 w-4" />
+              <AlertTitle>No Programs Found</AlertTitle>
+              <AlertDescription>
+                  No training programs match your current filter criteria. Try adjusting your filters.
+              </AlertDescription>
+          </Alert>
+        )}
+      </div>
     </div>
   );
 }
+
+    
