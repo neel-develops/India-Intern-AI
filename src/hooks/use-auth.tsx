@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
      // Any email/password is valid in prototype mode
-    const mockUser = createMock  User(email);
+    const mockUser = createMockUser(email);
     await handleLogin(mockUser);
   };
 
