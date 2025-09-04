@@ -44,7 +44,7 @@ export default function LoginPage() {
         <form onSubmit={handleSignIn}>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to continue to intern.ai</CardDescription>
+            <CardDescription>Sign in to continue to IndiaIntern.ai</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

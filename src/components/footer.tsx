@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold">intern.ai</h3>
+            <h3 className="text-xl font-bold">IndiaIntern.ai</h3>
           </div>
           <p className="text-sm text-blue-200">
             A Smart India Hackathon 2025 Project for the Ministry of Corporate Affairs.
@@ -32,11 +32,9 @@ export function Footer() {
       </div>
       <div className="bg-blue-950/50 py-4">
           <div className="container mx-auto text-center text-sm text-blue-300">
-            © {new Date().getFullYear()} intern.ai. All Rights Reserved.
+            © {new Date().getFullYear()} IndiaIntern.ai. All Rights Reserved.
           </div>
       </div>
     </footer>
   );
 }
-
-    

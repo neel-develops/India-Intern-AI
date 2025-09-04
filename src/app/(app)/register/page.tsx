@@ -54,7 +54,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSignUp}>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Create an Account</CardTitle>
-            <CardDescription>Join intern.ai to find your perfect match.</CardDescription>
+            <CardDescription>Join IndiaIntern.ai to find your perfect match.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
