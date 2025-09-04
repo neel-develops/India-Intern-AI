@@ -8,6 +8,7 @@ const firebaseConfig = {
   "storageBucket": "internship-aligner.firebasestorage.app",
   "apiKey": "AIzaSyAnndiBhtYgdGth2_mcj2fJmxR3TT8mZnM",
   "authDomain": "internship-aligner.firebaseapp.com",
+  "measurementId": "",
   "messagingSenderId": "440687570290"
 };
 
@@ -16,3 +17,4 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
 export { app, auth };
+
