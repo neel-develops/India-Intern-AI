@@ -51,12 +51,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: '/', icon: Home, label: 'Home' },
-    { href: '/about', icon: Info, label: 'About Us' },
-    { href: '/programs', icon: Briefcase, label: 'Training Programs' },
-    { href: '/institutes', icon: Building2, label: 'Institutes' },
+    { href: '/internships', icon: Briefcase, label: 'Internships' },
+    { href: '/companies', icon: Building2, label: 'Companies' },
     { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
-    { href: '/contact', icon: Phone, label: 'Contact Us' },
+    { href: '/recruiter', icon: Info, label: 'Recruiter View' },
   ];
 
   const sidebarContent = (
@@ -64,7 +63,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="p-4 flex justify-between items-center border-b">
         <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
           <Logo className="w-8 h-8 text-secondary" />
-          <span className="text-lg font-bold">PM-DAKSH Portal</span>
+          <span className="text-lg font-bold">intern.ai</span>
         </Link>
       </div>
       <nav className="flex-1 px-4 py-2 space-y-2">

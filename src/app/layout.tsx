@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -5,8 +6,8 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'PM-DAKSH Portal',
-  description: 'PM-DAKSH Skilling and Employment Portal.',
+  title: 'intern.ai',
+  description: 'AI-Powered Internship Matching Platform.',
 };
 
 export default function RootLayout({
