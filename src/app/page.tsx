@@ -1,4 +1,6 @@
 
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -7,6 +9,11 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { companies } from '@/lib/data';
 import { BriefcaseBusiness, IndianRupee, PiggyBank, Search, CalendarDays, Briefcase, GraduationCap, Users } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useAuth } from '@/hooks/use-auth.tsx';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { SmartMatchInternships } from '@/components/smart-match-internships';
 
 interface InfoCardProps {
   icon: ReactNode;
@@ -73,24 +80,36 @@ const coreBenefits = [
     }
 ];
 
+function LoggedInDashboard() {
+  return (
+    <div className="space-y-8">
+        <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">intern.ai Dashboard</h1>
+            <p className="text-muted-foreground">
+                Welcome back! Find your next opportunity.
+            </p>
+        </div>
+        <Separator />
+        <SmartMatchInternships />
+    </div>
+  );
+}
+
+
 export default function LandingPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  if (loading) {
+      return <div>Loading...</div> // Or a proper skeleton loader
+  }
+
+  if (user) {
+    return <LoggedInDashboard />
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-muted/20">
-      <header className="px-4 lg:px-6 h-16 flex items-center bg-background/80 backdrop-blur-sm sticky top-0 z-50 border-b">
-        <Link href="#" className="flex items-center justify-center font-bold text-xl">
-          intern.ai
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Button variant="ghost" asChild>
-            <Link href="/login" className="text-sm font-medium">
-              Login
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/register">Register</Link>
-          </Button>
-        </nav>
-      </header>
       <main className="flex-1">
         <section 
           className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center"
@@ -177,40 +196,7 @@ export default function LandingPage() {
         </section>
 
       </main>
-      <footer className="bg-blue-900 text-white">
-      <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold">intern.ai</h3>
-          </div>
-          <p className="text-sm text-blue-200">
-            A Smart India Hackathon 2025 Project for the Ministry of Corporate Affairs.
-          </p>
-        </div>
-        <div className="space-y-4">
-          <h4 className="font-semibold text-lg">Quick Links</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="#" className="text-blue-200 hover:text-white">About Us</Link></li>
-            <li><Link href="#" className="text-blue-200 hover:text-white">Contact</Link></li>
-            <li><Link href="#" className="text-blue-200 hover:text-white">Privacy Policy</Link></li>
-          </ul>
-        </div>
-        <div className="space-y-4">
-          <h4 className="font-semibold text-lg">In collaboration with</h4>
-          <div className="flex items-center gap-4">
-             <Image src="https://i.imgur.com/gG4gH0g.png" alt="SIH 2025 Logo" width={140} height={56} />
-             <Image src="https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Ministry_of_Corporate_Affairs_India.svg/1200px-Ministry_of_Corporate_Affairs_India.svg.png" alt="Ministry of Corporate Affairs Logo" width={40} height={40} />
-          </div>
-        </div>
-      </div>
-      <div className="bg-blue-950/50 py-4">
-          <div className="container mx-auto text-center text-sm text-blue-300">
-            © {new Date().getFullYear()} intern.ai. All Rights Reserved.
-          </div>
-      </div>
-    </footer>
+      <Footer />
     </div>
   )
 }
-
-    
