@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Wand2 } from 'lucide-react';
-import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { suggestRelevantInternships } from '@/ai/flows/suggest-relevant-internships';
 import { internships as allInternships } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InternshipCard } from '@/components/internship-card';
 import { useToast } from '@/hooks/use-toast';
-import type { Internship } from '@/lib/types';
-
-type SuggestedInternship = Internship & { matchReason?: string };
+import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships';
 
 export function SmartMatchInternships() {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
-  const [suggestedInternships, setSuggestedInternships] = useState<SuggestedInternship[]>([]);
+  const [suggestedInternships, setSuggestedInternships] = useState<SuggestRelevantInternshipsOutput>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const { toast } = useToast();
 
@@ -39,18 +37,19 @@ export function SmartMatchInternships() {
 
       const result = await suggestRelevantInternships({
         studentProfile: studentProfileForAI,
-        internshipListings: allInternships,
+        internshipListings: allInternships.map(i => ({...i, description: i.longDescription})),
       });
 
+      // The AI result now directly matches what InternshipCard needs, including the matchReason.
+      // We just need to find the original image for each suggested internship.
       const enrichedInternships = result.map(suggested => {
         const originalInternship = allInternships.find(i => i.id === suggested.id);
-        if (!originalInternship) return null;
         return {
-          ...originalInternship,
-          ...suggested, // This will overwrite fields from original with AI's version, but keeps image etc.
+          ...suggested,
+          image: originalInternship?.image || 'https://picsum.photos/600/400', // fallback image
+          longDescription: suggested.description,
         };
-      }).filter((i): i is SuggestedInternship => i !== null);
-
+      });
 
       setSuggestedInternships(enrichedInternships);
     } catch (error) {

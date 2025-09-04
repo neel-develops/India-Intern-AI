@@ -11,9 +11,7 @@ import { BriefcaseBusiness, IndianRupee, PiggyBank, Search, CalendarDays, Briefc
 import { ReactNode, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth.tsx';
 import { useRouter } from 'next/navigation';
-import { Separator } from '@/components/ui/separator';
-import { SmartMatchInternships } from '@/components/smart-match-internships';
-
+import { Footer } from '@/components/footer';
 
 interface InfoCardProps {
   icon: ReactNode;
@@ -80,31 +78,25 @@ const coreBenefits = [
     }
 ];
 
-function LoggedInDashboard() {
-  const router = useRouter();
-  useEffect(() => {
-      router.replace('/dashboard');
-  }, [router]);
-  return <div>Loading dashboard...</div>;
-}
-
-
 export default function LandingPage() {
   const { user, loading } = useAuth();
+  const router = useRouter();
 
-  if (loading) {
+  useEffect(() => {
+      if (!loading && user) {
+          router.replace('/dashboard');
+      }
+  }, [user, loading, router]);
+  
+
+  if (loading || user) {
       return <div>Loading...</div> // Or a proper skeleton loader
   }
 
-  if (user) {
-    return <LoggedInDashboard />
-  }
-
   return (
-    <div className="flex flex-col min-h-screen bg-muted/20">
-      <main className="flex-1">
+    <div className="flex flex-col min-h-screen">
         <section 
-          className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center"
+          className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center -mt-6 sm:-mt-8 -mx-6"
           style={{ backgroundImage: "url('https://picsum.photos/1600/900?blur=5&random=42')"}}
         >
           <div className="container px-4 md:px-6">
@@ -186,7 +178,6 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-      </main>
     </div>
   )
 }

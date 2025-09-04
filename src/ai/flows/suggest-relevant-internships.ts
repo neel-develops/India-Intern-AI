@@ -13,6 +13,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import type { Internship } from '@/lib/types';
+
 
 // Define the input schema for the flow
 const SuggestRelevantInternshipsInputSchema = z.object({
@@ -58,9 +60,9 @@ const SuggestRelevantInternshipsOutputSchema = z.array(z.object({
   matchReason: z.string().describe('The reason why this internship is a good match for the student.'),
 }));
 
-export type SuggestRelevantInternshipsOutput = z.infer<
-  typeof SuggestRelevantInternshipsOutputSchema
->;
+// This is a workaround to make the AI output compatible with our Internship type
+export type SuggestRelevantInternshipsOutput = (Omit<Internship, 'longDescription' | 'responsibilities' | 'qualifications' | 'image'> & { matchReason: string })[];
+
 
 // Define the prompt
 const suggestRelevantInternshipsPrompt = ai.definePrompt({
@@ -79,12 +81,12 @@ You must consider the following factors:
 For each suggested internship, you must provide a clear 'matchReason' that explains why it's a good fit, referencing the student's skills and preferences.
 
 Student Profile:
-{{studentProfile}}
+{{{json studentProfile}}}
 
 Internship Listings:
-{{internshipListings}}
+{{{json internshipListings}}}
 
-Output a JSON array of internship objects that best match the student's profile based on the criteria above. Include the original internship 'id' in your response.
+Output a JSON array of internship objects that best match the student's profile based on the criteria above. Include the original internship 'id' in your response. Only return the top 3-5 matches.
       `,
 });
 

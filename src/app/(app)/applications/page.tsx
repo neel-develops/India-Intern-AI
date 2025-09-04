@@ -1,7 +1,7 @@
 
 'use client';
 import { useApplications } from '@/hooks/use-applications';
-import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { internships } from '@/lib/data';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import Image from 'next/image';

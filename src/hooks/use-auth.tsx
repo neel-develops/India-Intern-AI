@@ -4,7 +4,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { useStudentProfile } from './use-student-profile';
+import { useStudentProfile } from './use-student-profile.tsx';
 
 interface AuthContextType {
   user: User | null;

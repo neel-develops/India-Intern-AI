@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Briefcase, MapPin, Cpu, Check, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useApplications } from '@/hooks/use-applications';
-import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { useToast } from '@/hooks/use-toast';
 import { useNotifications } from '@/hooks/use-notifications';
 

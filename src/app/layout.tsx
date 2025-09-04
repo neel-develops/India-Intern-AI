@@ -17,6 +17,8 @@ import {
   PanelLeft,
   User,
   HelpCircle,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +31,7 @@ import {
 } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useStudentProfile } from '@/hooks/use-student-profile';
+import { StudentProfileProvider } from '@/hooks/use-student-profile.tsx';
 import { AuthProvider, useAuth } from '@/hooks/use-auth.tsx';
 import { UserNav } from '@/components/user-nav';
 import { Footer } from '@/components/footer';
@@ -37,39 +39,34 @@ import { Footer } from '@/components/footer';
 function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
-  const { profile } = useStudentProfile();
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
     setIsClient(true);
   }, []);
   
-  const isLandingPage = pathname === '/';
-
   const navItems = [
-    { href: '/', icon: Home, label: 'Home' },
-    { href: '/internships', icon: Briefcase, label: 'Training Programs' },
-    { href: '/companies', icon: Building2, label: 'Institutes' },
-    { href: '/applications', icon: FileText, label: 'My Applications' },
-    { href: '/profile', icon: User, label: 'My Profile' },
-    { href: '/eligibility', icon: HelpCircle, label: 'Eligibility'},
+    { href: '/', icon: Home, label: 'Home', auth: 'any' },
+    { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
+    { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
+    { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
+    { href: '/profile', icon: User, label: 'My Profile', auth: true },
+    { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
   ];
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="p-4 flex justify-between items-center border-b">
+      <SheetHeader className="p-4 flex flex-row justify-between items-center border-b">
         <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
           <Logo className="w-8 h-8" />
           <span className="text-lg font-bold">intern.ai</span>
         </Link>
-      </div>
+      </SheetHeader>
       <nav className="flex-1 px-4 py-2 space-y-2">
         {navItems.map((item) => {
-            if (!user && (item.href === '/applications' || item.href === '/profile')) {
-                return null;
-            }
-            // For logged-in users, the root path should point to the dashboard
-            const href = user && item.href === '/' ? '/dashboard' : item.href;
+            if (item.auth === true && !user) return null;
+            
+            const href = (user && item.href === '/') ? '/dashboard' : item.href;
 
             return (
                 <Link
@@ -86,6 +83,18 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
             )
         })}
       </nav>
+      {!user && isClient && (
+        <div className="px-4 py-2 mt-auto border-t">
+          <div className="space-y-2">
+             <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2" variant="outline">
+                <Link href="/login"><LogIn className="h-4 w-4" />Login</Link>
+            </Button>
+             <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2">
+                <Link href="/register"><UserPlus className="h-4 w-4" />Register</Link>
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -95,9 +104,9 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       {loading ? (
         <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
       ) : user ? (
-        <UserNav user={user} profile={profile} />
+        <UserNav user={user} />
       ) : (
-        <div className="flex gap-2">
+        <div className="hidden md:flex gap-2">
             <Button variant="ghost" asChild>
                 <Link href="/login">Login</Link>
             </Button>
@@ -109,26 +118,6 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  // Render the public landing page if the user is not logged in AND is on the root path
-  if (isLandingPage && !user) {
-    return (
-        <>
-            <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
-                 <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-                    <Logo className="w-8 h-8" />
-                    <span className="text-lg font-bold">intern.ai</span>
-                </Link>
-                <div className="w-full flex-1 flex justify-end items-center gap-4">
-                     {isClient && headerContent}
-                </div>
-            </header>
-            {children}
-            <Footer />
-        </>
-    )
-  }
-
-  // Render the full app layout for logged-in users or for any page other than the landing page
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
@@ -137,7 +126,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 sticky top-0 z-50">
+            <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
@@ -149,10 +138,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                     <span className="sr-only">Toggle navigation menu</span>
                 </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="flex flex-col p-0 md:hidden">
-                        <SheetHeader>
-                            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                        </SheetHeader>
+                <SheetContent side="left" className="flex flex-col p-0 w-[280px] md:hidden">
                     {sidebarContent}
                 </SheetContent>
             </Sheet>
@@ -160,7 +146,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                 {isClient && headerContent}
             </div>
             </header>
-            <main className="flex-1 p-4 sm:p-6 bg-background/95">
+            <main className="flex-1 p-4 sm:p-6 bg-muted/20">
                 {children}
             </main>
             <Footer />
@@ -196,7 +182,9 @@ export default function RootLayout({
             disableTransitionOnChange
             >
                 <AuthProvider>
+                  <StudentProfileProvider>
                     <AppLayoutContent>{children}</AppLayoutContent>
+                  </StudentProfileProvider>
                 </AuthProvider>
                 <Toaster />
             </ThemeProvider>

@@ -12,13 +12,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/hooks/use-auth';
-import type { StudentProfile } from '@/lib/types';
+import { useAuth } from '@/hooks/use-auth.tsx';
+import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import type { User } from 'firebase/auth';
 
 interface UserNavProps {
   user: User | null;
-  profile: StudentProfile | null;
 }
 
 function getInitials(name: string) {
@@ -26,15 +25,12 @@ function getInitials(name: string) {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 }
 
-export function UserNav({ user, profile }: UserNavProps) {
+export function UserNav({ user }: UserNavProps) {
   const { signOut: logOut } = useAuth();
+  const { profile } = useStudentProfile();
 
   if (!user) {
-    return (
-      <Button asChild>
-        <Link href="/login">Login</Link>
-      </Button>
-    );
+    return null;
   }
   
   const userName = profile?.personalInfo?.name || user.displayName || 'User';

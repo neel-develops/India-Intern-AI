@@ -3,8 +3,8 @@
 
 import { StudentProfileForm } from '@/components/student-profile-form';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useStudentProfile } from '@/hooks/use-student-profile';
-import { useAuth } from '@/hooks/use-auth';
+import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
+import { useAuth } from '@/hooks/use-auth.tsx';
 import type { StudentProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
