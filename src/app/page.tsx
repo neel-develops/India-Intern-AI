@@ -8,13 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { companies } from '@/lib/data';
 import { BriefcaseBusiness, IndianRupee, PiggyBank, Search, CalendarDays, Briefcase, GraduationCap, Users } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth.tsx';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { SmartMatchInternships } from '@/components/smart-match-internships';
-import { Footer } from '@/components/footer';
+
 
 interface InfoCardProps {
   icon: ReactNode;
@@ -82,24 +81,16 @@ const coreBenefits = [
 ];
 
 function LoggedInDashboard() {
-  return (
-    <div className="space-y-8">
-        <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">intern.ai Dashboard</h1>
-            <p className="text-muted-foreground">
-                Welcome back! Find your next opportunity.
-            </p>
-        </div>
-        <Separator />
-        <SmartMatchInternships />
-    </div>
-  );
+  const router = useRouter();
+  useEffect(() => {
+      router.replace('/dashboard');
+  }, [router]);
+  return <div>Loading dashboard...</div>;
 }
 
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
-  const router = useRouter();
 
   if (loading) {
       return <div>Loading...</div> // Or a proper skeleton loader
@@ -197,7 +188,6 @@ export default function LandingPage() {
         </section>
 
       </main>
-      <Footer />
     </div>
   )
 }
