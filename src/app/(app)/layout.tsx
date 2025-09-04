@@ -11,9 +11,9 @@ import {
   FileText,
   Home,
   PanelLeft,
-  ShieldCheck,
+  Info,
   User,
-  Users,
+  Phone,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -50,24 +50,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, []);
 
   const navItems = [
-    { href: '/', icon: Home, label: 'Dashboard' },
-    { href: '/internships', icon: Briefcase, label: 'Internships' },
-    { href: '/companies', icon: Building2, label: 'Companies' },
+    { href: '/', icon: Home, label: 'Home' },
+    { href: '/about', icon: Info, label: 'About Us' },
+    { href: '/programs', icon: Briefcase, label: 'Training Programs' },
+    { href: '/institutes', icon: Building2, label: 'Institutes' },
     { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
-    { href: '/recruiter', icon: Users, label: 'Recruiter View' },
-    { href: '/eligibility', icon: ShieldCheck, label: 'Eligibility' },
+    { href: '/contact', icon: Phone, label: 'Contact Us' },
   ];
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="p-4 flex justify-between items-center">
+      <div className="p-4 flex justify-between items-center border-b">
         <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-          <Logo className="w-8 h-8" />
-          <span className="text-lg font-bold">Internship Aligner</span>
+          <Logo className="w-8 h-8 text-secondary" />
+          <span className="text-lg font-bold">PM-DAKSH Portal</span>
         </Link>
       </div>
-      <nav className="flex-1 px-4 space-y-2">
+      <nav className="flex-1 px-4 py-2 space-y-2">
         {navItems.map((item) => (
           <Link
             key={item.href}
@@ -121,6 +121,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </DropdownMenuContent>
         </DropdownMenu>
         <ThemeToggle />
+         <Button>Login / Register</Button>
     </>
   );
 

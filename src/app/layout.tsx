@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Internship Aligner',
-  description: 'Aligning students with the perfect internships.',
+  title: 'PM-DAKSH Portal',
+  description: 'PM-DAKSH Skilling and Employment Portal.',
 };
 
 export default function RootLayout({

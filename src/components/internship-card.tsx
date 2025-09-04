@@ -36,7 +36,7 @@ export function InternshipCard({ internship, matchReason }: InternshipCardProps)
             <Badge variant="secondary" className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" /> {internship.location}
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="outline" className="flex items-center gap-1">
                 <Cpu className="h-3 w-3" /> {internship.domain}
             </Badge>
         </div>

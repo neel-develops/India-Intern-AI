@@ -4,9 +4,12 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { companies, internships } from '@/lib/data';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Link as LinkIcon, MapPin, Briefcase } from 'lucide-react';
+import { Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 import { InternshipCard } from '@/components/internship-card';
+import { Card } from '@/components/ui/card';
+import { Briefcase } from 'lucide-react';
+
 
 export default function CompanyDetailsPage() {
   const params = useParams();
@@ -16,7 +19,7 @@ export default function CompanyDetailsPage() {
   const companyInternships = internships.filter(i => i.company === company?.name);
 
   if (!company) {
-    return <div>Company not found</div>;
+    return <div>Institute not found</div>;
   }
 
   return (
@@ -39,7 +42,7 @@ export default function CompanyDetailsPage() {
 
         <div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-8">
-                Internships at {company.name}
+                Training Programs at {company.name}
             </h2>
 
             {companyInternships.length > 0 ? (
@@ -51,9 +54,9 @@ export default function CompanyDetailsPage() {
             ) : (
                 <div className="text-center py-12 bg-muted/30 rounded-lg">
                     <Briefcase className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium text-muted-foreground">No open internships</h3>
+                    <h3 className="mt-4 text-lg font-medium text-muted-foreground">No open programs</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        {company.name} does not have any open internships at the moment. Please check back later.
+                        {company.name} does not have any open training programs at the moment. Please check back later.
                     </p>
                 </div>
             )}
@@ -61,5 +64,3 @@ export default function CompanyDetailsPage() {
     </div>
   );
 }
-// This is a placeholder Card component to avoid an error since the file where it's defined might not exist yet.
-const Card = ({ className, children }: { className?: string, children: React.ReactNode }) => <div className={className}>{children}</div>;
