@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Button } from './ui/button';
-import { Filter, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 
 export interface Filters {
@@ -74,23 +75,21 @@ export function InternshipFilters({ onFilterChange, uniqueDomains, uniqueLocatio
                     </SelectContent>
                 </Select>
             </div>
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Skills</label>
-                <Input
-                    placeholder="e.g. React, Python"
-                    value={filters.skills}
-                    onChange={(e) => setFilters(prev => ({ ...prev, skills: e.target.value }))}
-                />
-            </div>
-            <div className="flex gap-2">
-                <Button className="w-full" disabled>
-                    <Filter className="mr-2 h-4 w-4" /> Filter
-                </Button>
-                {isFiltered && (
-                    <Button variant="ghost" size="icon" onClick={handleReset}>
-                        <X className="h-4 w-4" />
-                    </Button>
-                )}
+            <div className="space-y-2 lg:col-span-2">
+                <label className="text-sm font-medium">Skills (comma-separated)</label>
+                <div className="flex gap-2">
+                    <Input
+                        placeholder="e.g. React, Python"
+                        value={filters.skills}
+                        onChange={(e) => setFilters(prev => ({ ...prev, skills: e.target.value }))}
+                        className="flex-grow"
+                    />
+                    {isFiltered && (
+                        <Button variant="ghost" size="icon" onClick={handleReset} aria-label="Reset filters">
+                            <X className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
       </CardContent>

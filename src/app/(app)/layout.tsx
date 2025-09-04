@@ -26,7 +26,7 @@ import {
 import { Logo } from '@/components/icons';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { AuthProvider, useAuth } from '@/hooks/use-auth.tsx';
 import { UserNav } from '@/components/user-nav';
 import { Footer } from '@/components/footer';
 
