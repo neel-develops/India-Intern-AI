@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -197,6 +198,10 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                           <SelectItem value="Design">Design</SelectItem>
                           <SelectItem value="Mobile Development">Mobile Development</SelectItem>
                           <SelectItem value="Marketing">Marketing</SelectItem>
+                          <SelectItem value="Engineering">Engineering</SelectItem>
+                          <SelectItem value="Healthcare">Healthcare</SelectItem>
+                          <SelectItem value="Finance">Finance</SelectItem>
+                           <SelectItem value="Agriculture">Agriculture</SelectItem>
                         </SelectContent>
                       </Select>
                     <FormMessage />
