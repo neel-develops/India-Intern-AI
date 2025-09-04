@@ -29,8 +29,11 @@ export function SmartMatchInternships() {
 
     try {
       const studentProfileForAI = {
-        ...profile,
+        personalInfo: profile.personalInfo,
+        skills: profile.skills,
+        preferences: profile.preferences,
         resumeText: profile.resumeSummary,
+        affirmativeAction: profile.affirmativeAction,
       };
 
       const result = await suggestRelevantInternships({
