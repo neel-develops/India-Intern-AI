@@ -81,8 +81,8 @@ const prompt = ai.definePrompt({
 
   **Output:**
   For each student, provide:
-  - A `matchScore` (0-100) that reflects this comprehensive evaluation.
-  - An array of `reasons` explaining the score. These reasons must clearly state how the student's profile matches the internship and explicitly mention any affirmative action criteria that influenced the decision (e.g., "Strong match due to Python skills and preference for candidates from aspirational districts.").
+  - A matchScore (0-100) that reflects this comprehensive evaluation.
+  - An array of reasons explaining the score. These reasons must clearly state how the student's profile matches the internship and explicitly mention any affirmative action criteria that influenced the decision (e.g., "Strong match due to Python skills and preference for candidates from aspirational districts.").
 
   **Internship Description:**
   {{internshipDescription}}
