@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { SmartMatchInternships } from '@/components/smart-match-internships';
+import { Footer } from '@/components/footer';
 
 interface InfoCardProps {
   icon: ReactNode;
