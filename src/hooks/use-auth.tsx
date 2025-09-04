@@ -1,66 +1,77 @@
 
 'use client';
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
+import type { User } from 'firebase/auth';
 import { useStudentProfile } from './use-student-profile.tsx';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signInWithEmail: (email: string, pass: string) => Promise<any>;
-  signUpWithEmail: (email: string, pass: string) => Promise<any>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Mock a user object since we are bypassing actual Firebase Auth
+const createMockUser = (email: string): User => ({
+  uid: email, // Use email as UID for simplicity
+  email: email,
+  displayName: 'Prototype User',
+  photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`,
+  emailVerified: true,
+  isAnonymous: false,
+  metadata: {},
+  providerData: [],
+  providerId: 'password',
+  tenantId: null,
+  delete: async () => {},
+  getIdToken: async () => 'mock-token',
+  getIdTokenResult: async () => ({
+    token: 'mock-token',
+    expirationTime: '',
+    authTime: '',
+    issuedAtTime: '',
+    signInProvider: null,
+    signInSecondFactor: null,
+    claims: {},
+  }),
+  reload: async () => {},
+  toJSON: () => ({}),
+});
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // No initial loading needed for mock auth
   const { loadProfileForUser, clearProfile } = useStudentProfile();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        await loadProfileForUser(user.uid);
-      } else {
-        setUser(null);
-        clearProfile();
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [loadProfileForUser, clearProfile]);
+  
+  const handleLogin = useCallback(async (newUser: User) => {
+    setUser(newUser);
+    await loadProfileForUser(newUser.uid);
+    setLoading(false);
+  },[loadProfileForUser])
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    try {
-        return await signInWithEmailAndPassword(auth, email, pass);
-    } finally {
-        setLoading(false);
-    }
-  }
+    // Any email/password is valid in prototype mode
+    const mockUser = createMockUser(email);
+    await handleLogin(mockUser);
+  };
 
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    try {
-        return await createUserWithEmailAndPassword(auth, email, pass);
-    } finally {
-        setLoading(false);
-    }
-  }
-
+     // Any email/password is valid in prototype mode
+    const mockUser = createMock  User(email);
+    await handleLogin(mockUser);
+  };
 
   const signOut = async () => {
-    try {
-        await firebaseSignOut(auth);
-    } catch (error) {
-        console.error("Error signing out", error);
-    }
+    setLoading(true);
+    setUser(null);
+    clearProfile();
+    setLoading(false);
   };
 
   return (
