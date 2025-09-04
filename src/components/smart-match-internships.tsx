@@ -13,11 +13,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InternshipCard } from '@/components/internship-card';
 import { useToast } from '@/hooks/use-toast';
-import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships';
+import type { Internship } from '@/lib/types';
+
+type SuggestedInternship = Internship & { matchReason?: string };
 
 export function SmartMatchInternships() {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
-  const [suggestedInternships, setSuggestedInternships] = useState<SuggestRelevantInternshipsOutput>([]);
+  const [suggestedInternships, setSuggestedInternships] = useState<SuggestedInternship[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const { toast } = useToast();
 
@@ -40,7 +42,17 @@ export function SmartMatchInternships() {
         internshipListings: allInternships,
       });
 
-      setSuggestedInternships(result);
+      const enrichedInternships = result.map(suggested => {
+        const originalInternship = allInternships.find(i => i.id === suggested.id);
+        if (!originalInternship) return null;
+        return {
+          ...originalInternship,
+          ...suggested, // This will overwrite fields from original with AI's version, but keeps image etc.
+        };
+      }).filter((i): i is SuggestedInternship => i !== null);
+
+
+      setSuggestedInternships(enrichedInternships);
     } catch (error) {
       console.error('AI match error:', error);
       toast({
@@ -127,8 +139,8 @@ export function SmartMatchInternships() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {suggestedInternships.map((internship, index) => (
                 <InternshipCard
-                key={`${internship.title}-${index}`}
-                internship={{...internship, id: String(index), image: `https://picsum.photos/600/400?random=${10+index}`}}
+                key={`${internship.id}-${index}`}
+                internship={internship}
                 matchReason={internship.matchReason}
                 />
             ))}

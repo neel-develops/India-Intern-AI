@@ -32,6 +32,7 @@ const SuggestRelevantInternshipsInputSchema = z.object({
     resumeText: z.string().describe('The text content of the student resume.'),
   }).describe('The student profile data.'),
   internshipListings: z.array(z.object({
+      id: z.string(),
       title: z.string(),
       company: z.string(),
       description: z.string(),
@@ -47,6 +48,7 @@ export type SuggestRelevantInternshipsInput = z.infer<
 
 // Define the output schema for the flow
 const SuggestRelevantInternshipsOutputSchema = z.array(z.object({
+  id: z.string().describe('The unique ID of the internship listing.'),
   title: z.string(),
   company: z.string(),
   description: z.string(),
@@ -82,7 +84,7 @@ Student Profile:
 Internship Listings:
 {{internshipListings}}
 
-Output a JSON array of internship objects that best match the student's profile based on the criteria above.
+Output a JSON array of internship objects that best match the student's profile based on the criteria above. Include the original internship 'id' in your response.
       `,
 });
 
