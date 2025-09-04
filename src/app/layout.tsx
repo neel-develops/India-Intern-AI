@@ -181,11 +181,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
             >
-                <AuthProvider>
-                  <StudentProfileProvider>
+                <StudentProfileProvider>
+                  <AuthProvider>
                     <AppLayoutContent>{children}</AppLayoutContent>
-                  </StudentProfileProvider>
-                </AuthProvider>
+                  </AuthProvider>
+                </StudentProfileProvider>
                 <Toaster />
             </ThemeProvider>
         </body>
