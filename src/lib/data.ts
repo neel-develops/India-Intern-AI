@@ -4,45 +4,284 @@ import type { Internship, StudentProfile, Company, Application, Notification } f
 export const companies: Company[] = [
     {
         id: '1',
-        name: 'Bharat Electronics Limited',
-        logo: 'https://logo.clearbit.com/bel-india.in',
-        website: 'https://bel-india.in',
-        description: 'A Navratna PSU and India’s foremost defence electronics company. BEL is a pioneer in the design, development, and manufacture of a wide range of strategic electronic products.'
+        name: 'RELIANCE INDUSTRIES LIMITED',
+        logo: 'https://logo.clearbit.com/ril.com',
+        website: 'https://www.ril.com',
+        description: 'An Indian multinational conglomerate company, headquartered in Mumbai, India. Its diverse businesses include energy, petrochemicals, natural gas, retail, telecommunications, mass media, and textiles.'
     },
     {
         id: '2',
-        name: 'Apollo Hospitals',
-        logo: 'https://logo.clearbit.com/apollohospitals.com',
-        website: 'https://apollohospitals.com',
-        description: 'A leading integrated healthcare services provider in Asia. It has a robust presence across the healthcare ecosystem, including hospitals, pharmacies, primary care & diagnostic clinics.'
+        name: 'TATA CONSULTANCY SERVICES LIMITED',
+        logo: 'https://logo.clearbit.com/tcs.com',
+        website: 'https://www.tcs.com',
+        description: 'An Indian multinational information technology services and consulting company headquartered in Mumbai. It is a part of the Tata Group and operates in 150 locations across 46 countries.'
     },
     {
         id: '3',
-        name: 'Larsen & Toubro',
-        logo: 'https://logo.clearbit.com/larsentoubro.com',
-        website: 'https://larsentoubro.com',
-        description: 'A major Indian multinational engaged in EPC projects, hi-tech manufacturing and services. It operates in over 30 countries worldwide.'
+        name: 'HDFC BANK LIMITED',
+        logo: 'https://logo.clearbit.com/hdfcbank.com',
+        website: 'https://www.hdfcbank.com',
+        description: 'An Indian banking and financial services company headquartered in Mumbai. It is India\'s largest private sector bank by assets and by market capitalisation as of April 2021.'
     },
     {
         id: '4',
-        name: 'National Payments Corporation of India',
-        logo: 'https://logo.clearbit.com/npci.org.in',
-        website: 'https://npci.org.in',
-        description: 'An umbrella organization for operating retail payments and settlement systems in India. It is an initiative of RBI and IBA under the provisions of the Payment and Settlement Systems Act, 2007.'
+        name: 'OIL AND NATURAL GAS CORPORATION LIMITED',
+        logo: 'https://logo.clearbit.com/ongcindia.com',
+        website: 'https://www.ongcindia.com',
+        description: 'An Indian public sector multinational crude oil and gas company. Its registered office is in New Delhi. It is under the ownership of Ministry of Petroleum and Natural Gas, Government of India.'
     },
+
     {
         id: '5',
-        name: 'ITC Limited',
-        logo: 'https://logo.clearbit.com/itcportal.com',
-        website: 'https://itcportal.com',
-        description: 'An Indian conglomerate with diversified business in FMCG, hotels, software, packaging, paperboards, specialty papers and agri-business.'
+        name: 'INFOSYS LIMITED',
+        logo: 'https://logo.clearbit.com/infosys.com',
+        website: 'https://www.infosys.com',
+        description: 'An Indian multinational information technology company that provides business consulting, information technology and outsourcing services.'
     },
     {
         id: '6',
-        name: 'Sun Pharmaceutical Industries',
-        logo: 'https://logo.clearbit.com/sunpharma.com',
-        website: 'https://sunpharma.com',
-        description: 'An Indian multinational pharmaceutical company that manufactures and sells pharmaceutical formulations and active pharmaceutical ingredients (APIs) in more than 100 countries.'
+        name: 'NTPC LIMITED',
+        logo: 'https://logo.clearbit.com/ntpc.co.in',
+        website: 'https://www.ntpc.co.in',
+        description: 'An Indian public sector undertaking, engaged in the business of generation of electricity and allied activities. It is a company incorporated under the Companies Act 1956 and is under the ownership of Ministry of Power, Government of India.'
+    },
+    {
+        id: '7',
+        name: 'TATA STEEL LIMITED',
+        logo: 'https://logo.clearbit.com/tatasteel.com',
+        website: 'https://www.tatasteel.com',
+        description: 'An Indian multinational steel-making company, based in Jamshedpur, Jharkhand and headquartered in Mumbai, Maharashtra. It is a part of the Tata Group.'
+    },
+    {
+        id: '8',
+        name: 'ITC LIMITED',
+        logo: 'https://logo.clearbit.com/itcportal.com',
+        website: 'https://www.itcportal.com',
+        description: 'An Indian conglomerate with diversified business in FMCG, hotels, software, packaging, paperboards, specialty papers and agri-business.'
+    },
+    {
+        id: '9',
+        name: 'INDIAN OIL CORPORATION LIMITED',
+        logo: 'https://logo.clearbit.com/iocl.com',
+        website: 'https://www.iocl.com',
+        description: 'An Indian public sector oil and gas company headquartered in New Delhi. It is the largest commercial oil company in the country, with a net profit of ₹41,653 crore for the financial year 2020-21.'
+    },
+    {
+        id: '10',
+        name: 'ICICI BANK LIMITED',
+        logo: 'https://logo.clearbit.com/icicibank.com',
+        website: 'https://www.icicibank.com',
+        description: 'An Indian multinational banking and financial services company with its registered office in Vadodara, Gujarat and corporate office in Mumbai, Maharashtra.'
+    },
+    {
+        id: '11',
+        name: 'POWER GRID CORPORATION OF INDIA LIMITED',
+        logo: 'https://logo.clearbit.com/powergrid.in',
+        website: 'https://www.powergrid.in',
+        description: 'An Indian public sector undertaking engaged in transmission of bulk power across different states of India. It is headquartered in Gurugram.'
+    },
+    {
+        id: '12',
+        name: 'TATA SONS PRIVATE LIMITED',
+        logo: 'https://logo.clearbit.com/tata.com',
+        website: 'https://www.tata.com',
+        description: 'The holding company of the Tata Group and holds the bulk of shareholding in these companies. It is a private limited company and is based in Mumbai.'
+    },
+    {
+        id: '13',
+        name: 'WIPRO LIMITED',
+        logo: 'https://logo.clearbit.com/wipro.com',
+        website: 'https://www.wipro.com',
+        description: 'An Indian multinational corporation that provides information technology, consulting and business process services.'
+    },
+    {
+        id: '14',
+        name: 'HCL TECHNOLOGIES LIMITED',
+        logo: 'https://logo.clearbit.com/hcltech.com',
+        website: 'https://www.hcltech.com',
+        description: 'An Indian multinational information technology services and consulting company, headquartered in Noida, Uttar Pradesh, India.'
+    },
+    {
+        id: '15',
+        name: 'HINDUSTAN ZINC LIMITED',
+        logo: 'https://logo.clearbit.com/hzlindia.com',
+        website: 'https://www.hzlindia.com',
+        description: 'An Indian integrated mining and resources producer of zinc, lead, silver and cadmium.'
+    },
+    {
+        id: '16',
+        name: 'RELIANCE JIO INFOCOMM LIMITED',
+        logo: 'https://logo.clearbit.com/jio.com',
+        website: 'https://www.jio.com',
+        description: 'An Indian telecommunications company and a subsidiary of Jio Platforms, headquartered in Mumbai, Maharashtra, India.'
+    },
+    {
+        id: '17',
+        name: 'MAHANADI COALFIELDS LIMITED',
+        logo: 'https://logo.clearbit.com/mahanadicoal.in',
+        website: 'https://www.mahanadicoal.in',
+        description: 'One of the major coal producing companies of India. It is one of the eight subsidiaries of Coal India Limited.'
+    },
+    {
+        id: '18',
+        name: 'NMDC LIMITED',
+        logo: 'https://logo.clearbit.com/nmdc.co.in',
+        website: 'https://www.nmdc.co.in',
+        description: 'An Indian public sector undertaking, it is under the ownership of Ministry of Steel, Government of India.'
+    },
+    {
+        id: '19',
+        name: 'HINDUSTAN UNILEVER LIMITED',
+        logo: 'https://logo.clearbit.com/hul.co.in',
+        website: 'https://www.hul.co.in',
+        description: 'A British-Dutch manufacturing company headquartered in Mumbai, India. Its products include foods, beverages, cleaning agents, personal care products, water purifiers and consumer goods.'
+    },
+    {
+        id: '20',
+        name: 'REC LIMITED',
+        logo: 'https://logo.clearbit.com/recindia.nic.in',
+        website: 'https://www.recindia.nic.in',
+        description: 'A Navratna company under the Ministry of Power, provides financial assistance to state electricity boards, state governments, central/state power utilities, independent power producers, rural electric cooperatives and private sector utilities.'
+    },
+    {
+        id: '21',
+        name: 'JSW STEEL LIMITED',
+        logo: 'https://logo.clearbit.com/jsw.in',
+        website: 'https://www.jsw.in/steel',
+        description: 'An Indian multinational steel making company, based in Mumbai, Maharashtra. It is a subsidiary of JSW Group.'
+    },
+    {
+        id: '22',
+        name: 'GAIL (INDIA) LIMITED',
+        logo: 'https://logo.clearbit.com/gailonline.com',
+        website: 'https://www.gailonline.com',
+        description: 'The largest state-owned natural gas processing and distribution company in India. It is under the ownership of Ministry of Petroleum and Natural Gas, Government of India.'
+    },
+    {
+        id: '23',
+        name: 'COGNIZANT TECHNOLOGY SOLUTIONS INDIA PRIVATE LIMITED',
+        logo: 'https://logo.clearbit.com/cognizant.com',
+        website: 'https://www.cognizant.com',
+        description: 'An American multinational technology company that provides business consulting, information technology and outsourcing services.'
+    },
+    {
+        id: '24',
+        name: 'LARSEN AND TOUBRO LIMITED',
+        logo: 'https://logo.clearbit.com/larsentoubro.com',
+        website: 'https://www.larsentoubro.com',
+        description: 'A major Indian multinational engaged in EPC projects, hi-tech manufacturing and services. It operates in over 30 countries worldwide.'
+    },
+    {
+        id: '25',
+        name: 'AXIS BANK LIMITED',
+        logo: 'https://logo.clearbit.com/axisbank.com',
+        website: 'https://www.axisbank.com',
+        description: 'An Indian banking and financial services company headquartered in Mumbai, Maharashtra. It sells financial services to large and mid-size companies, SMEs and retail businesses.'
+    },
+    {
+        id: '26',
+        name: 'NORTHERN COALFIELDS LIMITED',
+        logo: 'https://logo.clearbit.com/nclcil.in',
+        website: 'https://www.nclcil.in',
+        description: 'A subsidiary of Coal India Limited, which is a government of India undertaking. It is headquartered in Singrauli, Madhya Pradesh.'
+    },
+    {
+        id: '27',
+        name: 'OIL INDIA LIMITED',
+        logo: 'https://logo.clearbit.com/oil-india.com',
+        website: 'https://www.oil-india.com',
+        description: 'The second largest hydrocarbon exploration and production Indian public sector company. It is under the ownership of Ministry of Petroleum and Natural Gas, Government of India.'
+    },
+    {
+        id: '28',
+        name: 'HINDUSTAN PETROLEUM CORPORATION LIMITED',
+        logo: 'https://logo.clearbit.com/hindustanpetroleum.com',
+        website: 'https://www.hindustanpetroleum.com',
+        description: 'An Indian public sector oil and gas company. It is a subsidiary of ONGC with its headquarters in Mumbai, Maharashtra. It has a 25% market-share in India among public-sector companies.'
+    },
+    {
+        id: '29',
+        name: 'JINDAL STEEL & POWER LIMITED',
+        logo: 'https://logo.clearbit.com/jindalsteelpower.com',
+        website: 'https://www.jindalsteelpower.com',
+        description: 'An Indian steel and energy company based in New Delhi. With turnover of approx. ₹40000 crore, JSPL is a part of about ₹130000 crore diversified O.P. Jindal Group conglomerate.'
+    },
+    {
+        id: '30',
+        name: 'RELIANCE RETAIL LIMITED',
+        logo: 'https://logo.clearbit.com/relianceretail.com',
+        website: 'https://www.relianceretail.com',
+        description: 'An Indian retail company and a subsidiary of Reliance Industries Limited. Founded in 2006, it is the largest retailer in India in terms of revenue.'
+    },
+    {
+        id: '31',
+        name: 'NUCLEAR POWER CORPORATION OF INDIA LIMITED',
+        logo: 'https://logo.clearbit.com/npcil.nic.in',
+        website: 'https://www.npcil.nic.in',
+        description: 'An Indian public sector undertaking based in Mumbai, Maharashtra. It is wholly owned by the Government of India and is responsible for the generation of nuclear power for electricity.'
+    },
+    {
+        id: '32',
+        name: 'TECH MAHINDRA LIMITED',
+        logo: 'https://logo.clearbit.com/techmahindra.com',
+        website: 'https://www.techmahindra.com',
+        description: 'An Indian multinational information technology services and consulting company. A part of the Mahindra Group, the company is headquartered in Pune and has its registered office in Mumbai.'
+    },
+    {
+        id: '33',
+        name: 'POWER FINANCE CORPORATION LIMITED',
+        logo: 'https://logo.clearbit.com/pfcindia.com',
+        website: 'https://www.pfcindia.com',
+        description: 'An Indian financial institution under the ownership of Ministry of Power, Government of India. Established in 1986, it is the financial back bone of Indian Power Sector.'
+    },
+    {
+        id: '34',
+        name: 'ULTRATECH CEMENT LIMITED',
+        logo: 'https://logo.clearbit.com/ultratechcement.com',
+        website: 'https://www.ultratechcement.com',
+        description: 'An Indian cement company based in Mumbai. It is a part of the Aditya Birla Group. UltraTech is the largest manufacturer of grey cement, ready mix concrete and white cement in India.'
+    },
+    {
+        id: '35',
+        name: 'INDUSIND BANK LTD.',
+        logo: 'https://logo.clearbit.com/indusind.com',
+        website: 'https://www.indusind.com',
+        description: 'A new-generation Indian bank headquartered in Pune. The bank offers commercial, transactional and electronic banking products and services.'
+    },
+    {
+        id: '36',
+        name: 'NHPC LIMITED',
+        logo: 'https://logo.clearbit.com/nhpcindia.com',
+        website: 'https://www.nhpcindia.com',
+        description: 'An Indian government hydropower board under the ownership of Ministry of Power, Government of India that was incorporated in the year 1975 with an authorised capital of ₹2000 million.'
+    },
+    {
+        id: '37',
+        name: 'STEEL AUTHORITY OF INDIA LIMITED',
+        logo: 'https://logo.clearbit.com/sail.co.in',
+        website: 'https://www.sail.co.in',
+        description: 'An Indian government-owned steel manufacturing enterprise based in New Delhi, India. It is under the ownership of Ministry of Steel, Government of India.'
+    },
+    {
+        id: '38',
+        name: 'MARUTI SUZUKI INDIA LIMITED',
+        logo: 'https://logo.clearbit.com/marutisuzuki.com',
+        website: 'https://www.marutisuzuki.com',
+        description: 'A subsidiary of the Japanese automotive manufacturer Suzuki. It is the largest car manufacturer in India, with a market share of over 43%.'
+    },
+    {
+        id: '39',
+        name: 'VEDANTA LIMITED',
+        logo: 'https://logo.clearbit.com/vedantalimited.com',
+        website: 'https://www.vedantalimited.com',
+        description: 'An Indian multinational mining company headquartered in Mumbai, India, with their main operations in iron ore, gold and aluminium mines in Goa, Karnataka, Rajasthan and Odisha.'
+    },
+    {
+        id: '40',
+        name: 'BHARAT PETROLEUM CORPORATION LIMITED',
+        logo: 'https://logo.clearbit.com/bharatpetroleum.in',
+        website: 'https://www.bharatpetroleum.in',
+        description: 'An Indian government-owned oil and gas corporation. It is under the ownership of Ministry of Petroleum and Natural Gas, Government of India, headquartered in Mumbai, Maharashtra.'
     }
 ];
 
@@ -63,7 +302,7 @@ export const internships: Internship[] = [
   {
     id: '2',
     title: 'Healthcare Management Intern',
-    company: 'Apollo Hospitals',
+    company: 'APOLLO HOSPITALS ENTERPRISE LIMITED',
     description: 'Assist in hospital administration, patient care coordination, and quality improvement projects. A great opportunity for those interested in healthcare operations.',
     longDescription: 'As a Healthcare Management Intern, you will get a 360-degree view of hospital operations. You will rotate through different departments, from patient services to financial planning, and contribute to projects aimed at improving efficiency and patient satisfaction.',
     responsibilities: ['Shadowing hospital administrators', 'Collecting and analyzing data on patient flow', 'Assisting in the development of patient education materials', 'Participating in quality audits'],
@@ -76,7 +315,7 @@ export const internships: Internship[] = [
   {
     id: '3',
     title: 'Civil Engineering Intern',
-    company: 'Larsen & Toubro',
+    company: 'LARSEN AND TOUBRO LIMITED',
     description: 'Join our infrastructure projects and gain hands-on experience in project planning, site supervision, and quality control for large-scale construction projects.',
     longDescription: 'This is a field-based internship where you will be part of a team building the nation\'s infrastructure. You will learn the practical aspects of civil engineering, from reading blueprints to managing resources and ensuring safety compliance on a live construction site.',
     responsibilities: ['Assisting project managers with daily tasks', 'Monitoring construction activities to ensure they meet specifications', 'Conducting quality checks on materials', 'Preparing project progress reports'],
@@ -89,7 +328,7 @@ export const internships: Internship[] = [
   {
     id: '4',
     title: 'Fintech Product Intern',
-    company: 'National Payments Corporation of India',
+    company: 'NATIONAL PAYMENTS CORPORATION OF INDIA',
     description: 'Work on the next generation of digital payment solutions in India. You will be involved in product research, feature definition, and competitor analysis for products like UPI.',
     longDescription: 'Be a part of the digital payments revolution in India. This internship will give you a unique insight into the world of fintech. You will work with product managers to define and launch new features that will be used by millions of people.',
     responsibilities: ['Conducting market and competitor research', 'Writing product requirements documents (PRDs)', 'Collaborating with engineering and design teams', 'Analyzing user data to identify trends and opportunities'],
@@ -102,7 +341,7 @@ export const internships: Internship[] = [
   {
     id: '5',
     title: 'Agri-Business Intern',
-    company: 'ITC Limited',
+    company: 'ITC LIMITED',
     description: 'Join ITC\'s Agri-Business division and work on projects related to crop sourcing, supply chain management, and rural marketing. An ideal role for agriculture or business students.',
     longDescription: 'This internship provides a deep dive into India\'s agricultural sector. You will work on ITC\'s e-Choupal initiative, interacting with farmers, and contributing to a more efficient and transparent agricultural supply chain. It is a unique blend of fieldwork and corporate strategy.',
     responsibilities: ['Assisting in the procurement of agricultural commodities', 'Analyzing supply chain data to identify inefficiencies', 'Conducting market research in rural areas', 'Supporting the development of farmer training programs'],
@@ -115,7 +354,7 @@ export const internships: Internship[] = [
   {
     id: '6',
     title: 'Pharmaceutical Research Intern',
-    company: 'Sun Pharmaceutical Industries',
+    company: 'SUN PHARMACEUTICAL INDUSTRIES LIMITED',
     description: 'Work in our R&D labs on drug formulation and development. This is a hands-on role for pharmacy or chemistry students to gain industry experience.',
     longDescription: 'This internship is an excellent opportunity for aspiring scientists to get real-world experience in a leading pharmaceutical company. You will work under the guidance of senior researchers, assisting with experiments, data analysis, and documentation in a state-of-the-art laboratory.',
     responsibilities: ['Assisting with laboratory experiments', 'Preparing chemical solutions and reagents', 'Operating and maintaining lab equipment', 'Recording and analyzing experimental data'],
@@ -128,7 +367,7 @@ export const internships: Internship[] = [
   {
     id: '7',
     title: 'Frontend Developer Intern',
-    company: 'National Payments Corporation of India',
+    company: 'NATIONAL PAYMENTS CORPORATION OF INDIA',
     description: 'Help build and maintain user interfaces for our flagship payment products. You will work with React, TypeScript, and modern CSS frameworks to create accessible and performant UIs.',
     longDescription: 'As a Frontend Developer Intern, you will be a key member of our product team, translating designs into high-quality code. This role offers a chance to work on applications used by millions, focusing on UI/UX, performance, and accessibility.',
     responsibilities: ['Developing new user-facing features using React.js', 'Building reusable components and front-end libraries for future use', 'Translating designs and wireframes into high-quality code', 'Optimizing components for maximum performance across a vast array of web-capable devices and browsers'],
@@ -141,7 +380,7 @@ export const internships: Internship[] = [
   {
     id: '8',
     title: 'Data Science Intern',
-    company: 'Apollo Hospitals',
+    company: 'APOLLO HOSPITALS ENTERPRISE LIMITED',
     description: 'Apply your data science skills to real healthcare challenges. Work with large datasets to build predictive models and generate insights to improve patient outcomes.',
     longDescription: 'This internship will place you at the intersection of data science and healthcare. You will work with a team of clinicians and data scientists to analyze clinical data, build machine learning models, and contribute to research that can have a real impact on patient care.',
     responsibilities: ['Data cleaning and preprocessing of clinical datasets', 'Building and evaluating machine learning models', 'Visualizing data and communicating findings to stakeholders', 'Collaborating with clinical staff to understand data context'],
@@ -154,7 +393,7 @@ export const internships: Internship[] = [
   {
     id: '9',
     title: 'UI/UX Design Intern',
-    company: 'ITC Limited',
+    company: 'ITC LIMITED',
     description: 'Join our digital marketing team and help design engaging and intuitive user experiences for our consumer-facing web and mobile applications.',
     longDescription: 'As a UI/UX Design Intern, you will be involved in the entire product development lifecycle, from user research and wireframing to creating high-fidelity mockups and interactive prototypes. This is a great opportunity to build your portfolio with work on major consumer brands.',
     responsibilities: ['Conducting user research and evaluating user feedback', 'Creating user flows, wireframes, prototypes, and mockups', 'Collaborating with product managers and engineers to implement designs', 'Maintaining and evolving our design system'],
