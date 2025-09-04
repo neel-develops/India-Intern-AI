@@ -136,7 +136,7 @@ export function SmartMatchInternships() {
         </div>
       )}
 
-      {!isAiLoading && !suggestedInternships.length && (
+      {!isAiLoading && suggestedInternships.length === 0 && (
          <Alert className="bg-accent/50 border-accent">
             <Wand2 className="h-4 w-4" />
             <AlertTitle>Ready for your matches?</AlertTitle>
