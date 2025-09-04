@@ -33,7 +33,9 @@ export function SmartMatchCandidates() {
 
     try {
         const profilesForAI = allStudentProfiles.map(p => ({
-            ...p,
+            personalInfo: p.personalInfo,
+            skills: p.skills,
+            preferences: [`Domain: ${p.preferences.domain}`, `Type: ${p.preferences.internshipType}`],
             resumeSummary: p.resumeSummary,
         }));
 
