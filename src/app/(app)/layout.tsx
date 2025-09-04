@@ -11,7 +11,6 @@ import {
   FileText,
   Home,
   PanelLeft,
-  Info,
   User,
   Phone,
 } from 'lucide-react';
@@ -55,7 +54,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: '/companies', icon: Building2, label: 'Companies' },
     { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
-    { href: '/recruiter', icon: Info, label: 'Recruiter View' },
   ];
 
   const sidebarContent = (
