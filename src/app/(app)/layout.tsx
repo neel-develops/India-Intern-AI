@@ -5,14 +5,12 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Bell,
   Briefcase,
   Building2,
   FileText,
   Home,
   PanelLeft,
   User,
-  Phone,
   HelpCircle,
 } from 'lucide-react';
 
@@ -27,22 +25,16 @@ import {
 } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
 import { ThemeToggle } from '@/components/theme-toggle';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
-import { useNotifications } from '@/hooks/use-notifications';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { UserNav } from '@/components/user-nav';
+import { Footer } from '@/components/footer';
 
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { notifications } = useNotifications();
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const { user, loading } = useAuth();
+  const { profile } = useStudentProfile();
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -56,14 +48,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
     { href: '/eligibility', icon: HelpCircle, label: 'Eligibility'},
-    { href: '/recruiter', icon: User, label: 'Recruiter View' },
   ];
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className="p-4 flex justify-between items-center border-b">
         <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-          <Logo className="w-8 h-8 text-secondary" />
+          <Logo className="w-8 h-8" />
           <span className="text-lg font-bold">intern.ai</span>
         </Link>
       </div>
@@ -90,38 +81,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const headerContent = (
     <>
-         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                        <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 justify-center p-0">{unreadCount}</Badge>
-                    )}
-                    <span className="sr-only">Toggle notifications</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {notifications.length > 0 ? (
-                    notifications.slice(0, 5).map(n => (
-                         <DropdownMenuItem key={n.id} asChild>
-                            <Link href={n.link || '/notifications'} className={cn(!n.read && 'font-bold')}>
-                                {n.message}
-                            </Link>
-                        </DropdownMenuItem>
-                    ))
-                ) : (
-                    <DropdownMenuItem disabled>No new notifications</DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                   <Link href="/notifications">View all</Link>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
-        <ThemeToggle />
-         <Button>Login / Register</Button>
+      <ThemeToggle />
+      {loading ? (
+        <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
+      ) : user ? (
+        <UserNav user={user} profile={profile} />
+      ) : (
+        <Button asChild>
+          <Link href="/login">Login / Register</Link>
+        </Button>
+      )}
     </>
   );
 
@@ -157,9 +126,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
           </header>
           <main className="flex-1 p-4 sm:p-6 bg-background/95">
-          {children}
+            {children}
           </main>
+          <Footer />
       </div>
       </div>
   );
+}
+
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <AuthProvider>
+            <AppLayoutContent>{children}</AppLayoutContent>
+        </AuthProvider>
+    )
 }
