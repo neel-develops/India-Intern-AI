@@ -27,9 +27,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
         <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">intern.ai Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
-                Welcome! Powered by Smart India Hackathon
+                Welcome back! Here's where you can find your AI-powered internship matches.
             </p>
         </div>
         <Separator />
