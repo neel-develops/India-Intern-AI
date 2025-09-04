@@ -72,7 +72,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         ))}
       </nav>
       <div className="mt-auto p-4">
-        <ThemeToggle />
+        {/* ThemeToggle was here */}
       </div>
     </div>
   );
