@@ -83,9 +83,9 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
           experienceMonths: profile?.eligibility.experienceMonths || 0,
       },
       affirmativeAction: {
-        socialCategory: profile?.affirmativeAction.socialCategory || 'General',
-        isFromAspirationalDistrict: profile?.affirmativeAction.isFromAspirationalDistrict || false,
-        hasParticipatedBefore: profile?.affirmativeAction.hasParticipatedBefore || false,
+        socialCategory: profile?.affirmativeAction?.socialCategory || 'General',
+        isFromAspirationalDistrict: profile?.affirmativeAction?.isFromAspirationalDistrict || false,
+        hasParticipatedBefore: profile?.affirmativeAction?.hasParticipatedBefore || false,
       }
     },
   });
