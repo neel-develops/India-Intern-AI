@@ -8,10 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { companies } from '@/lib/data';
 import { BriefcaseBusiness, IndianRupee, PiggyBank, Search, CalendarDays, Briefcase, GraduationCap, Users } from 'lucide-react';
-import { ReactNode, useEffect } from 'react';
-import { useAuth } from '@/hooks/use-auth.tsx';
-import { useRouter } from 'next/navigation';
-import { Footer } from '@/components/footer';
+import { ReactNode } from 'react';
+import { AppShell } from '@/components/app-shell';
 
 interface InfoCardProps {
   icon: ReactNode;
@@ -79,24 +77,11 @@ const coreBenefits = [
 ];
 
 export default function LandingPage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-      if (!loading && user) {
-          router.replace('/dashboard');
-      }
-  }, [user, loading, router]);
-  
-
-  if (loading || user) {
-      return <div>Loading...</div> // Or a proper skeleton loader
-  }
-
   return (
-    <div className="flex flex-col min-h-screen">
+    <AppShell>
+      <div className="flex flex-col min-h-screen -mt-14">
         <section 
-          className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center -mt-6 sm:-mt-8 -mx-6"
+          className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center"
           style={{ backgroundImage: "url('https://picsum.photos/1600/900?blur=5&random=42')"}}
         >
           <div className="container px-4 md:px-6">
@@ -178,6 +163,7 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
-    </div>
+      </div>
+    </AppShell>
   )
 }
