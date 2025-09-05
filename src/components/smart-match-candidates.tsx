@@ -34,11 +34,21 @@ export function SmartMatchCandidates() {
 
     try {
         const profilesForAI = allStudentProfiles.map(p => ({
-            personalInfo: p.personalInfo,
+            personalInfo: {
+                name: p.personalInfo.name,
+                age: p.personalInfo.age,
+                email: p.personalInfo.email,
+                location: p.personalInfo.location,
+            },
             skills: p.skills,
             preferences: [`Domain: ${p.preferences.domain}`, `Type: ${p.preferences.internshipType}`],
             resumeSummary: p.resumeSummary,
-            affirmativeAction: p.affirmativeAction,
+            affirmativeAction: {
+                // This data is currently missing from the student profile, so we'll use defaults
+                socialCategory: 'General',
+                isFromAspirationalDistrict: false,
+                hasParticipatedBefore: false,
+            },
         }));
 
       const result = await suggestSuitableCandidates({
