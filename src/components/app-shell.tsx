@@ -44,13 +44,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!loading && user && (pathname === '/' || pathname === '/login' || pathname === '/register')) {
+    if (!loading && user && (pathname === '/login' || pathname === '/register')) {
         router.replace('/dashboard');
+    }
+     if (!loading && !user && pathname !== '/' && pathname !== '/login' && pathname !== '/register' && pathname !== '/eligibility' && !pathname.startsWith('/companies')) {
+      router.replace('/login');
     }
   }, [user, loading, pathname, router]);
 
   const navItems = [
-    { href: '/', icon: Home, label: 'Home', auth: 'any' },
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
     { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
@@ -71,9 +73,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <nav className="flex-1 px-4 py-2 space-y-2">
         {navItems.map((item) => {
             if (item.auth === true && !user) return null;
-            if (item.href === '/' && user) return null; // Hide home link if logged in
-            if (item.href === '/dashboard' && !user) return null; // Hide dashboard link if logged out
+            if (item.href === '/' && user) return null;
             
+            const isPublicRouteWhenLoggedIn = !user && (item.href === '/internships' || item.href === '/companies' || item.href === '/eligibility');
+
             return (
                 <Link
                     key={item.href}
@@ -123,40 +126,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
     </>
   );
-  
-  // This is a special case for the landing page so it doesn't have the main grid layout
-  if (pathname === '/') {
-     return (
-         <div className="flex flex-col min-h-screen">
-            <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30 w-full">
-                <Sheet>
-                    <SheetTrigger asChild>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="shrink-0"
-                    >
-                        <PanelLeft className="h-5 w-5" />
-                        <span className="sr-only">Toggle navigation menu</span>
-                    </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="flex flex-col p-0 w-[280px]">
-                        {sidebarContent}
-                    </SheetContent>
-                </Sheet>
-                <Link href="/" className="flex items-center gap-2 text-primary font-semibold md:hidden">
-                    <Logo className="w-8 h-8" />
-                    <span className="sr-only">IndiaIntern.ai</span>
-                </Link>
-                <div className="w-full flex-1 flex justify-end items-center gap-4">
-                    {isClient && headerContent}
-                </div>
-            </header>
-             <main className="flex-grow">{children}</main>
-            <Footer />
-        </div>
-     )
-  }
 
   // Main application layout
   return (
