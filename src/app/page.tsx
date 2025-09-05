@@ -79,7 +79,7 @@ const coreBenefits = [
 export default function LandingPage() {
   return (
     <AppShell>
-      <div className="flex flex-col min-h-screen -mt-14">
+      <div className="flex flex-col min-h-screen">
         <section 
           className="w-full py-20 md:py-32 lg:py-40 bg-cover bg-center"
           style={{ backgroundImage: "url('https://picsum.photos/1600/900?blur=5&random=42')"}}
@@ -165,5 +165,5 @@ export default function LandingPage() {
         </section>
       </div>
     </AppShell>
-  )
+  );
 }

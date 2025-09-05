@@ -142,6 +142,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         {sidebarContent}
                     </SheetContent>
                 </Sheet>
+                <Link href="/" className="flex items-center gap-2 text-primary font-semibold md:hidden">
+                    <Logo className="w-8 h-8" />
+                    <span className="sr-only">IndiaIntern.ai</span>
+                </Link>
                 <div className="w-full flex-1 flex justify-end items-center gap-4">
                     {isClient && headerContent}
                 </div>

@@ -5,6 +5,15 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { StudentProfileProvider } from '@/hooks/use-student-profile.tsx';
 import { AuthProvider } from '@/hooks/use-auth.tsx';
+import { Poppins } from 'next/font/google';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
+  weight: ['400', '500', '600', '700']
+});
+
 
 export default function RootLayout({
   children,
@@ -13,17 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-        <head>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-            <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-            />
-        </head>
         <body
             className={cn(
-            'min-h-screen bg-background font-body antialiased'
+            'min-h-screen bg-background font-body antialiased',
+             poppins.variable
             )}
         >
             <ThemeProvider
