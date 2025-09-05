@@ -32,14 +32,18 @@ export function useApplications() {
     }
   }, []);
 
-  const addApplication = useCallback((newApplication: Application) => {
-    const updatedApplications = [...applications, newApplication];
+  const addApplication = useCallback((newApplication: Omit<Application, 'id'>) => {
+    const applicationWithId: Application = {
+        ...newApplication,
+        id: crypto.randomUUID(),
+    };
+    const updatedApplications = [...applications, applicationWithId];
     saveApplications(updatedApplications);
   }, [applications, saveApplications]);
   
-  const updateApplicationStatus = useCallback((internshipId: string, status: Application['status']) => {
+  const updateApplicationStatus = useCallback((applicationId: string, status: Application['status']) => {
     const updatedApplications = applications.map(app => 
-        app.internshipId === internshipId ? { ...app, status } : app
+        app.id === applicationId ? { ...app, status } : app
     );
     saveApplications(updatedApplications);
   }, [applications, saveApplications]);

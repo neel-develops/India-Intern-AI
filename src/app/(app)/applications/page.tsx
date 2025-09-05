@@ -80,7 +80,7 @@ export default function ApplicationsPage() {
           }
 
           return (
-            <Card key={internship.id} className="overflow-hidden">
+            <Card key={app.id} className="overflow-hidden">
               <div className="flex flex-col sm:flex-row">
                 <div className="relative h-48 sm:h-auto sm:w-48 shrink-0">
                     <Image src={internship.image} alt={internship.title} layout="fill" objectFit="cover" data-ai-hint={`${internship.domain} ${internship.company}`}/>
@@ -102,7 +102,7 @@ export default function ApplicationsPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">Update Status:</span>
-                            <Select onValueChange={(value) => handleStatusChange(internship.id, value as Application['status'])} defaultValue={app.status}>
+                            <Select onValueChange={(value) => handleStatusChange(app.id, value as Application['status'])} defaultValue={app.status}>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Change status" />
                                 </SelectTrigger>
