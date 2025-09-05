@@ -22,6 +22,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
@@ -43,7 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!loading && user && pathname === '/') {
+    if (!loading && user && (pathname === '/' || pathname === '/login' || pathname === '/register')) {
         router.replace('/dashboard');
     }
   }, [user, loading, pathname, router]);
@@ -65,6 +66,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Logo className="w-8 h-8" />
           <span className="text-lg font-bold">IndiaIntern.ai</span>
         </Link>
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
       </SheetHeader>
       <nav className="flex-1 px-4 py-2 space-y-2">
         {navItems.map((item) => {
