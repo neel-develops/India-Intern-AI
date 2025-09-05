@@ -12,8 +12,9 @@ export default function HomePage() {
     const router = useRouter();
 
     useEffect(() => {
-        // This effect can handle initial redirects if needed,
-        // but AppShell now primarily controls visibility and routing logic.
+        if (!loading && user) {
+            router.replace('/dashboard');
+        }
     }, [user, loading, router]);
 
 
@@ -24,9 +25,15 @@ export default function HomePage() {
             </div>
         );
     }
-
+    
+    // If there is a user, the effect will redirect to /dashboard.
+    // If no user, show the landing content.
     if (user) {
-        return <DashboardPage />;
+        return (
+             <div className="flex items-center justify-center min-h-screen">
+                <div className="text-lg">Redirecting to your dashboard...</div>
+            </div>
+        );
     }
 
     return <LandingContent />;
