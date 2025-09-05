@@ -8,13 +8,13 @@ import {
   Briefcase,
   Building2,
   FileText,
-  Home,
   PanelLeft,
   User,
   HelpCircle,
   LogIn,
   UserPlus,
-  LayoutDashboard
+  LayoutDashboard,
+  Home
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -43,16 +43,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (!loading && user && (pathname === '/login' || pathname === '/register')) {
-        router.replace('/dashboard');
-    }
-     if (!loading && !user && pathname !== '/' && pathname !== '/login' && pathname !== '/register' && pathname !== '/eligibility' && !pathname.startsWith('/companies')) {
-      router.replace('/login');
-    }
-  }, [user, loading, pathname, router]);
-
   const navItems = [
+    { href: '/', icon: Home, label: 'Home', auth: 'any' },
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
     { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
@@ -61,37 +53,65 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
   ];
   
+  const sidebarHeader = (
+    <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
+      <Logo className="w-8 h-8" />
+      <span className="text-lg font-bold">IndiaIntern.ai</span>
+    </Link>
+  );
+  
+  const sidebarNav = (
+    <nav className="flex-1 px-4 py-2 space-y-2">
+      {navItems.map((item) => {
+          if (item.auth === true && !user) return null;
+          if (item.href === '/' && user) return null; // Hide home link for logged in users in sidebar
+          if (item.href === '/dashboard' && !user) return null;
+          
+          return (
+              <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+                  pathname === item.href && 'bg-accent text-primary font-medium'
+                  )}
+              >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+              </Link>
+          )
+      })}
+    </nav>
+  );
+
   const sidebarContent = (
     <div className="flex flex-col h-full">
+      <div className="p-4 border-b">
+        {sidebarHeader}
+      </div>
+      {sidebarNav}
+      {!user && isClient && (
+        <div className="px-4 py-2 mt-auto border-t">
+          <div className="space-y-2">
+             <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2" variant="outline">
+                <Link href="/login"><LogIn className="h-4 w-4" />Login</Link>
+            </Button>
+             <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2">
+                <Link href="/register"><UserPlus className="h-4 w-4" />Register</Link>
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+  
+  const mobileSidebarContent = (
+     <div className="flex flex-col h-full">
       <SheetHeader className="p-4 flex flex-row justify-between items-center border-b">
-        <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-          <Logo className="w-8 h-8" />
-          <span className="text-lg font-bold">IndiaIntern.ai</span>
-        </Link>
+        {sidebarHeader}
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
       </SheetHeader>
-      <nav className="flex-1 px-4 py-2 space-y-2">
-        {navItems.map((item) => {
-            if (item.auth === true && !user) return null;
-            if (item.href === '/' && user) return null;
-            
-            const isPublicRouteWhenLoggedIn = !user && (item.href === '/internships' || item.href === '/companies' || item.href === '/eligibility');
-
-            return (
-                <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
-                    pathname === item.href && 'bg-accent text-primary font-medium'
-                    )}
-                >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                </Link>
-            )
-        })}
-      </nav>
+      {sidebarNav}
       {!user && isClient && (
         <div className="px-4 py-2 mt-auto border-t">
           <div className="space-y-2">
@@ -127,7 +147,37 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  // Main application layout
+  const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
+  const isLandingPage = pathname === '/';
+
+  // If user is not logged in and on a public page, or on landing page, show a simpler layout
+  if (!user && (isLandingPage || isPublicPage)) {
+    return (
+        <div className="flex flex-col min-h-screen">
+             <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+                <Link href="/" className="flex items-center gap-2 text-primary font-semibold lg:mr-auto">
+                    <Logo className="w-8 h-8" />
+                    <span className="text-lg font-bold">IndiaIntern.ai</span>
+                </Link>
+                <nav className="hidden md:flex gap-4">
+                     <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
+                     <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
+                     <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
+                </nav>
+                <div className="flex items-center gap-4 ml-auto">
+                    {isClient && headerContent}
+                </div>
+            </header>
+            <main className="flex-1">
+                {children}
+            </main>
+            <Footer />
+        </div>
+    );
+  }
+
+
+  // Main application layout for authenticated users
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
@@ -149,7 +199,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="flex flex-col p-0 w-[280px] md:hidden">
-                    {sidebarContent}
+                    {mobileSidebarContent}
                 </SheetContent>
             </Sheet>
             <div className="w-full flex-1 flex justify-end items-center gap-4">

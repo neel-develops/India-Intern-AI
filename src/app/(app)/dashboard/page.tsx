@@ -15,13 +15,17 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!loading && !user) {
-            router.replace('/');
+            router.replace('/login');
         }
     }, [user, loading, router]);
 
 
     if (loading || !user) {
-        return <div>Loading...</div>; // Or a proper skeleton screen
+        return (
+             <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+                <div className="text-lg">Loading...</div>
+            </div>
+        );
     }
 
   return (
