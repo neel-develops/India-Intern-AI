@@ -45,6 +45,7 @@ const profileSchema = z.object({
   preferences: z.object({
     domain: z.string().min(1, 'Domain preference is required.'),
     internshipType: z.string().min(1, 'Internship type is required.'),
+    otherDomain: z.string().optional(),
   }),
   resumeSummary: z.string().min(50, 'Resume summary must be at least 50 characters.'),
   resumeFile: z.any().optional(),
@@ -55,6 +56,14 @@ const profileSchema = z.object({
     hasNoGovtJobFamily: z.boolean().refine(val => val === true, { message: 'No family member should have a government job.' }),
     experienceMonths: z.coerce.number().min(12, 'At least 12 months of experience is required.'),
   }),
+}).refine(data => {
+    if (data.preferences.domain === 'Other') {
+        return !!data.preferences.otherDomain && data.preferences.otherDomain.length > 0;
+    }
+    return true;
+}, {
+    message: 'Please specify your domain',
+    path: ['preferences.otherDomain'],
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -85,6 +94,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
       preferences: {
         domain: profile?.preferences.domain || '',
         internshipType: profile?.preferences.internshipType || '',
+        otherDomain: profile?.preferences.otherDomain || '',
       },
       resumeSummary: profile?.resumeSummary || '',
       eligibility: {
@@ -96,6 +106,8 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
       },
     },
   });
+
+  const domainPreference = form.watch('preferences.domain');
 
   function onSubmit(data: ProfileFormValues) {
     const newProfile: StudentProfile = {
@@ -331,7 +343,8 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                           <SelectItem value="Engineering">Engineering</SelectItem>
                           <SelectItem value="Healthcare">Healthcare</SelectItem>
                           <SelectItem value="Finance">Finance</SelectItem>
-                           <SelectItem value="Agriculture">Agriculture</SelectItem>
+                          <SelectItem value="Agriculture">Agriculture</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     <FormMessage />
@@ -361,6 +374,21 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 )}
                 />
             </div>
+            {domainPreference === 'Other' && (
+                <FormField
+                    control={form.control}
+                    name="preferences.otherDomain"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Other Domain</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Please specify your domain" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            )}
           </CardContent>
         </Card>
 

@@ -30,6 +30,7 @@ const SuggestRelevantInternshipsInputSchema = z.object({
       internshipType: z
         .string()      
         .describe('The preferred type of internship.'),
+      otherDomain: z.string().optional().describe('A custom domain if the preferred domain is "Other".'),
     }),
     resumeText: z.string().describe('The text content of the student resume.'),
   }).describe('The student profile data.'),
@@ -75,7 +76,7 @@ Your goal is to provide the most suitable matches based on the student's profile
 
 You must consider the following factors:
 *   Match the student's skills with the skills required for the internship.
-*   Match the student's preferred domain and internship type.
+*   Match the student's preferred domain and internship type. If the domain is 'Other', use the 'otherDomain' field as their preference.
 *   Consider the student's location preferences.
 
 For each suggested internship, you must provide a clear 'matchReason' that explains why it's a good fit, referencing the student's skills and preferences.

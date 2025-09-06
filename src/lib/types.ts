@@ -29,6 +29,7 @@ export interface StudentProfile {
   preferences: {
     domain: string;
     internshipType: string;
+    otherDomain?: string;
   };
   resumeSummary: string;
   resumeFilename?: string;
