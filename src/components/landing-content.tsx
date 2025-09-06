@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Briefcase, IndianRupee, Search, Award, Users, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 
 const features = [
@@ -11,9 +11,27 @@ const features = [
     "Comprehensive eligibility checker",
 ];
 
-const testimonials = [
-    { name: 'Aarav Sharma', quote: 'IndiaIntern.ai made finding a relevant internship incredibly easy. The AI recommendations were spot on!', role: 'Student, Delhi Technological University' },
-    { name: 'Priya Singh', quote: 'A fantastic platform that connects students with meaningful opportunities. The process was seamless and efficient.', role: 'Student, IIT Bombay' },
+const schemeBenefits = [
+    { 
+        icon: <Award className="h-10 w-10 text-primary" />, 
+        title: "Gain Real-World Experience", 
+        description: "Get 12 months of invaluable hands-on experience working in India's leading companies and institutions." 
+    },
+    { 
+        icon: <IndianRupee className="h-10 w-10 text-primary" />, 
+        title: "Receive Financial Support", 
+        description: "Benefit from a monthly stipend of ₹4500 from the government and ₹500 from the industry, plus a one-time grant of ₹6000." 
+    },
+    { 
+        icon: <Search className="h-10 w-10 text-primary" />, 
+        title: "Explore Diverse Opportunities", 
+        description: "Choose from a wide variety of sectors and roles in top-tier organizations across the nation." 
+    },
+    { 
+        icon: <GraduationCap className="h-10 w-10 text-primary" />, 
+        title: "Enhance Your Skills", 
+        description: "Develop critical professional skills and significantly improve your employability for a successful career start." 
+    },
 ];
 
 export function LandingContent() {
@@ -62,37 +80,23 @@ export function LandingContent() {
          <section id="features" className="w-full py-12 md:py-24 bg-muted/40">
           <div className="container px-4 md:px-6">
             <div className="text-center space-y-3 mb-10">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Why Choose IndiaIntern.ai?</h2>
+              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">About the PM Internship Scheme</h2>
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed">
-                We provide a comprehensive platform to bridge the gap between talented students and India's leading companies.
+                A national initiative to bridge the gap between talented youth and India's leading companies, fostering skill development and employability.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Feature Cards Here */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {schemeBenefits.map((benefit, i) => (
+                  <Card key={i} className="text-center p-6 flex flex-col items-center">
+                    <div className="mb-4">{benefit.icon}</div>
+                    <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
+                    <p className="text-muted-foreground">{benefit.description}</p>
+                  </Card>
+              ))}
             </div>
           </div>
         </section>
 
-        <section id="testimonials" className="w-full py-12 md:py-24">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter text-center mb-10 md:text-4xl">
-              Success Stories
-            </h2>
-            <div className="grid gap-8 md:grid-cols-2">
-                {testimonials.map((t, i) => (
-                    <Card key={i} className="p-6">
-                        <blockquote className="text-lg font-semibold leading-snug">
-                            “{t.quote}”
-                        </blockquote>
-                        <div className="mt-4">
-                            <p className="font-semibold">{t.name}</p>
-                            <p className="text-sm text-muted-foreground">{t.role}</p>
-                        </div>
-                    </Card>
-                ))}
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );
