@@ -10,9 +10,9 @@ export function Footer() {
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-bold">IndiaIntern.ai</h3>
           </div>
-          <p className="text-sm text-blue-200">
+          <div className="text-sm text-blue-200">
             A project of Smart India Hackathon.
-          </p>
+          </div>
         </div>
         <div className="space-y-4">
           <h4 className="font-semibold text-lg">Quick Links</h4>
