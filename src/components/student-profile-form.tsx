@@ -26,6 +26,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { universities } from '@/lib/universities';
+import { Separator } from '@/components/ui/separator';
 
 
 const profileSchema = z.object({
