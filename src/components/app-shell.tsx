@@ -154,7 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-16 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+             <header className="flex h-16 items-center gap-4 border-b bg-gray-100 dark:bg-gray-800 px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
                 <Link href="/" className="flex items-center gap-2 mr-auto">
                   <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={180} height={40} />
                 </Link>
@@ -179,13 +179,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // Main application layout for authenticated users
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r bg-muted/40 md:block">
+        <div className="hidden border-r bg-gray-100/40 dark:bg-gray-800/40 md:block">
             <div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
             {sidebarContent}
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+            <header className="flex h-14 items-center gap-4 border-b bg-gray-100 dark:bg-gray-800 px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button

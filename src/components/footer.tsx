@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export function Footer() {
   return (
-    <footer className="bg-muted border-t">
+    <footer className="bg-gray-100 dark:bg-gray-800 border-t">
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
           <div className="flex items-center">
@@ -30,7 +30,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <div className="bg-muted/50 py-4 border-t">
+      <div className="bg-gray-200/50 dark:bg-gray-900/50 py-4 border-t">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
             © {new Date().getFullYear()} IndiaIntern.ai. All Rights Reserved.
           </div>
