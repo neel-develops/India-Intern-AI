@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -15,7 +14,8 @@ import {
   LogIn,
   UserPlus,
   LayoutDashboard,
-  Home
+  Home,
+  Bell
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,8 @@ import { UserNav } from '@/components/user-nav';
 import { Footer } from '@/components/footer';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { useNotifications } from '@/hooks/use-notifications.tsx';
+import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
 
 function useIsClient() {
   const [isClient, setIsClient] = useState(false)
@@ -43,11 +45,14 @@ function useIsClient() {
   return isClient
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function AppShellContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const router = useRouter();
   const isClient = useIsClient();
+  const { notifications } = useNotifications();
+  const unreadCount = notifications.filter(n => !n.read).length;
+
 
   if (!isClient) {
     return null;
@@ -143,7 +148,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {loading ? (
         <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
       ) : user ? (
-        <UserNav user={user} />
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/notifications" className="relative">
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
+          </Button>
+          <UserNav user={user} />
+        </div>
       ) : (
         <div className="hidden md:flex gap-2">
             <Button variant="ghost" asChild>
@@ -224,4 +241,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
     </div>
   );
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+    return (
+        <NotificationsProvider>
+            <AppShellContent>{children}</AppShellContent>
+        </NotificationsProvider>
+    )
 }
