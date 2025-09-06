@@ -164,7 +164,7 @@ export function AppShell({ children }: { children: React.Node }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-20 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+             <header className="flex h-24 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
                 <Link href="/" className="flex items-center gap-2 mr-auto">
                   <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
                 </Link>
@@ -195,7 +195,7 @@ export function AppShell({ children }: { children: React.Node }) {
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-20 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+            <header className="flex h-24 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
