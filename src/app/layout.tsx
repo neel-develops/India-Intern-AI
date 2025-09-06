@@ -7,6 +7,7 @@ import { StudentProfileProvider } from '@/hooks/use-student-profile.tsx';
 import { AuthProvider } from '@/hooks/use-auth.tsx';
 import { Poppins } from 'next/font/google';
 import { AppShell } from '@/components/app-shell';
+import { ClientOnly } from '@/components/client-only';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -40,7 +41,9 @@ export default function RootLayout({
                         <AppShell>
                             {children}
                         </AppShell>
-                        <Toaster />
+                        <ClientOnly>
+                            <Toaster />
+                        </ClientOnly>
                     </AuthProvider>
                 </StudentProfileProvider>
             </ThemeProvider>
