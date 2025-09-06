@@ -154,7 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-16 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+             <header className="flex h-16 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
                 <Link href="/" className="flex items-center gap-2 mr-auto">
                   <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={180} height={40} />
                 </Link>
@@ -185,7 +185,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+            <header className="flex h-14 items-center gap-4 border-b bg-muted px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
@@ -205,7 +205,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {isClient && headerContent}
             </div>
             </header>
-            <main className="flex-1 p-4 sm:p-6 bg-muted/20">
+            <main className="flex-1 p-4 sm:p-6 bg-background">
                 {children}
             </main>
             <Footer />
