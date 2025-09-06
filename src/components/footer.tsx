@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-gray-800 border-t">
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="space-y-4 flex flex-col justify-center">
+        <div className="space-y-4 flex flex-col justify-center md:items-center">
           <div className="flex items-center">
             <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={200} height={50} />
           </div>
