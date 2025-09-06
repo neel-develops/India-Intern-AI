@@ -2,7 +2,7 @@
  * @fileOverview Types and Zod schemas for the learning plan generation flow.
  */
 
-import {z} from 'genkit/zod';
+import {z} from 'zod';
 
 export const GenerateLearningPlanInputSchema = z.object({
   skill: z.string().describe('The skill the user wants to learn.'),

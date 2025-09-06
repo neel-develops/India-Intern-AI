@@ -2,7 +2,7 @@
  * @fileOverview Types and Zod schemas for the resume analysis flow.
  */
 
-import {z} from 'genkit/zod';
+import {z} from 'zod';
 
 export const AnalyseResumeInputSchema = z.object({
   resumeText: z.string().min(100).describe("The full text content of the student's resume."),

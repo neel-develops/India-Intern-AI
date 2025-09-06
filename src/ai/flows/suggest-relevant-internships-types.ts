@@ -2,7 +2,7 @@
  * @fileOverview Types and Zod schemas for the internship suggestion flow.
  */
 
-import {z} from 'genkit/zod';
+import {z} from 'zod';
 import type { Internship } from '@/lib/types';
 
 

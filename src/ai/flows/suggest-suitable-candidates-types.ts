@@ -2,7 +2,7 @@
  * @fileOverview Types and Zod schemas for the suitable candidates suggestion flow.
  */
 
-import {z} from 'genkit/zod';
+import {z} from 'zod';
 
 export const SuggestSuitableCandidatesInputSchema = z.object({
   internshipDescription: z
