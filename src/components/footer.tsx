@@ -26,7 +26,7 @@ export function Footer() {
           <h4 className="font-semibold text-lg text-foreground">In collaboration with</h4>
           <div className="flex items-center gap-4">
              <Image src="https://i.ibb.co/zTP3djy5/SIH-Logo-removebg-preview.png" alt="SIH 2025 Logo" width={140} height={56} />
-             <Image src="https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Ministry_of_Corporate_Affairs_India.svg/1200px-Ministry_of_Corporate_Affairs_India.svg.png" alt="Ministry of Corporate Affairs Logo" width={40} height={40} />
+             <Image src="https://i.ibb.co/Lz5KDwfF/Ministry-of-Corporate-Affairs-India-svg-removebg-preview.png" alt="Ministry of Corporate Affairs Logo" width={40} height={40} />
           </div>
         </div>
       </div>
