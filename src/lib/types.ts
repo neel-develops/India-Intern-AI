@@ -20,6 +20,7 @@ export interface StudentProfile {
     email: string;
     location: string;
     linkedin?: string;
+    university?: string;
   };
   skills: string[];
   preferences: {

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { StudentProfile } from '@/lib/types';
-import { Mail, MapPin, Star, User, ShieldQuestion } from 'lucide-react';
+import { Mail, MapPin, Star, User, ShieldQuestion, GraduationCap } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -29,9 +29,14 @@ export function StudentCard({ student }: StudentCardProps) {
         </Avatar>
         <div className="flex-grow">
             <CardTitle>{student.personalInfo.name}</CardTitle>
-            <CardDescription className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" /> {student.personalInfo.location}
+            <CardDescription className="flex items-center gap-2 text-xs">
+                <MapPin className="h-3 w-3" /> {student.personalInfo.location}
             </CardDescription>
+            {student.personalInfo.university && (
+                <CardDescription className="flex items-center gap-2 text-xs mt-1">
+                    <GraduationCap className="h-3 w-3" /> {student.personalInfo.university}
+                </CardDescription>
+            )}
         </div>
       </CardHeader>
       <CardContent className="flex-grow space-y-4">

@@ -21,6 +21,12 @@ import { useToast } from '@/hooks/use-toast';
 import type { StudentProfile } from '@/lib/types';
 import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { universities } from '@/lib/universities';
+
 
 const profileSchema = z.object({
   personalInfo: z.object({
@@ -29,6 +35,7 @@ const profileSchema = z.object({
     email: z.string().email('Invalid email address.'),
     location: z.string().min(2, 'Location is required.'),
     linkedin: z.string().url().optional().or(z.literal('')),
+    university: z.string().optional(),
   }),
   skills: z.string().min(1, 'Please list at least one skill.'),
   preferences: z.object({
@@ -65,6 +72,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         email: profile?.personalInfo.email || '',
         location: profile?.personalInfo.location || '',
         linkedin: profile?.personalInfo.linkedin || '',
+        university: profile?.personalInfo.university || '',
       },
       skills: profile?.skills.join(', ') || '',
       preferences: {
@@ -154,6 +162,64 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                   <FormControl>
                     <Input placeholder="e.g. Mumbai, India" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="personalInfo.university"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>University / College</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? universities.find(
+                                (uni) => uni === field.value
+                              )
+                            : "Select your university"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[--radix-popover-content-available-height] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search university..." />
+                        <CommandEmpty>No university found.</CommandEmpty>
+                        <CommandGroup>
+                          {universities.map((uni) => (
+                            <CommandItem
+                              value={uni}
+                              key={uni}
+                              onSelect={() => {
+                                form.setValue("personalInfo.university", uni);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  uni === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {uni}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
