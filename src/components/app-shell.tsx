@@ -17,6 +17,7 @@ import {
   Home,
   Bell,
   BrainCircuit,
+  FileScan,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
     { href: '/learn', icon: BrainCircuit, label: 'Learn a Skill', auth: true },
+    { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
     { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
     { href: '/profile', icon: User, label: 'My Profile', auth: true },
     { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
