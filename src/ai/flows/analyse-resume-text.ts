@@ -5,30 +5,11 @@
  *
  * It exports:
  * - `analyseResumeText`: An async function that takes resume text and returns a structured analysis.
- * - `AnalyseResumeInput`: The TypeScript type for the input.
- * - `AnalyseResumeOutput`: The TypeScript type for the output.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-
-export const AnalyseResumeInputSchema = z.object({
-  resumeText: z.string().min(100).describe('The full text content of the student\'s resume.'),
-});
-
-export type AnalyseResumeInput = z.infer<typeof AnalyseResumeInputSchema>;
-
-export const AnalyseResumeOutputSchema = z.object({
-    analysis: z.object({
-        strengths: z.string().describe("A summary of the key strengths of the resume."),
-        suggestions: z.string().describe("Actionable suggestions for improvement."),
-        impactScore: z.number().min(0).max(100).describe("A score from 0-100 indicating the overall impact of the resume."),
-    }),
-    detectedSkills: z.array(z.string()).describe("A list of skills detected from the resume text."),
-});
-
-export type AnalyseResumeOutput = z.infer<typeof AnalyseResumeOutputSchema>;
-
+import type { AnalyseResumeInput, AnalyseResumeOutput } from './analyse-resume-text-types';
+import { AnalyseResumeInputSchema, AnalyseResumeOutputSchema } from './analyse-resume-text-types';
 
 const prompt = ai.definePrompt({
   name: 'analyseResumePrompt',

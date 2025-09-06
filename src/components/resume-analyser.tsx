@@ -13,7 +13,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { analyseResumeText } from '@/ai/flows/analyse-resume-text';
-import type { AnalyseResumeOutput } from '@/ai/flows/analyse-resume-text';
+import type { AnalyseResumeOutput } from '@/ai/flows/analyse-resume-text-types';
 import { Skeleton } from './ui/skeleton';
 import { useStudentProfile } from '@/hooks/use-student-profile';
 import { Progress } from './ui/progress';

@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { generateLearningPlan } from '@/ai/flows/generate-learning-plan';
-import type { GenerateLearningPlanOutput } from '@/ai/flows/generate-learning-plan';
+import type { GenerateLearningPlanOutput } from '@/ai/flows/generate-learning-plan-types';
 import { Skeleton } from './ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { useStudentProfile } from '@/hooks/use-student-profile';
