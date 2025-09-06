@@ -43,7 +43,7 @@ function useIsClient() {
   return isClient
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({ children }: { children: React.Node }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   
   const sidebarHeader = (
     <Link href="/" className="flex flex-col items-start gap-2">
-      <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={180} height={40} />
+      <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={150} height={33} />
       <p className="text-xs text-muted-foreground -mt-2">A project of Smart India Hackathon</p>
     </Link>
   );
@@ -164,7 +164,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-16 items-center gap-4 border-b bg-gray-100 dark:bg-gray-800 px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+             <header className="flex h-20 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
                 <Link href="/" className="flex items-center gap-2 mr-auto">
                   <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
                 </Link>
@@ -195,7 +195,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-gray-100 dark:bg-gray-800 px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+            <header className="flex h-20 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
