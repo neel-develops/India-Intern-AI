@@ -25,6 +25,8 @@ const GenerateLearningPlanOutputSchema = z.object({
     step: z.string().describe('The title of the learning step.'),
     description: z.string().describe('A brief description of what to learn in this step.'),
     resources: z.array(z.string()).describe('A list of suggested online resources (articles, tutorials, videos).'),
+    youtubeResources: z.array(z.string()).describe('A list of suggested YouTube video tutorials or channels.'),
+    freeCertifications: z.array(z.string()).describe('A list of free certification courses available online.'),
   })).describe("The structured learning plan."),
   projectIdea: z.object({
       title: z.string().describe("A catchy title for a practical project."),
@@ -43,7 +45,10 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateLearningPlanOutputSchema},
   prompt: `You are a helpful career coach AI. A user wants to learn a new skill: {{{skill}}}.
 
-  Your task is to generate a concise, actionable learning plan to help them get started. The plan should be broken down into 3-4 logical steps. For each step, provide a brief description and a few high-quality, real online resources (like tutorials, articles, or documentation).
+  Your task is to generate a concise, actionable learning plan to help them get started. The plan should be broken down into 3-4 logical steps. For each step, provide a brief description and include the following:
+  1.  A few high-quality, real online resources (like tutorials, articles, or documentation).
+  2.  A list of the best YouTube video tutorials or channels for that step.
+  3.  A list of any available free certification courses related to the step. If none are available, return an empty array.
 
   Also, suggest one simple but practical project idea that would help the user apply their new knowledge.
 

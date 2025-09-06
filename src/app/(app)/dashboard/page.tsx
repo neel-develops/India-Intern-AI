@@ -12,7 +12,6 @@ import { useApplications } from '@/hooks/use-applications';
 import { Progress } from '@/components/ui/progress';
 import { InfoCard } from '@/components/info-card';
 import { Briefcase, FileText, UserCheck, IndianRupee, Search, Award } from 'lucide-react';
-import { LearnSkill } from '@/components/learn-skill';
 
 
 export default function DashboardPage() {
@@ -98,10 +97,6 @@ export default function DashboardPage() {
         <Separator />
         
         <SmartMatchInternships />
-
-        <Separator />
-        
-        <LearnSkill />
         
         <Separator />
 

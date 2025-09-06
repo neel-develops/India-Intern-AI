@@ -15,7 +15,8 @@ import {
   UserPlus,
   LayoutDashboard,
   Home,
-  Bell
+  Bell,
+  BrainCircuit,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -63,6 +64,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
     { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
+    { href: '/learn', icon: BrainCircuit, label: 'Learn a Skill', auth: true },
     { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
     { href: '/profile', icon: User, label: 'My Profile', auth: true },
     { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
@@ -80,7 +82,6 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
       {navItems.map((item) => {
           if (item.auth === true && !user) return null;
           if (item.href === '/' && user) return null; // Hide home link for logged in users in sidebar
-          if (item.href === '/dashboard' && !user) return null;
           
           return (
               <Link

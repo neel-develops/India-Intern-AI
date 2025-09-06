@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BrainCircuit, BookOpen, Rocket, PlusCircle } from 'lucide-react';
+import { BrainCircuit, BookOpen, Rocket, PlusCircle, Youtube, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -127,16 +127,39 @@ export function LearnSkill() {
             <CardContent className="space-y-6">
                 <div>
                     <h3 className="text-lg font-semibold flex items-center gap-2 mb-2"><BookOpen className="h-5 w-5"/> Learning Steps</h3>
-                     <Accordion type="single" collapsible className="w-full">
+                     <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
                         {learningPlan.learningPlan.map((step, index) => (
                             <AccordionItem value={`item-${index}`} key={index}>
                                 <AccordionTrigger className="text-base">{index+1}. {step.step}</AccordionTrigger>
-                                <AccordionContent className="space-y-2 pl-2">
+                                <AccordionContent className="space-y-4 pl-2">
                                     <p className="text-muted-foreground">{step.description}</p>
-                                    <h4 className="font-semibold pt-2">Resources:</h4>
-                                    <ul className="list-disc list-inside text-muted-foreground">
-                                        {step.resources.map((resource, rIndex) => <li key={rIndex}><a href={resource} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{resource}</a></li>)}
-                                    </ul>
+                                    
+                                    {step.resources.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold pt-2">Resources:</h4>
+                                            <ul className="list-disc list-inside text-muted-foreground">
+                                                {step.resources.map((resource, rIndex) => <li key={rIndex}><a href={resource} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{resource}</a></li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {step.youtubeResources.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold pt-2 flex items-center gap-2"><Youtube className="h-5 w-5 text-red-600" /> YouTube Resources:</h4>
+                                            <ul className="list-disc list-inside text-muted-foreground">
+                                                {step.youtubeResources.map((resource, rIndex) => <li key={rIndex}><a href={resource} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{resource}</a></li>)}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {step.freeCertifications.length > 0 && (
+                                        <div>
+                                            <h4 className="font-semibold pt-2 flex items-center gap-2"><Award className="h-5 w-5 text-yellow-500" /> Free Certifications:</h4>
+                                            <ul className="list-disc list-inside text-muted-foreground">
+                                                {step.freeCertifications.map((resource, rIndex) => <li key={rIndex}><a href={resource} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{resource}</a></li>)}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </AccordionContent>
                             </AccordionItem>
                         ))}
