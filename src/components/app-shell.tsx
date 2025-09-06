@@ -3,6 +3,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Briefcase,
@@ -25,7 +26,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Logo } from '@/components/icons';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/hooks/use-auth.tsx';
 import { UserNav } from '@/components/user-nav';
@@ -54,13 +54,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   ];
   
   const sidebarHeader = (
-    <div className="flex flex-col">
-        <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-          <Logo className="w-8 h-8" />
-          <span className="text-lg font-bold">IndiaIntern.ai</span>
-        </Link>
-        <p className="text-xs text-muted-foreground ml-10">A project of Smart India Hackathon</p>
-    </div>
+    <Link href="/" className="flex items-center gap-2">
+      <Image src="https://i.imgur.com/rS2K8gM.png" alt="IndiaIntern.ai Logo" width={180} height={40} />
+    </Link>
   );
   
   const sidebarNav = (
@@ -111,8 +107,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const mobileSidebarContent = (
      <div className="flex flex-col h-full">
       <SheetHeader className="p-4 flex flex-row justify-between items-center border-b">
-        {sidebarHeader}
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+        {sidebarHeader}
       </SheetHeader>
       {sidebarNav}
       {!user && isClient && (
@@ -157,14 +153,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-                <div className="flex flex-col lg:mr-auto">
-                    <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-                        <Logo className="w-8 h-8" />
-                        <span className="text-lg font-bold">IndiaIntern.ai</span>
-                    </Link>
-                    <p className="text-xs text-muted-foreground ml-10 -mt-1 hidden md:block">A project of Smart India Hackathon</p>
-                </div>
+             <header className="flex h-16 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
+                <Link href="/" className="flex items-center gap-2 mr-auto">
+                  <Image src="https://i.imgur.com/rS2K8gM.png" alt="IndiaIntern.ai Logo" width={180} height={40} />
+                </Link>
                 <nav className="hidden md:flex gap-4">
                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
                      <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
