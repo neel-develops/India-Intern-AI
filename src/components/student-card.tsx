@@ -39,7 +39,7 @@ export function StudentCard({ student }: StudentCardProps) {
             )}
             {student.personalInfo.university && (
                 <CardDescription className="flex items-center gap-2 text-xs mt-1">
-                    <GraduationCap className="h-3 w-3" /> {student.personalinfo.university}
+                    <GraduationCap className="h-3 w-3" /> {student.personalInfo.university}
                 </CardDescription>
             )}
         </div>
