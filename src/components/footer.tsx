@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-100 dark:bg-gray-800 border-t">
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="space-y-4">
+        <div className="space-y-4 flex flex-col justify-center">
           <div className="flex items-center">
             <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={200} height={50} />
           </div>
@@ -26,7 +26,7 @@ export function Footer() {
           <h4 className="font-semibold text-lg text-foreground">In collaboration with</h4>
           <div className="flex items-center gap-4">
              <Image src="https://i.ibb.co/zTP3djy5/SIH-Logo-removebg-preview.png" alt="SIH 2025 Logo" width={140} height={56} />
-             <Image src="https://i.ibb.co/Lz5KDwfF/Ministry-of-Corporate-Affairs-India-svg-removebg-preview.png" alt="Ministry of Corporate Affairs Logo" width={80} height={80} />
+             <Image src="https://i.ibb.co/Lz5KDwfF/Ministry-of-Corporate-Affairs-India-svg-removebg-preview.png" alt="Ministry of Corporate Affairs Logo" width={140} height={140} />
           </div>
         </div>
       </div>
