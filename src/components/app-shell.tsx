@@ -31,18 +31,28 @@ import { useAuth } from '@/hooks/use-auth.tsx';
 import { UserNav } from '@/components/user-nav';
 import { Footer } from '@/components/footer';
 import { cn } from '@/lib/utils';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false)
+ 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+ 
+  return isClient
+}
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [isClient, setIsClient] = React.useState(false);
+  const isClient = useIsClient();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
+  if (!isClient) {
+    return null;
+  }
+  
   const navItems = [
     { href: '/', icon: Home, label: 'Home', auth: 'any' },
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
@@ -90,7 +100,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {sidebarHeader}
       </div>
       {sidebarNav}
-      {!user && isClient && (
+      {!user && (
         <div className="px-4 py-2 mt-auto border-t">
           <div className="space-y-2">
              <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2" variant="outline">
@@ -112,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {sidebarHeader}
       </SheetHeader>
       {sidebarNav}
-      {!user && isClient && (
+      {!user && (
         <div className="px-4 py-2 mt-auto border-t">
           <div className="space-y-2">
              <Button asChild className="w-full justify-start gap-3 rounded-lg px-3 py-2" variant="outline">
@@ -164,7 +174,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                      <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
                 </nav>
                 <div className="flex items-center gap-4 ml-auto">
-                    {isClient && headerContent}
+                    {headerContent}
                 </div>
             </header>
             <main className="flex-1">
@@ -202,7 +212,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </SheetContent>
             </Sheet>
             <div className="w-full flex-1 flex justify-end items-center gap-4">
-                {isClient && headerContent}
+                {headerContent}
             </div>
             </header>
             <main className="flex-1 p-4 sm:p-6 bg-background">
