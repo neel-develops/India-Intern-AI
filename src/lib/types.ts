@@ -21,6 +21,9 @@ export interface StudentProfile {
     location: string;
     linkedin?: string;
     university?: string;
+    degree?: string;
+    stream?: string;
+    graduatingYear?: number;
   };
   skills: string[];
   preferences: {

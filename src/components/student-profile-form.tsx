@@ -36,6 +36,9 @@ const profileSchema = z.object({
     location: z.string().min(2, 'Location is required.'),
     linkedin: z.string().url().optional().or(z.literal('')),
     university: z.string().optional(),
+    degree: z.string().min(2, "Degree is required."),
+    stream: z.string().min(2, "Stream is required."),
+    graduatingYear: z.coerce.number().min(new Date().getFullYear(), "Year must be in the future.").max(new Date().getFullYear() + 5, "Year seems too far in the future."),
   }),
   skills: z.string().min(1, 'Please list at least one skill.'),
   preferences: z.object({
@@ -73,6 +76,9 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         location: profile?.personalInfo.location || '',
         linkedin: profile?.personalInfo.linkedin || '',
         university: profile?.personalInfo.university || '',
+        degree: profile?.personalInfo.degree || '',
+        stream: profile?.personalInfo.stream || '',
+        graduatingYear: profile?.personalInfo.graduatingYear || new Date().getFullYear() + 1,
       },
       skills: profile?.skills.join(', ') || '',
       preferences: {
@@ -108,7 +114,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle>Personal & Academic Information</CardTitle>
             <CardDescription>This information will be visible to recruiters.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -166,6 +172,61 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="personalInfo.linkedin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn Profile</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Separator />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                control={form.control}
+                name="personalInfo.degree"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Degree</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g. Bachelor of Technology" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="personalInfo.stream"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Stream / Major</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g. Computer Science" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+             <FormField
+                control={form.control}
+                name="personalInfo.graduatingYear"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Graduating Year</FormLabel>
+                    <FormControl>
+                        <Input type="number" placeholder="e.g. 2025" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
             <FormField
               control={form.control}
               name="personalInfo.university"
@@ -220,19 +281,6 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                       </Command>
                     </PopoverContent>
                   </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="personalInfo.linkedin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>LinkedIn Profile</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

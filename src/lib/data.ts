@@ -297,7 +297,7 @@ export const internships: Internship[] = [
     skills: ['C++', 'VHDL', 'Embedded Systems', 'RTOS'],
     domain: 'Engineering',
     location: 'Bangalore',
-    image: 'https://picsum.photos/600/400?random=1',
+    image: 'https://picsum.photos/seed/picsum1/600/400',
   },
   {
     id: '2',
@@ -310,7 +310,7 @@ export const internships: Internship[] = [
     skills: ['Healthcare Management', 'Data Analysis', 'Communication'],
     domain: 'Healthcare',
     location: 'Chennai',
-    image: 'https://picsum.photos/600/400?random=2',
+    image: 'https://picsum.photos/seed/picsum2/600/400',
   },
   {
     id: '3',
@@ -323,7 +323,7 @@ export const internships: Internship[] = [
     skills: ['AutoCAD', 'Project Management', 'Quality Control'],
     domain: 'Engineering',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=3',
+    image: 'https://picsum.photos/seed/picsum3/600/400',
   },
   {
     id: '4',
@@ -336,7 +336,7 @@ export const internships: Internship[] = [
     skills: ['Product Management', 'Data Analysis', 'Market Research', 'UPI'],
     domain: 'Finance',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=4',
+    image: 'https://picsum.photos/seed/picsum4/600/400',
   },
   {
     id: '5',
@@ -349,7 +349,7 @@ export const internships: Internship[] = [
     skills: ['Supply Chain', 'Market Research', 'Data Analysis'],
     domain: 'Agriculture',
     location: 'Hyderabad',
-    image: 'https://picsum.photos/600/400?random=5',
+    image: 'https://picsum.photos/seed/picsum5/600/400',
   },
   {
     id: '6',
@@ -362,7 +362,7 @@ export const internships: Internship[] = [
     skills: ['Laboratory Skills', 'Chemistry', 'Data Recording'],
     domain: 'Healthcare',
     location: 'Pune',
-    image: 'https://picsum.photos/600/400?random=6',
+    image: 'https://picsum.photos/seed/picsum6/600/400',
   },
   {
     id: '7',
@@ -375,7 +375,7 @@ export const internships: Internship[] = [
     skills: ['React', 'TypeScript', 'CSS', 'HTML', 'JavaScript'],
     domain: 'Web Development',
     location: 'Bangalore',
-    image: 'https://picsum.photos/600/400?random=7',
+    image: 'https://picsum.photos/seed/picsum7/600/400',
   },
   {
     id: '8',
@@ -388,7 +388,7 @@ export const internships: Internship[] = [
     skills: ['Python', 'Machine Learning', 'Pandas', 'Data Visualization'],
     domain: 'Data Science',
     location: 'Hyderabad',
-    image: 'https://picsum.photos/600/400?random=8',
+    image: 'https://picsum.photos/seed/picsum8/600/400',
   },
   {
     id: '9',
@@ -401,7 +401,7 @@ export const internships: Internship[] = [
     skills: ['Figma', 'UI Design', 'UX Research', 'Prototyping'],
     domain: 'Design',
     location: 'Kolkata',
-    image: 'https://picsum.photos/600/400?random=9',
+    image: 'https://picsum.photos/seed/picsum9/600/400',
   },
   {
     id: '10',
@@ -414,7 +414,7 @@ export const internships: Internship[] = [
     skills: ['Android', 'iOS', 'Flutter', 'Java', 'Swift'],
     domain: 'Mobile Development',
     location: 'Ghaziabad',
-    image: 'https://picsum.photos/600/400?random=10',
+    image: 'https://picsum.photos/seed/picsum10/600/400',
   },
   {
     id: '11',
@@ -427,7 +427,7 @@ export const internships: Internship[] = [
     skills: ['Java', 'Spring Boot', 'Microservices', 'SQL'],
     domain: 'Web Development',
     location: 'Pune',
-    image: 'https://picsum.photos/600/400?random=11'
+    image: 'https://picsum.photos/seed/picsum11/600/400'
   },
   {
     id: '12',
@@ -440,7 +440,7 @@ export const internships: Internship[] = [
     skills: ['Financial Analysis', 'Excel', 'Reporting', 'Accounting'],
     domain: 'Finance',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=12'
+    image: 'https://picsum.photos/seed/picsum12/600/400'
   },
   {
     id: '13',
@@ -453,7 +453,7 @@ export const internships: Internship[] = [
     skills: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'DevOps'],
     domain: 'Web Development',
     location: 'Bangalore',
-    image: 'https://picsum.photos/600/400?random=13'
+    image: 'https://picsum.photos/seed/picsum13/600/400'
   },
   {
     id: '14',
@@ -466,7 +466,7 @@ export const internships: Internship[] = [
     skills: ['Recruitment', 'Onboarding', 'Communication', 'HR'],
     domain: 'Marketing',
     location: 'Mysore',
-    image: 'https://picsum.photos/600/400?random=14'
+    image: 'https://picsum.photos/seed/picsum14/600/400'
   },
   {
     id: '15',
@@ -479,7 +479,7 @@ export const internships: Internship[] = [
     skills: ['Mechanical Engineering', 'CAD', 'Quality Control', 'Process Improvement'],
     domain: 'Engineering',
     location: 'Jamshedpur',
-    image: 'https://picsum.photos/600/400?random=15'
+    image: 'https://picsum.photos/seed/picsum15/600/400'
   },
   {
     id: '16',
@@ -492,7 +492,7 @@ export const internships: Internship[] = [
     skills: ['Marketing', 'Brand Management', 'Social Media', 'Market Research'],
     domain: 'Marketing',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=16'
+    image: 'https://picsum.photos/seed/picsum16/600/400'
   },
   {
     id: '17',
@@ -505,7 +505,7 @@ export const internships: Internship[] = [
     skills: ['Petroleum Engineering', 'Data Analysis', 'Reservoir Engineering'],
     domain: 'Engineering',
     location: 'Dehradun',
-    image: 'https://picsum.photos/600/400?random=17'
+    image: 'https://picsum.photos/seed/picsum17/600/400'
   },
   {
     id: '18',
@@ -518,7 +518,7 @@ export const internships: Internship[] = [
     skills: ['Electrical Engineering', 'Power Systems', 'Data Analysis'],
     domain: 'Engineering',
     location: 'Delhi',
-    image: 'https://picsum.photos/600/400?random=18'
+    image: 'https://picsum.photos/seed/picsum18/600/400'
   },
   {
     id: '19',
@@ -531,7 +531,7 @@ export const internships: Internship[] = [
     skills: ['Investment Banking', 'Financial Modeling', 'Valuation', 'Excel'],
     domain: 'Finance',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=19'
+    image: 'https://picsum.photos/seed/picsum19/600/400'
   },
   {
     id: '20',
@@ -544,7 +544,7 @@ export const internships: Internship[] = [
     skills: ['Networking', 'Cisco', 'TCP/IP', 'Routing'],
     domain: 'Engineering',
     location: 'Navi Mumbai',
-    image: 'https://picsum.photos/600/400?random=20'
+    image: 'https://picsum.photos/seed/picsum20/600/400'
   },
    {
     id: '21',
@@ -557,7 +557,7 @@ export const internships: Internship[] = [
     skills: ['CAD', 'Automotive Engineering', 'SolidWorks', 'CATIA', 'Design'],
     domain: 'Engineering',
     location: 'Gurgaon',
-    image: 'https://picsum.photos/600/400?random=21'
+    image: 'https://picsum.photos/seed/picsum21/600/400'
   },
   {
     id: '22',
@@ -570,7 +570,7 @@ export const internships: Internship[] = [
     skills: ['Business Analysis', 'Requirement Gathering', 'Agile', 'UML'],
     domain: 'Web Development',
     location: 'Chennai',
-    image: 'https://picsum.photos/600/400?random=22'
+    image: 'https://picsum.photos/seed/picsum22/600/400'
   },
   {
     id: '23',
@@ -583,7 +583,7 @@ export const internships: Internship[] = [
     skills: ['Cybersecurity', 'SIEM', 'Vulnerability Assessment', 'Incident Response'],
     domain: 'Web Development',
     location: 'Noida',
-    image: 'https://picsum.photos/600/400?random=23'
+    image: 'https://picsum.photos/seed/picsum23/600/400'
   },
   {
     id: '24',
@@ -596,7 +596,7 @@ export const internships: Internship[] = [
     skills: ['Machine Learning', 'Python', 'TensorFlow', 'PyTorch', 'AI'],
     domain: 'Data Science',
     location: 'Pune',
-    image: 'https://picsum.photos/600/400?random=24'
+    image: 'https://picsum.photos/seed/picsum24/600/400'
   },
   {
     id: '25',
@@ -609,7 +609,7 @@ export const internships: Internship[] = [
     skills: ['Retail', 'Inventory Management', 'Customer Service', 'Sales'],
     domain: 'Marketing',
     location: 'Delhi',
-    image: 'https://picsum.photos/600/400?random=25'
+    image: 'https://picsum.photos/seed/picsum25/600/400'
   },
    {
     id: '26',
@@ -622,7 +622,7 @@ export const internships: Internship[] = [
     skills: ['Strategy', 'Market Analysis', 'Corporate Finance', 'Management Consulting'],
     domain: 'Finance',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=26'
+    image: 'https://picsum.photos/seed/picsum26/600/400'
   },
   {
     id: '27',
@@ -635,7 +635,7 @@ export const internships: Internship[] = [
     skills: ['Consulting', 'Digital Transformation', 'Cloud Computing', 'AI', 'Project Management'],
     domain: 'Web Development',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=27'
+    image: 'https://picsum.photos/seed/picsum27/600/400'
   },
   {
     id: '28',
@@ -648,7 +648,7 @@ export const internships: Internship[] = [
     skills: ['Mining Engineering', 'Mine Planning', 'Safety Management'],
     domain: 'Engineering',
     location: 'Udaipur',
-    image: 'https://picsum.photos/600/400?random=28'
+    image: 'https://picsum.photos/seed/picsum28/600/400'
   },
   {
     id: '29',
@@ -661,7 +661,7 @@ export const internships: Internship[] = [
     skills: ['Supply Chain Management', 'Logistics', 'Data Analysis', 'Process Improvement'],
     domain: 'Engineering',
     location: 'Jamnagar',
-    image: 'https://picsum.photos/600/400?random=29'
+    image: 'https://picsum.photos/seed/picsum29/600/400'
   },
   {
     id: '30',
@@ -674,7 +674,7 @@ export const internships: Internship[] = [
     skills: ['Quality Assurance', 'Manual Testing', 'Automation Testing', 'Selenium', 'JIRA'],
     domain: 'Web Development',
     location: 'Hyderabad',
-    image: 'https://picsum.photos/600/400?random=30'
+    image: 'https://picsum.photos/seed/picsum30/600/400'
   },
   {
     id: '31',
@@ -687,7 +687,7 @@ export const internships: Internship[] = [
     skills: ['Chemical Engineering', 'Process Control', 'Safety Management', 'Aspen HYSYS'],
     domain: 'Engineering',
     location: 'Pata',
-    image: 'https://picsum.photos/600/400?random=31'
+    image: 'https://picsum.photos/seed/picsum31/600/400'
   },
   {
     id: '32',
@@ -700,7 +700,7 @@ export const internships: Internship[] = [
     skills: ['Corporate Communications', 'Public Relations', 'Content Creation', 'Social Media'],
     domain: 'Marketing',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=32'
+    image: 'https://picsum.photos/seed/picsum32/600/400'
   },
   {
     id: '33',
@@ -713,7 +713,7 @@ export const internships: Internship[] = [
     skills: ['Metallurgy', 'Materials Science', 'Quality Control', 'Steel'],
     domain: 'Engineering',
     location: 'Raigarh',
-    image: 'https://picsum.photos/600/400?random=33'
+    image: 'https://picsum.photos/seed/picsum33/600/400'
   },
   {
     id: '34',
@@ -726,7 +726,7 @@ export const internships: Internship[] = [
     skills: ['Nuclear Engineering', 'Safety Analysis', 'Reactor Physics'],
     domain: 'Engineering',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=34'
+    image: 'https://picsum.photos/seed/picsum34/600/400'
   },
   {
     id: '35',
@@ -739,7 +739,7 @@ export const internships: Internship[] = [
     skills: ['SQL', 'Python', 'Pandas', 'Tableau', 'Data Analysis'],
     domain: 'Data Science',
     location: 'Bangalore',
-    image: 'https://picsum.photos/600/400?random=35'
+    image: 'https://picsum.photos/seed/picsum35/600/400'
   },
   {
     id: '36',
@@ -752,7 +752,7 @@ export const internships: Internship[] = [
     skills: ['Project Finance', 'Financial Modeling', 'Risk Analysis', 'Credit Appraisal'],
     domain: 'Finance',
     location: 'New Delhi',
-    image: 'https://picsum.photos/600/400?random=36'
+    image: 'https://picsum.photos/seed/picsum36/600/400'
   },
   {
     id: '37',
@@ -765,7 +765,7 @@ export const internships: Internship[] = [
     skills: ['Operations Management', 'Production Planning', 'Logistics', 'Process Improvement'],
     domain: 'Engineering',
     location: 'Mumbai',
-    image: 'https://picsum.photos/600/400?random=37'
+    image: 'https://picsum.photos/seed/picsum37/600/400'
   },
   {
     id: '38',
@@ -778,7 +778,7 @@ export const internships: Internship[] = [
     skills: ['Credit Risk', 'Financial Analysis', 'Accounting', 'Risk Management'],
     domain: 'Finance',
     location: 'Pune',
-    image: 'https://picsum.photos/600/400?random=38'
+    image: 'https://picsum.photos/seed/picsum38/600/400'
   },
   {
     id: '39',
@@ -791,7 +791,7 @@ export const internships: Internship[] = [
     skills: ['Hydropower', 'Civil Engineering', 'Project Management', 'AutoCAD'],
     domain: 'Engineering',
     location: 'Faridabad',
-    image: 'https://picsum.photos/600/400?random=39'
+    image: 'https://picsum.photos/seed/picsum39/600/400'
   },
   {
     id: '40',
@@ -804,7 +804,7 @@ export const internships: Internship[] = [
     skills: ['Process Safety', 'Risk Assessment', 'Chemical Engineering', 'HAZOP'],
     domain: 'Engineering',
     location: 'Kochi',
-    image: 'https://picsum.photos/600/400?random=40'
+    image: 'https://picsum.photos/seed/picsum40/600/400'
   }
 ];
 
