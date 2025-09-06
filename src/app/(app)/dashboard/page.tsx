@@ -17,7 +17,7 @@ import { Briefcase, FileText, UserCheck, IndianRupee, Search, Award } from 'luci
 export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const { profile, isLoading: profileLoading } = useStudentProfile();
-    const { applications } = useApplications();
+    const { applications, isLoading: applicationsLoading } = useApplications();
     const router = useRouter();
 
     useEffect(() => {
@@ -61,7 +61,7 @@ export default function DashboardPage() {
         },
     ];
 
-    if (authLoading || profileLoading || !user) {
+    if (authLoading || profileLoading || applicationsLoading || !user) {
         return (
              <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
                 <div className="text-lg">Loading...</div>

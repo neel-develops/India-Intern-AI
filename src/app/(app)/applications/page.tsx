@@ -11,8 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Application } from '@/lib/types';
 import { Briefcase, Calendar, Info } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function ApplicationsPage() {
+  const { user } = useAuth();
   const { profile } = useStudentProfile();
   const { applications, updateApplicationStatus, isLoading } = useApplications();
 
@@ -20,7 +22,7 @@ export default function ApplicationsPage() {
     return <div>Loading applications...</div>
   }
   
-  if (!profile) {
+  if (!user || !profile) {
     return (
         <Card>
             <CardHeader>

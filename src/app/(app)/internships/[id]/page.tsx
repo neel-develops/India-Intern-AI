@@ -11,11 +11,13 @@ import Link from 'next/link';
 import { useApplications } from '@/hooks/use-applications';
 import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { useToast } from '@/hooks/use-toast';
-import { useNotifications } from '@/hooks/use-notifications';
+import { useNotifications } from '@/hooks/use-notifications.tsx';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function InternshipDetailsPage() {
   const params = useParams();
   const { id } = params;
+  const { user } = useAuth();
   const { profile } = useStudentProfile();
   const { applications, addApplication } = useApplications();
   const { addNotification } = useNotifications();
@@ -31,7 +33,7 @@ export default function InternshipDetailsPage() {
   const isApplied = applications.some(app => app.internshipId === internship.id);
 
   const handleApply = () => {
-    if (profile) {
+    if (profile && user) {
       addApplication({
         internshipId: internship.id,
         studentEmail: profile.personalInfo.email,
