@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Wand2 } from 'lucide-react';
+import { Wand2, BellRing, Mail } from 'lucide-react';
 import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { suggestRelevantInternships } from '@/ai/flows/suggest-relevant-internships';
 import { internships as allInternships } from '@/lib/data';
@@ -15,18 +15,21 @@ import { InternshipCard } from '@/components/internship-card';
 import { useToast } from '@/hooks/use-toast';
 import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships';
 import type { Internship } from '@/lib/types';
+import { Input } from './ui/input';
 
 
 export function SmartMatchInternships() {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
   const [suggestedInternships, setSuggestedInternships] = useState<(Internship & { matchReason: string })[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const { toast } = useToast();
 
   const handleFindMatches = async () => {
     if (!profile) return;
 
     setIsAiLoading(true);
+    setSearchPerformed(true);
     setSuggestedInternships([]);
 
     try {
@@ -64,6 +67,13 @@ export function SmartMatchInternships() {
       setIsAiLoading(false);
     }
   };
+  
+  const handleNotifyClick = () => {
+    toast({
+        title: 'Subscription Confirmed!',
+        description: 'You will be notified when new internships match your profile.'
+    })
+  }
 
   if (isProfileLoading) {
     return (
@@ -133,7 +143,7 @@ export function SmartMatchInternships() {
         </div>
       )}
 
-      {!isAiLoading && suggestedInternships.length > 0 && (
+      {!isAiLoading && searchPerformed && suggestedInternships.length > 0 && (
         <div className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">Your Top Matches</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -148,7 +158,31 @@ export function SmartMatchInternships() {
         </div>
       )}
 
-      {!isAiLoading && suggestedInternships.length === 0 && (
+      {!isAiLoading && searchPerformed && suggestedInternships.length === 0 && (
+          <Card className="text-center bg-accent/50 border-accent">
+            <CardContent className="p-8">
+                <BellRing className="mx-auto h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No Matches Found Right Now</h3>
+                <p className="text-muted-foreground mb-6">
+                    Don't worry! We can notify you via email as soon as a new internship matching your profile is available.
+                </p>
+                <div className="flex max-w-sm mx-auto">
+                    <div className="relative w-full">
+                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                         <Input 
+                            type="email" 
+                            placeholder="Your email address" 
+                            defaultValue={profile.personalInfo.email} 
+                            className="pl-10"
+                        />
+                    </div>
+                    <Button onClick={handleNotifyClick} className="ml-2">Notify Me</Button>
+                </div>
+            </CardContent>
+          </Card>
+      )}
+
+      {!isAiLoading && !searchPerformed && (
          <Alert className="bg-accent/50 border-accent">
             <Wand2 className="h-4 w-4" />
             <AlertTitle>Ready for your matches?</AlertTitle>
