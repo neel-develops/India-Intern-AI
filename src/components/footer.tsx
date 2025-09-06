@@ -11,7 +11,7 @@ export function Footer() {
             <h3 className="text-xl font-bold">IndiaIntern.ai</h3>
           </div>
           <p className="text-sm text-blue-200">
-            A Smart India Hackathon 2025 Project for the Ministry of Corporate Affairs.
+            A project of Smart India Hackathon.
           </p>
         </div>
         <div className="space-y-4">
