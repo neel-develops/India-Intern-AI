@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { FileScan, Wand2, Star, ThumbsUp, Lightbulb, Badge } from 'lucide-react';
+import { FileScan, Wand2, Star, ThumbsUp, Lightbulb, Badge, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter
 } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -17,13 +18,17 @@ import type { AnalyseResumeOutput } from '@/ai/flows/analyse-resume-text-types';
 import { Skeleton } from './ui/skeleton';
 import { useStudentProfile } from '@/hooks/use-student-profile';
 import { Progress } from './ui/progress';
+import { generateResumeSummary } from '@/ai/flows/generate-resume-summary';
+import { useAuth } from '@/hooks/use-auth';
 
 export function ResumeAnalyser() {
   const [resumeText, setResumeText] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalyseResumeOutput | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
-  const { profile } = useStudentProfile();
+  const { user } = useAuth();
+  const { profile, saveProfile } = useStudentProfile();
 
   const handleAnalyseResume = async () => {
     if (resumeText.trim().length < 100) {
@@ -67,6 +72,51 @@ export function ResumeAnalyser() {
               description: 'Please add a resume summary to your profile first.',
           });
       }
+  }
+
+  const handleGenerateResume = async () => {
+    if (!analysisResult) return;
+    setIsGenerating(true);
+    try {
+      const result = await generateResumeSummary({
+        resumeText: resumeText,
+        skills: analysisResult.detectedSkills,
+      });
+      setResumeText(result.generatedSummary);
+      toast({
+        title: 'Resume Generated!',
+        description: 'A new resume summary has been generated and placed in the text area.',
+      });
+    } catch (error) {
+      console.error('AI resume generation error:', error);
+       toast({
+        variant: 'destructive',
+        title: 'Error Generating Resume',
+        description: 'Could not generate a new summary. Please try again.',
+      });
+    } finally {
+        setIsGenerating(false);
+    }
+  }
+  
+  const handleSaveToProfile = () => {
+      if (!profile || !user) {
+         toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'You must have a profile to save a resume summary.',
+        });
+        return;
+      }
+      const updatedProfile = {
+          ...profile,
+          resumeSummary: resumeText,
+      };
+      saveProfile(user.uid, updatedProfile);
+      toast({
+        title: 'Resume Saved!',
+        description: 'Your resume summary has been updated in your profile.',
+      });
   }
 
   return (
@@ -171,6 +221,16 @@ export function ResumeAnalyser() {
                 </div>
 
             </CardContent>
+             <CardFooter className="gap-2 pt-6 border-t">
+                <Button onClick={handleGenerateResume} disabled={isGenerating}>
+                    <Wand2 className="mr-2" />
+                    {isGenerating ? 'Generating...' : 'Generate Better Resume with AI'}
+                </Button>
+                <Button onClick={handleSaveToProfile} variant="secondary">
+                    <Save className="mr-2" />
+                    Save to Profile
+                </Button>
+            </CardFooter>
         </Card>
       )}
     </div>
