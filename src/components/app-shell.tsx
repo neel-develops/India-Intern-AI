@@ -43,7 +43,7 @@ function useIsClient() {
   return isClient
 }
 
-export function AppShell({ children }: { children: React.Node }) {
+export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -164,16 +164,18 @@ export function AppShell({ children }: { children: React.Node }) {
   if (!user && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-24 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
-                <Link href="/" className="flex items-center gap-2 mr-auto">
-                  <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
-                </Link>
-                <nav className="hidden md:flex gap-4">
-                     <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
-                     <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
-                     <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
-                </nav>
-                <div className="flex items-center gap-4 ml-auto">
+             <header className="flex h-28 items-center justify-between gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+                <div className="flex flex-1 items-center gap-8">
+                  <Link href="/" className="flex items-center gap-2">
+                    <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
+                  </Link>
+                  <nav className="hidden md:flex gap-4">
+                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
+                      <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
+                      <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
+                  </nav>
+                </div>
+                <div className="flex flex-1 items-center justify-end gap-4">
                     {headerContent}
                 </div>
             </header>
@@ -195,7 +197,7 @@ export function AppShell({ children }: { children: React.Node }) {
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-24 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+            <header className="flex h-28 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
