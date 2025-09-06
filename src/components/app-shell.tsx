@@ -54,10 +54,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   ];
   
   const sidebarHeader = (
-    <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
-      <Logo className="w-8 h-8" />
-      <span className="text-lg font-bold">IndiaIntern.ai</span>
-    </Link>
+    <div className="flex flex-col">
+        <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
+          <Logo className="w-8 h-8" />
+          <span className="text-lg font-bold">IndiaIntern.ai</span>
+        </Link>
+        <p className="text-xs text-muted-foreground ml-10">A project of Smart India Hackathon</p>
+    </div>
   );
   
   const sidebarNav = (
@@ -155,10 +158,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex flex-col min-h-screen">
              <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
-                <Link href="/" className="flex items-center gap-2 text-primary font-semibold lg:mr-auto">
-                    <Logo className="w-8 h-8" />
-                    <span className="text-lg font-bold">IndiaIntern.ai</span>
-                </Link>
+                <div className="flex flex-col lg:mr-auto">
+                    <Link href="/" className="flex items-center gap-2 text-primary font-semibold">
+                        <Logo className="w-8 h-8" />
+                        <span className="text-lg font-bold">IndiaIntern.ai</span>
+                    </Link>
+                    <p className="text-xs text-muted-foreground ml-10 -mt-1 hidden md:block">A project of Smart India Hackathon</p>
+                </div>
                 <nav className="hidden md:flex gap-4">
                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
                      <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
