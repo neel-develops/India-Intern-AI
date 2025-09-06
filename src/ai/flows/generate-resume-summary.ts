@@ -16,7 +16,7 @@ const prompt = ai.definePrompt({
   Based on the user's original resume text and the list of their key skills, please rewrite the resume summary.
 
   The new summary should be:
-  - Professional and concise.
+  - Professional and concise (around 150 words).
   - Written in the first-person (e.g., "I am a motivated...").
   - Action-oriented, using strong verbs.
   - Highlight the provided key skills effectively.

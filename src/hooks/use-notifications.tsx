@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import type { Notification } from '@/lib/types';
+import { useAuth } from './use-auth';
 
-const STORAGE_KEY = 'notifications';
+const getStorageKey = (userId: string) => `notifications-${userId}`;
 
 interface NotificationsContextType {
     notifications: Notification[];
@@ -15,33 +16,44 @@ interface NotificationsContextType {
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(STORAGE_KEY);
-      if (item) {
-        setNotifications(JSON.parse(item));
-      }
-    } catch (error) {
-      console.error('Failed to load notifications:', error);
-      window.localStorage.removeItem(STORAGE_KEY);
-    } finally {
+    if (user) {
+        setIsLoading(true);
+        try {
+          const item = window.localStorage.getItem(getStorageKey(user.uid));
+          if (item) {
+            setNotifications(JSON.parse(item));
+          } else {
+            setNotifications([]);
+          }
+        } catch (error) {
+          console.error('Failed to load notifications:', error);
+          setNotifications([]);
+        } finally {
+            setIsLoading(false);
+        }
+    } else {
+        setNotifications([]);
         setIsLoading(false);
     }
-  }, []);
+  }, [user]);
 
   const saveNotifications = useCallback((updatedNotifications: Notification[]) => {
-    try {
-      // Sort by date descending before saving
-      const sorted = updatedNotifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sorted));
-      setNotifications(sorted);
-    } catch (error) {
-      console.error('Failed to save notifications to local storage:', error);
+    if (user) {
+        try {
+          // Sort by date descending before saving
+          const sorted = updatedNotifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          window.localStorage.setItem(getStorageKey(user.uid), JSON.stringify(sorted));
+          setNotifications(sorted);
+        } catch (error) {
+          console.error('Failed to save notifications to local storage:', error);
+        }
     }
-  }, []);
+  }, [user]);
 
   const addNotification = useCallback((newNotification: Omit<Notification, 'id' | 'date' | 'read'> & { id?: string }) => {
     const notificationWithDefaults: Notification = {
