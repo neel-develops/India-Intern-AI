@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
           <div className="flex items-center">
-            <Image src="https://i.imgur.com/rS2K8gM.png" alt="IndiaIntern.ai Logo" width={200} height={50} />
+            <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={200} height={50} />
           </div>
           <div className="text-sm text-blue-200">
             A project of Smart India Hackathon.
