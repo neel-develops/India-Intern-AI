@@ -29,10 +29,11 @@ export function useApplications() {
           setIsLoading(false);
       }
     } else {
-        setApplications([]);
-        setIsLoading(false);
+        // If there's no user, ensure applications are cleared and loading is false.
+        if (applications.length > 0) setApplications([]);
+        if (isLoading) setIsLoading(false);
     }
-  }, [user]);
+  }, [user, applications.length, isLoading]);
 
   const saveApplications = useCallback((updatedApplications: Application[]) => {
     if (user) {
