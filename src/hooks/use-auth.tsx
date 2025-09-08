@@ -44,14 +44,14 @@ const createMockUser = (email: string): User => ({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false); // No initial loading needed for mock auth
+  const [loading, setLoading] = useState(true);
   const { loadProfileForUser, clearProfile } = useStudentProfile();
   
   const handleLogin = useCallback(async (newUser: User) => {
     setUser(newUser);
     await loadProfileForUser(newUser.uid);
     setLoading(false);
-  },[loadProfileForUser])
+  },[loadProfileForUser]);
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
@@ -73,6 +73,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     clearProfile();
     setLoading(false);
   };
+
+  useEffect(() => {
+    // On initial load, if there's no user, we should stop loading.
+    // This handles the case where the app is loaded for the first time without any user session.
+    if (!user) {
+        setLoading(false);
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, signInWithEmail, signUpWithEmail, signOut }}>
