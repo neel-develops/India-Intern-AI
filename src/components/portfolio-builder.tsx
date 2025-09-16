@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useRef } from 'react';
 import { Wand2, User, Mail, Linkedin, Rocket, Star, Download } from 'lucide-react';
@@ -27,7 +28,7 @@ export function PortfolioBuilder() {
             const result = await generatePortfolio({
                 name: profile.personalInfo.name,
                 email: profile.personalInfo.email,
-                linkedin: profile.personalInfo.linkedin,
+                linkedin: profile.personalInfo.linkedin || '',
                 resumeSummary: profile.resumeSummary,
                 skills: profile.skills,
             });
