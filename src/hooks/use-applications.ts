@@ -33,7 +33,7 @@ export function useApplications() {
         if (applications.length > 0) setApplications([]);
         if (isLoading) setIsLoading(false);
     }
-  }, [user, applications.length, isLoading]);
+  }, [user]);
 
   const saveApplications = useCallback((updatedApplications: Application[]) => {
     if (user) {

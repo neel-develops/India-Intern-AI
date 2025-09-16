@@ -79,6 +79,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
      { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
      { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer', auth: true },
+     { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach', auth: true },
   ]
   
   const sidebarHeader = (
