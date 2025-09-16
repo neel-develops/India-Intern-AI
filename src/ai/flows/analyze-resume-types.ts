@@ -20,5 +20,8 @@ export const AnalyzeResumeOutputSchema = z.object({
     suggestion: z.string().describe("A concrete suggestion on how to improve this point."),
   })).describe("A list of areas where the resume can be improved."),
   actionableTips: z.array(z.string()).describe("A list of general, actionable tips for making the resume stand out."),
+  resumeScore: z.number().min(0).max(100).describe("A score from 0 to 100 representing the overall quality of the resume, considering clarity, impact, and completeness."),
+  scoreRationale: z.string().describe("A brief explanation for the given score, highlighting key factors that influenced it."),
+  enhancedSummary: z.string().describe("An improved, professionally rewritten version of the resume summary, ready to be used."),
 });
 export type AnalyzeResumeOutput = z.infer<typeof AnalyzeResumeOutputSchema>;
