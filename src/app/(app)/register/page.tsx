@@ -72,7 +72,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md bg-card/60 backdrop-blur-lg">
         <form onSubmit={handleSignUp}>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Create an Account</CardTitle>
@@ -139,7 +139,7 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button
-              className="w-full"
+              className="w-full rounded-full"
               type="submit"
               disabled={loading}
             >
@@ -147,7 +147,7 @@ export default function RegisterPage() {
             </Button>
             <div className="relative w-full">
                 <Separator />
-                <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-background px-2 text-xs text-muted-foreground">OR CONTINUE WITH</span>
+                <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-xs text-muted-foreground">OR CONTINUE WITH</span>
              </div>
              <div className="grid grid-cols-2 gap-4 w-full">
                 <Button variant="outline" type="button" onClick={() => handleSocialLogin('Google')}>
@@ -161,7 +161,7 @@ export default function RegisterPage() {
              </div>
             <p className="text-sm text-muted-foreground">
                 Already have an account?{' '}
-                <Link href="/login" className="text-primary hover:underline">
+                <Link href="/login" className="text-secondary hover:underline">
                     Sign In
                 </Link>
             </p>

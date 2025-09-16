@@ -21,7 +21,7 @@ function getInitials(name: string) {
 
 export function StudentCard({ student }: StudentCardProps) {
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg">
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 bg-card/70 backdrop-blur-sm">
       <CardHeader className="flex flex-row items-start gap-4">
         <Avatar className="h-12 w-12">
             <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${student.personalInfo.name}`} />
@@ -55,12 +55,12 @@ export function StudentCard({ student }: StudentCardProps) {
           ))}
         </div>
         {student.matchScore !== undefined && student.reasons && (
-            <div className="p-3 bg-accent/50 border border-dashed border-accent-foreground/30 rounded-lg space-y-2">
-                <div className="flex items-center gap-2 font-semibold text-accent-foreground">
-                    <Star className="h-5 w-5 text-primary" />
+            <div className="p-3 bg-secondary/10 border border-dashed border-secondary/30 rounded-lg space-y-2">
+                <div className="flex items-center gap-2 font-semibold text-secondary">
+                    <Star className="h-5 w-5" />
                     Match Score: {student.matchScore}/100
                 </div>
-                <ul className="list-disc list-inside text-sm text-accent-foreground space-y-1">
+                <ul className="list-disc list-inside text-sm text-secondary/90 space-y-1">
                     {student.reasons.map((reason, i) => <li key={i}>{reason}</li>)}
                 </ul>
             </div>

@@ -25,6 +25,7 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
           alt={internship.title}
           layout="fill"
           objectFit="cover"
+          className="rounded-t-lg"
           data-ai-hint={`${internship.domain} ${internship.company}`}
         />
       </div>
@@ -36,7 +37,7 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge variant="outline" className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" /> {internship.location}
             </Badge>
             <Badge variant="outline" className="flex items-center gap-1">
@@ -48,12 +49,12 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
         </p>
         <div className="flex flex-wrap gap-2">
           {internship.skills.slice(0, 4).map((skill) => (
-            <Badge key={skill} variant="outline">{skill}</Badge>
+            <Badge key={skill} variant="secondary">{skill}</Badge>
           ))}
         </div>
         {matchReason && (
-            <div className="p-3 bg-primary/10 border border-dashed border-primary/30 rounded-lg">
-                <p className="text-sm font-medium text-primary flex items-start gap-2">
+            <div className="p-3 bg-secondary/10 border border-dashed border-secondary/30 rounded-lg">
+                <p className="text-sm font-medium text-secondary flex items-start gap-2">
                     <Wand2 className="h-4 w-4 shrink-0 mt-0.5" />
                     <span className="flex-1"><span className="font-semibold">AI Match Reason:</span> {matchReason}</span>
                 </p>
@@ -72,7 +73,7 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
   if (onSelect) {
     return (
         <div onClick={() => onSelect(internship)} className="cursor-pointer">
-            <Card className={cn('flex flex-col h-full overflow-hidden transition-all hover:shadow-lg', isSelected ? 'ring-2 ring-primary' : '')}>
+            <Card className={cn('flex flex-col h-full overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 bg-card/70 backdrop-blur-sm', isSelected ? 'ring-2 ring-secondary' : '')}>
                 {cardContent}
             </Card>
         </div>
@@ -80,7 +81,7 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
   }
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg">
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1 bg-card/70 backdrop-blur-sm">
         {cardContent}
     </Card>
   );

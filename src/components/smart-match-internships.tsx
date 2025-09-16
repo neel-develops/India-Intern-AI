@@ -71,7 +71,11 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
       setSuggestedInternships(enrichedInternships);
     } catch (error: any) {
       console.error('AI match error:', error);
-      setApiError('Could not fetch AI-powered suggestions. Please try again later.');
+       if (error.message && error.message.includes('429')) {
+         setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+       } else {
+        setApiError('Could not fetch AI-powered suggestions. Please try again later.');
+       }
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -105,7 +109,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
   if (!profile) {
     return (
-      <Card>
+      <Card className="bg-card/70 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Unlock Your Perfect Internship</CardTitle>
           <CardDescription>
@@ -123,10 +127,10 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-card/70 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Wand2 className="text-primary" />
+            <Wand2 className="text-secondary" />
             AI-Powered Internship Matches
           </CardTitle>
           <CardDescription>
@@ -134,7 +138,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button onClick={handleFindMatches} disabled={isAiLoading}>
+          <Button onClick={handleFindMatches} disabled={isAiLoading} variant="secondary">
             {isAiLoading ? 'Analyzing...' : 'Find My Smart Matches'}
           </Button>
         </CardContent>
@@ -188,9 +192,9 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
       )}
 
       {!isAiLoading && searchPerformed && !apiError && suggestedInternships.length === 0 && (
-          <Card className="text-center bg-accent/50 border-accent">
+          <Card className="text-center bg-card/70 backdrop-blur-sm border-secondary/30">
             <CardContent className="p-8">
-                <BellRing className="mx-auto h-12 w-12 text-primary mb-4" />
+                <BellRing className="mx-auto h-12 w-12 text-secondary mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No Matches Found Right Now</h3>
                 <p className="text-muted-foreground mb-6">
                     Don't worry! We can notify you via email as soon as a new internship matching your profile is available.
@@ -212,7 +216,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
       )}
 
       {!isAiLoading && !searchPerformed && !apiError && (
-         <Alert className="bg-accent/50 border-accent">
+         <Alert className="bg-card/70 backdrop-blur-sm border-secondary/30 text-secondary">
             <Wand2 className="h-4 w-4" />
             <AlertTitle>Ready for your matches?</AlertTitle>
             <AlertDescription>

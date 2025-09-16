@@ -11,7 +11,7 @@ interface InfoCardProps {
 
 export function InfoCard({ title, value, icon, description }: InfoCardProps) {
     return (
-        <Card>
+        <Card className="bg-card/70 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                     {title}

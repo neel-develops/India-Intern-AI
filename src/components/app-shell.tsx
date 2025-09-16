@@ -195,10 +195,10 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         </div>
       ) : (
         <div className="hidden md:flex gap-2">
-            <Button variant="ghost" asChild>
+            <Button variant="outline" asChild className="rounded-full">
                 <Link href="/login">Login</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="rounded-full">
                 <Link href="/register">Register</Link>
             </Button>
         </div>
@@ -213,7 +213,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   if ((!user && !loading) && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
-             <header className="flex h-28 items-center justify-between gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+             <header className="flex h-20 items-center justify-between gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:px-6 sticky top-0 z-30 py-4">
                 <div className="flex flex-1 items-center gap-8">
                   <Link href="/" className="flex items-center gap-2">
                     <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
@@ -240,13 +240,13 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   // Main application layout for authenticated users
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <div className="hidden border-r bg-gray-100/40 dark:bg-gray-800/40 md:block">
+        <div className="hidden border-r bg-muted/40 md:block">
             <div className="fixed flex h-full max-h-screen flex-col gap-2 md:w-[220px] lg:w-[280px]">
             {sidebarContent}
             </div>
         </div>
         <div className="flex flex-col">
-            <header className="flex h-28 items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">
+            <header className="flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:px-6 sticky top-0 z-30 py-4">
             <Sheet>
                 <SheetTrigger asChild>
                 <Button
@@ -266,7 +266,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
                 {headerContent}
             </div>
             </header>
-            <main className="flex-1 p-4 sm:p-6 bg-background">
+            <main className="flex-1 p-4 sm:p-6 bg-muted/20">
                 {children}
             </main>
             <Footer />

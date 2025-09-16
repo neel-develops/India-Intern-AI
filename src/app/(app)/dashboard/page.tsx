@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <InfoCard title="Applications Sent" value={applications.length} icon={<FileText />} description="Keep track of all your applications."/>
             <InfoCard title="New Programs" value="10+" icon={<Briefcase />} description="New programs available this week."/>
-            <Card>
+            <Card className="bg-card/70 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="text-base font-medium">Profile Completion</CardTitle>
                 </CardHeader>
@@ -93,12 +93,10 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
         </div>
-
-        <Separator />
         
         <SmartMatchInternships />
         
-        <Separator />
+        <Separator className="my-8" />
 
         <div>
             <div className="space-y-2 mb-6">
@@ -109,8 +107,8 @@ export default function DashboardPage() {
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                  {schemeBenefits.map((item, index) => (
-                    <Card key={index} className="flex flex-col items-center text-center p-6">
-                        <div className="p-3 bg-primary/10 rounded-full mb-4 text-primary">
+                    <Card key={index} className="flex flex-col items-center text-center p-6 bg-card/70 backdrop-blur-sm transition-all hover:shadow-xl hover:-translate-y-1">
+                        <div className="p-3 bg-secondary/10 rounded-full mb-4 text-secondary">
                              {item.icon}
                         </div>
                         <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
