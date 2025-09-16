@@ -1,5 +1,7 @@
+
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Target, Lightbulb, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -11,6 +13,7 @@ import type { AnalyzeSkillGapOutput } from '@/ai/flows/analyze-skill-gap-types';
 import { Skeleton } from './ui/skeleton';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
+import { internships } from '@/lib/data';
 
 export function SkillGapVisualizer() {
     const [internshipDescription, setInternshipDescription] = useState('');
@@ -18,8 +21,10 @@ export function SkillGapVisualizer() {
     const [isAiLoading, setIsAiLoading] = useState(false);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
+    const searchParams = useSearchParams();
+    const internshipId = searchParams.get('internshipId');
 
-    const handleAnalyze = async () => {
+    const handleAnalyze = useCallback(async () => {
         if (!profile) return;
         if (!internshipDescription.trim()) {
             toast({ variant: 'destructive', title: 'Please paste an internship description.' });
@@ -38,8 +43,21 @@ export function SkillGapVisualizer() {
         } finally {
             setIsAiLoading(false);
         }
-    };
+    }, [profile, internshipDescription, toast]);
     
+    useEffect(() => {
+        if (internshipId) {
+            const selectedInternship = internships.find(i => i.id === internshipId);
+            if (selectedInternship) {
+                setInternshipDescription(selectedInternship.longDescription);
+                // Automatically trigger analysis if profile is loaded
+                if (profile) {
+                    handleAnalyze();
+                }
+            }
+        }
+    }, [internshipId, profile, handleAnalyze]);
+
     if (isProfileLoading) return <Skeleton className="h-64 w-full" />;
 
     if (!profile) return (
@@ -51,7 +69,7 @@ export function SkillGapVisualizer() {
         </Card>
     );
 
-    const matchPercentage = analysis ? (analysis.matchingSkills.length / analysis.requiredSkills.length) * 100 : 0;
+    const matchPercentage = analysis ? (analysis.matchingSkills.length / (analysis.requiredSkills.length || 1)) * 100 : 0;
 
     return (
         <div className="space-y-6">
@@ -122,12 +140,16 @@ export function SkillGapVisualizer() {
                                 <Lightbulb className="h-5 w-5 text-primary" />Why Your Missing Skills Matter
                             </h3>
                             <div className="space-y-4">
-                                {analysis.missingSkills.map((item, index) => (
-                                    <div key={index} className="p-4 bg-muted/50 rounded-lg">
-                                        <h4 className="font-semibold text-primary">{item.skill}</h4>
-                                        <p className="text-sm text-muted-foreground">{item.importance}</p>
-                                    </div>
-                                ))}
+                                {analysis.missingSkills.length > 0 ? (
+                                    analysis.missingSkills.map((item, index) => (
+                                        <div key={index} className="p-4 bg-muted/50 rounded-lg">
+                                            <h4 className="font-semibold text-primary">{item.skill}</h4>
+                                            <p className="text-sm text-muted-foreground">{item.importance}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">You have all the required skills for this role!</p>
+                                )}
                             </div>
                         </div>
                     </CardContent>

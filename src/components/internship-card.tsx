@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { Internship } from '@/lib/types';
-import { Briefcase, MapPin, Tag, Cpu } from 'lucide-react';
+import { Briefcase, MapPin, Tag, Cpu, BarChart3 } from 'lucide-react';
 
 interface InternshipCardProps {
   internship: Internship;
@@ -57,10 +57,18 @@ export function InternshipCard({ internship, matchReason }: InternshipCardProps)
         )}
       </CardContent>
       <Separator />
-      <CardFooter className="pt-6">
+      <CardFooter className="pt-6 flex flex-col sm:flex-row gap-2">
         <Button asChild className="w-full">
             <Link href={`/internships/${internship.id}`}>View Details</Link>
         </Button>
+        {matchReason && (
+            <Button asChild variant="outline" className="w-full">
+                <Link href={`/skill-gap-visualizer?internshipId=${internship.id}`}>
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Analyze Skill Gap
+                </Link>
+            </Button>
+        )}
       </CardFooter>
     </Card>
   );
