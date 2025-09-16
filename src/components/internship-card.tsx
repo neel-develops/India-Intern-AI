@@ -6,17 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import type { Internship } from '@/lib/types';
-import { Briefcase, MapPin, Tag, Cpu, BarChart3, Wand2 } from 'lucide-react';
+import { Briefcase, MapPin, Tag, Cpu, BarChart3, Wand2, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Progress } from './ui/progress';
 
 interface InternshipCardProps {
   internship: Internship;
   matchReason?: string;
+  matchPercentage?: number;
   onSelect?: (internship: Internship) => void;
   isSelected?: boolean;
 }
 
-export function InternshipCard({ internship, matchReason, onSelect, isSelected }: InternshipCardProps) {
+export function InternshipCard({ internship, matchReason, matchPercentage, onSelect, isSelected }: InternshipCardProps) {
   const cardContent = (
     <>
       <div className="relative h-48 w-full">
@@ -28,6 +30,12 @@ export function InternshipCard({ internship, matchReason, onSelect, isSelected }
           className="rounded-t-lg"
           data-ai-hint={`${internship.domain} ${internship.company}`}
         />
+         {matchPercentage !== undefined && (
+            <div className="absolute top-2 right-2 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white py-1 px-3 rounded-full text-sm font-semibold">
+                <TrendingUp className="h-4 w-4 text-emerald-400" />
+                <span>{matchPercentage}% Match</span>
+            </div>
+        )}
       </div>
       <CardHeader>
         <CardTitle className="line-clamp-2">{internship.title}</CardTitle>

@@ -46,8 +46,9 @@ export type SuggestRelevantInternshipsInput = z.infer<
 // Define the output schema for the flow
 export const SuggestRelevantInternshipsOutputSchema = z.array(z.object({
   id: z.string().describe('The unique ID of the internship listing.'),
-  matchReason: z.string().describe('The reason why this internship is a good match for the student.'),
+  matchReason: z.string().describe('The reason why this internship is a good match for the student, highlighting skill matches and areas for improvement.'),
+  matchPercentage: z.number().min(0).max(100).describe('A normalized percentage score (0-100) representing how well the student matches the internship.'),
 }));
 
 // This is a workaround to make the AI output compatible with our Internship type
-export type SuggestRelevantInternshipsOutput = { id: string, matchReason: string }[];
+export type SuggestRelevantInternshipsOutput = { id: string, matchReason: string, matchPercentage: number }[];

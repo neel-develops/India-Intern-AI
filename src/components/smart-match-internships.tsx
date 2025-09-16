@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Wand2, BellRing, Mail, AlertTriangle } from 'lucide-react';
+import { Wand2, BellRing, Mail, AlertTriangle, TrendingUp } from 'lucide-react';
 import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { suggestRelevantInternships } from '@/ai/flows/suggest-relevant-internships';
 import { internships as allInternships } from '@/lib/data';
@@ -22,9 +22,14 @@ interface SmartMatchInternshipsProps {
     selectedInternshipId?: string;
 }
 
+type EnrichedInternship = Internship & { 
+    matchReason: string;
+    matchPercentage: number;
+};
+
 export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId }: SmartMatchInternshipsProps) {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
-  const [suggestedInternships, setSuggestedInternships] = useState<(Internship & { matchReason: string })[]>([]);
+  const [suggestedInternships, setSuggestedInternships] = useState<EnrichedInternship[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -52,23 +57,30 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
       const result: SuggestRelevantInternshipsOutput = await suggestRelevantInternships({
         studentProfile: studentProfileForAI,
-        internshipListings: allInternships.map(i => ({...i, description: i.description})),
+        internshipListings: allInternships.map(i => ({...i, description: i.longDescription})),
       });
 
-      const enrichedInternships = result.map(suggested => {
-        const originalInternship = allInternships.find(i => i.id === suggested.id);
-        if (!originalInternship) return null;
-        return {
-          ...originalInternship,
-          matchReason: suggested.matchReason,
-        };
-      }).filter((i): i is Internship & { matchReason: string } => i !== null);
-
-      if (enrichedInternships.length === 0 && result.length === 0) {
-        setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+      if (result && result.length > 0) {
+        const enrichedInternships = result.map(suggested => {
+          const originalInternship = allInternships.find(i => i.id === suggested.id);
+          if (!originalInternship) return null;
+          return {
+            ...originalInternship,
+            matchReason: suggested.matchReason,
+            matchPercentage: suggested.matchPercentage,
+          };
+        }).filter((i): i is EnrichedInternship => i !== null);
+         setSuggestedInternships(enrichedInternships);
+      } else {
+         if (result && result.length === 0) {
+            // This case handles when AI runs but finds no matches
+             setSuggestedInternships([]);
+         } else {
+            // This case handles when the API call fails (e.g., rate limit)
+            setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+         }
       }
 
-      setSuggestedInternships(enrichedInternships);
     } catch (error: any) {
       console.error('AI match error:', error);
        if (error.message && error.message.includes('429')) {
@@ -134,7 +146,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
             AI-Powered Internship Matches
           </CardTitle>
           <CardDescription>
-            Based on your profile, our AI will find the most suitable internships for you.
+            Based on your profile, our AI will find the most suitable internships for you and calculate a match score.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -183,6 +195,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
                 key={`${internship.id}-${index}`}
                 internship={internship}
                 matchReason={internship.matchReason}
+                matchPercentage={internship.matchPercentage}
                 onSelect={onInternshipSelect}
                 isSelected={selectedInternshipId === internship.id}
                 />
@@ -197,7 +210,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
                 <BellRing className="mx-auto h-12 w-12 text-secondary mb-4" />
                 <h3 className="text-xl font-semibold mb-2">No Matches Found Right Now</h3>
                 <p className="text-muted-foreground mb-6">
-                    Don't worry! We can notify you via email as soon as a new internship matching your profile is available.
+                    Our AI couldn't find a strong match for your profile at the moment. We can notify you when a new opportunity comes up!
                 </p>
                 <div className="flex max-w-sm mx-auto">
                     <div className="relative w-full">
