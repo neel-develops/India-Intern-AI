@@ -64,7 +64,10 @@ const careerCoachFlow = ai.defineFlow(
     outputSchema: CareerCoachOutputSchema,
   },
   async (input) => {
-    const response = await prompt(input);
+    // A little bit of a hack to make the prompt work with roles
+    const historyWithRoles = input.history?.map(h => ({...h, isUser: h.role === 'user', isModel: h.role === 'model' }))
+
+    const response = await prompt({...input, history: historyWithRoles as any});
     const toolCalls = response.toolCalls('generateLearningPlan');
     
     let learningPlan: CareerCoachOutput['learningPlan'] = null;
