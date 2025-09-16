@@ -1,9 +1,8 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
-import { Mic, Bot, User, Send, CheckCircle, BrainCircuit } from 'lucide-react';
+import { useState, useRef, useEffect, use } from 'react';
+import { Bot, User, Send, CheckCircle, BrainCircuit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { startMockInterview } from '@/ai/flows/start-mock-interview';
@@ -11,6 +10,9 @@ import type { StartMockInterviewOutput } from '@/ai/flows/start-mock-interview-t
 import { useStudentProfile } from '@/hooks/use-student-profile';
 import { Skeleton } from './ui/skeleton';
 import { ScrollArea } from './ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Badge } from './ui/badge';
+import { Progress } from './ui/progress';
 
 interface Message {
     role: 'user' | 'model';
@@ -18,10 +20,17 @@ interface Message {
     feedback?: string;
 }
 
+interface FinalFeedback {
+    summary: string;
+    score: number;
+    tips: string[];
+}
+
 export function MockInterview() {
-    const [internshipTitle, setInternshipTitle] = useState('');
+    const [selectedSkill, setSelectedSkill] = useState('');
     const [interviewStarted, setInterviewStarted] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [finalFeedback, setFinalFeedback] = useState<FinalFeedback | null>(null);
     const [userInput, setUserInput] = useState('');
     const [isAiLoading, setIsAiLoading] = useState(false);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
@@ -32,19 +41,20 @@ export function MockInterview() {
         if (scrollAreaRef.current) {
             scrollAreaRef.current.scrollTo({ top: scrollAreaRef.current.scrollHeight, behavior: 'smooth' });
         }
-    }, [messages]);
+    }, [messages, finalFeedback]);
 
     const handleStartInterview = async () => {
-        if (!internshipTitle.trim()) {
-            toast({ variant: 'destructive', title: 'Please enter an internship title.' });
+        if (!selectedSkill.trim()) {
+            toast({ variant: 'destructive', title: 'Please select a skill for the interview.' });
             return;
         }
         setIsAiLoading(true);
         setInterviewStarted(true);
+        setFinalFeedback(null);
+        setMessages([]);
         try {
             const result = await startMockInterview({
-                internshipTitle,
-                userSkills: profile?.skills || [],
+                skillToInterview: selectedSkill,
             });
             setMessages([{ role: 'model', content: result.interviewerMessage }]);
         } catch (error) {
@@ -65,22 +75,26 @@ export function MockInterview() {
 
         try {
             const result = await startMockInterview({
-                internshipTitle,
-                userSkills: profile?.skills || [],
+                skillToInterview: selectedSkill,
                 history: newMessages,
             });
             
-            const newAiMessage: Message = {
-                role: 'model',
-                content: result.interviewerMessage,
-                feedback: result.feedback,
-            };
-
-            setMessages([...newMessages, newAiMessage]);
-
-            if (result.isInterviewOver) {
-                 toast({ title: 'Interview Complete!', description: 'Great job completing the mock interview.' });
+            if (result.isInterviewOver && result.summary && result.score && result.tips) {
+                setFinalFeedback({
+                    summary: result.summary,
+                    score: result.score,
+                    tips: result.tips,
+                });
+                toast({ title: 'Interview Complete!', description: 'Great job! Check out your final feedback below.' });
+            } else {
+                 const newAiMessage: Message = {
+                    role: 'model',
+                    content: result.interviewerMessage,
+                    feedback: result.feedback,
+                };
+                setMessages([...newMessages, newAiMessage]);
             }
+
         } catch (error) {
             console.error('AI interview error:', error);
             toast({ variant: 'destructive', title: 'Error during interview.' });
@@ -107,19 +121,24 @@ export function MockInterview() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl">
                         <BrainCircuit className="h-8 w-8 text-primary" />
-                        AI Mock Interview
+                        AI Mock Interviewer
                     </CardTitle>
-                    <CardDescription>Practice your interview skills with our AI. Enter the title of the internship you want to practice for.</CardDescription>
+                    <CardDescription>Practice your interview skills with our AI. Select a primary skill from your profile to begin.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <Input
-                        placeholder="e.g., Frontend Developer Intern"
-                        value={internshipTitle}
-                        onChange={(e) => setInternshipTitle(e.target.value)}
-                    />
+                <CardContent className="space-y-4">
+                    <Select onValueChange={setSelectedSkill} value={selectedSkill}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a skill from your profile..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {profile.skills.length > 0 ? profile.skills.map(skill => (
+                                <SelectItem key={skill.name} value={skill.name}>{skill.name}</SelectItem>
+                            )) : <SelectItem value="noskills" disabled>No skills found in profile</SelectItem>}
+                        </SelectContent>
+                    </Select>
                 </CardContent>
                 <CardFooter>
-                    <Button onClick={handleStartInterview} disabled={isAiLoading}>
+                    <Button onClick={handleStartInterview} disabled={isAiLoading || profile.skills.length === 0}>
                         {isAiLoading ? 'Starting...' : 'Start Interview'}
                     </Button>
                 </CardFooter>
@@ -128,10 +147,10 @@ export function MockInterview() {
     }
 
     return (
-        <Card className="flex flex-col h-[75vh]">
+        <Card className="flex flex-col h-[80vh]">
             <CardHeader>
-                <CardTitle>Mock Interview: <span className="text-primary">{internshipTitle}</span></CardTitle>
-                <CardDescription>Respond to the interviewer's questions below.</CardDescription>
+                <CardTitle>Mock Interview: <span className="text-primary">{selectedSkill}</span></CardTitle>
+                <CardDescription>Respond to the interviewer's questions below. Good luck!</CardDescription>
             </CardHeader>
             <CardContent className="flex-grow overflow-hidden">
                 <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
@@ -139,10 +158,10 @@ export function MockInterview() {
                         {messages.map((message, index) => (
                             <div key={index} className={`flex flex-col gap-2 ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
                                 <div className={`flex items-start gap-3 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                    <Bot className={`h-8 w-8 p-1.5 rounded-full bg-muted ${message.role === 'user' ? 'hidden' : ''}`} />
-                                    <User className={`h-8 w-8 p-1.5 rounded-full bg-primary text-primary-foreground ${message.role === 'model' ? 'hidden' : ''}`} />
+                                    <Bot className={`h-8 w-8 p-1.5 rounded-full bg-muted shrink-0 ${message.role === 'user' ? 'hidden' : ''}`} />
+                                    <User className={`h-8 w-8 p-1.5 rounded-full bg-primary text-primary-foreground shrink-0 ${message.role === 'model' ? 'hidden' : ''}`} />
                                     <div className={`rounded-lg p-3 max-w-md ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                                        <p className="text-sm">{message.content}</p>
+                                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                     </div>
                                 </div>
                                 {message.feedback && (
@@ -154,22 +173,46 @@ export function MockInterview() {
                                 )}
                             </div>
                         ))}
-                        {isAiLoading && <Skeleton className="h-16 w-3/4" />}
+                        {isAiLoading && <div className="flex items-start gap-3"><Bot className="h-8 w-8 p-1.5 rounded-full bg-muted shrink-0"/><Skeleton className="h-16 w-3/4" /></div>}
+                        {finalFeedback && (
+                            <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800">
+                                <CardHeader>
+                                    <CardTitle>Interview Complete!</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div>
+                                        <h3 className="font-semibold mb-2">Final Score: {finalFeedback.score}/10</h3>
+                                        <Progress value={finalFeedback.score * 10} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold">Summary:</h3>
+                                        <p className="text-sm text-muted-foreground">{finalFeedback.summary}</p>
+                                    </div>
+                                     <div>
+                                        <h3 className="font-semibold">Improvement Tips:</h3>
+                                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
+                                            {finalFeedback.tips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                        </ul>
+                                    </div>
+                                    <Button onClick={() => setInterviewStarted(false)}>Start a New Interview</Button>
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
                 </ScrollArea>
             </CardContent>
             <CardFooter className="pt-4 border-t">
                  <div className="flex w-full items-center space-x-2">
                     <Textarea
-                        placeholder="Type your answer here..."
+                        placeholder={finalFeedback ? "The interview has ended." : "Type your answer here..."}
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && !isAiLoading && handleSendAnswer()}
-                        disabled={isAiLoading}
+                        disabled={isAiLoading || !!finalFeedback}
                         className="flex-grow"
                         rows={2}
                     />
-                    <Button onClick={handleSendAnswer} disabled={isAiLoading}>
+                    <Button onClick={handleSendAnswer} disabled={isAiLoading || !!finalFeedback}>
                         <Send className="h-4 w-4" />
                         <span className="sr-only">Send</span>
                     </Button>

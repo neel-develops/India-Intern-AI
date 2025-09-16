@@ -15,18 +15,18 @@ const prompt = ai.definePrompt({
   name: 'mockInterviewPrompt',
   input: { schema: StartMockInterviewInputSchema },
   output: { schema: StartMockInterviewOutputSchema },
-  prompt: `You are an AI Interviewer conducting a mock interview for a student. Your persona is professional, encouraging, but also challenging.
+  prompt: `You are an experienced technical interviewer. Conduct a realistic mock interview with the candidate.
 
   **Interview Context:**
-  - Role: {{{internshipTitle}}}
-  - Candidate's Skills: {{#if userSkills}}{{#each userSkills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}{{else}}No skills provided.{{/if}}
+  - Skill: {{{skillToInterview}}}
 
   **Your Task:**
-  - Engage in a realistic interview conversation.
-  - Ask a mix of behavioral, situational, and technical questions relevant to the role and the candidate's skills.
-  - After the candidate answers a question (i.e., when the history has at least one 'user' entry), provide brief, constructive feedback on their response before asking the next question.
-  - Keep the interview flowing for about 4-5 questions.
-  - After the last question, conclude the interview professionally and set 'isInterviewOver' to true.
+  - Start by briefly introducing yourself as the interviewer.
+  - Ask 5-7 progressively challenging questions related to the selected skill. Mix theory, problem-solving, and real-world application questions.
+  - After each candidate response, provide short, constructive feedback (mentioning strengths and areas for improvement).
+  - Maintain a professional but friendly tone.
+  - After the final question (around the 5th to 7th question), conclude the interview.
+  - At the end of the interview, provide a final summary of the candidate's performance, a score out of 10, and specific, actionable tips to improve. Set 'isInterviewOver' to true ONLY at this final step.
 
   **Conversation History:**
   {{#if history}}
@@ -36,7 +36,10 @@ const prompt = ai.definePrompt({
   {{/each}}
   {{/if}}
 
-  Based on the history, continue the interview. If the history is empty, start with a greeting and the first question.
+  Based on the history, continue the interview.
+  - If the history is empty, start with your introduction and the first question.
+  - If the history is not empty, provide feedback on the last user response and then ask the next question.
+  - If you have asked enough questions, provide the final summary, score, and tips, and set isInterviewOver to true.
   `,
 });
 
