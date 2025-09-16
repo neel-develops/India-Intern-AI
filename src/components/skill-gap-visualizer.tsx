@@ -2,7 +2,7 @@
 'use client';
 import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Target, Lightbulb, Check, Award, GraduationCap, BarChart, ListTodo, Bot, User, AlertTriangle } from 'lucide-react';
+import { Target, Lightbulb, Check, Award, GraduationCap, BarChart, ListTodo, Bot, User, AlertTriangle, ChevronsUpDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -12,12 +12,15 @@ import type { AnalyzeSkillGapOutput } from '@/ai/flows/analyze-skill-gap-types';
 import { Skeleton } from './ui/skeleton';
 import { Badge } from './ui/badge';
 import type { Internship } from '@/lib/types';
-import { SmartMatchInternships } from './smart-match-internships';
 import { useRouter } from 'next/navigation';
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { Separator } from './ui/separator';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { internships as allInternships } from '@/lib/data';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './ui/command';
+import { cn } from '@/lib/utils';
 
 const getPriorityBadgeClass = (priority: 'Critical' | 'High' | 'Moderate') => {
     switch(priority) {
@@ -37,13 +40,18 @@ export function SkillGapVisualizer() {
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
     const router = useRouter();
+    const [open, setOpen] = useState(false)
 
-    const handleAnalyze = useCallback(async (internship: Internship) => {
+    const handleAnalyze = useCallback(async (internship: Internship | null) => {
         if (!profile) {
             toast({ variant: 'destructive', title: 'Please complete your profile first.' });
             return;
         }
-        if (!internship) return;
+        if (!internship) {
+            setSelectedInternship(null);
+            setAnalysis(null);
+            return;
+        }
         
         setSelectedInternship(internship);
         setIsAiLoading(true);
@@ -103,19 +111,67 @@ export function SkillGapVisualizer() {
 
     return (
         <div className="space-y-6">
-            <Card>
+            <Card className="bg-card/70 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl">
-                        <Target className="h-8 w-8 text-primary" />
+                        <Target className="h-8 w-8 text-secondary" />
                         Skill Gap Visualizer
                     </CardTitle>
                     <CardDescription>
-                        First, find your AI-powered internship matches. Then, select a card to analyze your skill gap and get a personalized action plan.
+                        Select your dream internship from the list below to analyze your skill gap and get a personalized action plan to land the job.
                     </CardDescription>
                 </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-medium">Search for your dream internship</label>
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-full md:w-[500px] justify-between"
+                                >
+                                {selectedInternship
+                                    ? selectedInternship.title
+                                    : "Select internship..."}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[500px] p-0">
+                                <Command>
+                                <CommandInput placeholder="Search internship..." />
+                                <CommandEmpty>No internship found.</CommandEmpty>
+                                <CommandGroup>
+                                    {allInternships.map((internship) => (
+                                    <CommandItem
+                                        key={internship.id}
+                                        value={internship.title}
+                                        onSelect={() => {
+                                            handleAnalyze(internship);
+                                            setOpen(false);
+                                        }}
+                                    >
+                                        <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            selectedInternship?.id === internship.id ? "opacity-100" : "opacity-0"
+                                        )}
+                                        />
+                                        <div className="flex flex-col">
+                                            <span>{internship.title}</span>
+                                            <span className="text-xs text-muted-foreground">{internship.company}</span>
+                                        </div>
+                                    </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </CardContent>
             </Card>
 
-            <SmartMatchInternships onInternshipSelect={handleAnalyze} selectedInternshipId={selectedInternship?.id}/>
             
             {apiError && (
                 <Alert variant="destructive">
@@ -132,36 +188,48 @@ export function SkillGapVisualizer() {
                     <CardHeader>
                          <Skeleton className="h-8 w-3/4" />
                     </CardHeader>
-                    <CardContent className="text-center">
-                        <Skeleton className="h-64 w-full" />
-                        <p className="mt-4 text-muted-foreground animate-pulse">AI is analyzing your profile...</p>
+                    <CardContent className="text-center p-8">
+                        <div className="flex justify-center items-center">
+                            <Bot className="h-16 w-16 text-secondary animate-pulse" />
+                        </div>
+                        <p className="mt-4 text-muted-foreground animate-pulse">Our AI is analyzing your profile against the internship requirements...</p>
                     </CardContent>
                 </Card>
             )}
 
+            {!selectedInternship && !isAiLoading && (
+                 <Alert className="bg-card/70 backdrop-blur-sm border-secondary/30 text-secondary">
+                    <Search className="h-4 w-4" />
+                    <AlertTitle>Ready to Analyze?</AlertTitle>
+                    <AlertDescription>
+                        Use the search bar above to find and select an internship. We'll instantly show you how you stack up.
+                    </AlertDescription>
+                </Alert>
+            )}
+
             {analysis && selectedInternship && (
-                <Card>
+                <Card className="bg-card/70 backdrop-blur-sm">
                     <CardHeader>
-                        <CardTitle>Analysis for: <span className="text-primary">{selectedInternship.title}</span></CardTitle>
+                        <CardTitle>Analysis for: <span className="text-secondary">{selectedInternship.title}</span></CardTitle>
                         <CardDescription>Here's a breakdown of your skills compared to the internship requirements.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-8">
                         <div className="grid md:grid-cols-3 gap-6">
-                            <Card className="flex flex-col items-center justify-center text-center p-6 md:col-span-1">
+                            <Card className="flex flex-col items-center justify-center text-center p-6 md:col-span-1 bg-card/50">
                                 <CardTitle className="mb-2">Overall Match</CardTitle>
                                 <div className="relative h-32 w-32">
                                      <svg className="h-full w-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                                         <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200 dark:text-gray-700" strokeWidth="2"></circle>
                                         <g className="origin-center -rotate-90 transform">
-                                            <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-primary" strokeWidth="2" strokeDasharray="100" strokeDashoffset={100 - analysis.overallMatchPercentage}></circle>
+                                            <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-secondary" strokeWidth="2" strokeDasharray="100" strokeDashoffset={100 - analysis.overallMatchPercentage}></circle>
                                         </g>
                                     </svg>
                                     <div className="absolute top-1/2 start-1/2 transform -translate-y-1/2 -translate-x-1/2">
-                                        <span className="text-center text-3xl font-bold text-gray-800 dark:text-white">{Math.round(analysis.overallMatchPercentage)}%</span>
+                                        <span className="text-center text-3xl font-bold text-foreground">{Math.round(analysis.overallMatchPercentage)}%</span>
                                     </div>
                                 </div>
                             </Card>
-                            <Card className="p-6 md:col-span-2">
+                            <Card className="p-6 md:col-span-2 bg-card/50">
                                 <CardTitle className="mb-4 flex items-center gap-2"><BarChart className="h-5 w-5"/> Skill Comparison</CardTitle>
                                 <ChartContainer config={chartConfig} className="w-full h-64">
                                     <ResponsiveContainer>
@@ -180,7 +248,7 @@ export function SkillGapVisualizer() {
                          <Separator />
                         
                         <div className="grid md:grid-cols-2 gap-6">
-                            <Card>
+                            <Card className="bg-card/50">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2"><Award className="h-5 w-5 text-green-500"/> Your Strengths</CardTitle>
                                 </CardHeader>
@@ -192,7 +260,7 @@ export function SkillGapVisualizer() {
                                     )}
                                 </CardContent>
                             </Card>
-                            <Card>
+                            <Card className="bg-card/50">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-yellow-500"/> Prioritized Gaps</CardTitle>
                                 </CardHeader>
@@ -217,9 +285,9 @@ export function SkillGapVisualizer() {
                          <Separator />
 
                         <div>
-                            <Card className="border-primary">
+                            <Card className="border-secondary bg-card/50">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-primary">
+                                    <CardTitle className="flex items-center gap-2 text-secondary">
                                         <ListTodo className="h-6 w-6" />
                                         Your Personalized Action Plan
                                     </CardTitle>
@@ -234,7 +302,7 @@ export function SkillGapVisualizer() {
                                         </div>
                                     ))}
                                     {analysis.prioritizedGaps.length > 0 && (
-                                        <Button onClick={handleGenerateLearningPlan} className="mt-4">
+                                        <Button onClick={handleGenerateLearningPlan} className="mt-4" variant="secondary">
                                             <Bot className="mr-2 h-4 w-4"/>
                                             Chat with AI Career Advisor for more details
                                         </Button>
@@ -248,3 +316,5 @@ export function SkillGapVisualizer() {
         </div>
     );
 }
+
+    
