@@ -18,7 +18,7 @@ const prompt = ai.definePrompt({
 
   {{#if userSkills}}
   User's Skills:
-  - {{#each userSkills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  - {{#each userSkills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}
   {{else}}
   User has not listed any skills.
   {{/if}}

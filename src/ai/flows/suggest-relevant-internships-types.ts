@@ -3,7 +3,7 @@
  */
 
 import {z} from 'zod';
-import type { Internship } from '@/lib/types';
+import type { Internship, Skill } from '@/lib/types';
 
 
 // Define the input schema for the flow
@@ -14,7 +14,10 @@ export const SuggestRelevantInternshipsInputSchema = z.object({
       age: z.number().describe('The age of the student.'),
       location: z.string().describe('The location of the student.'),
     }),
-    skills: z.array(z.string()).describe('A list of the student s skills.'),
+    skills: z.array(z.object({
+      name: z.string(),
+      proficiency: z.number(),
+    })).describe('A list of the student s skills with proficiency.'),
     preferences: z.object({
       domain: z.string().describe('The preferred domain of the student.'),
       internshipType: z

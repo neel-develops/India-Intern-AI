@@ -2,10 +2,14 @@
  * @fileOverview Types and Zod schemas for the mock interview flow.
  */
 import { z } from 'zod';
+import type { Skill } from '@/lib/types';
 
 export const StartMockInterviewInputSchema = z.object({
   internshipTitle: z.string().describe("The title of the internship the user is practicing for."),
-  userSkills: z.array(z.string()).describe("A list of the user's skills."),
+  userSkills: z.array(z.object({
+    name: z.string(),
+    proficiency: z.number(),
+  })).describe("A list of the user's skills with proficiency."),
   history: z.array(z.object({
       role: z.enum(['user', 'model']),
       content: z.string(),

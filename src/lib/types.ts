@@ -1,4 +1,9 @@
 
+export interface Skill {
+  name: string;
+  proficiency: number;
+}
+
 export interface Internship {
   id: string;
   title: string;
@@ -25,7 +30,7 @@ export interface StudentProfile {
     stream?: string;
     graduatingYear?: number;
   };
-  skills: string[];
+  skills: Skill[];
   preferences: {
     domain: string;
     internshipType: string;
@@ -33,6 +38,7 @@ export interface StudentProfile {
   };
   resumeSummary: string;
   resumeFilename?: string;
+  certificates?: { name: string }[];
   eligibility: {
     isNotEmployedFullTime: boolean;
     isNotEnrolledFullTime: boolean;

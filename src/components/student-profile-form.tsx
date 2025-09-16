@@ -2,7 +2,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,10 +23,11 @@ import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, PlusCircle, Trash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { universities } from '@/lib/universities';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
 
 
 const profileSchema = z.object({
@@ -41,14 +42,17 @@ const profileSchema = z.object({
     stream: z.string().min(2, "Stream is required."),
     graduatingYear: z.coerce.number().min(new Date().getFullYear(), "Year must be in the future.").max(new Date().getFullYear() + 5, "Year seems too far in the future."),
   }),
-  skills: z.string().min(1, 'Please list at least one skill.'),
+  skills: z.array(z.object({
+    name: z.string().min(1, "Skill name is required."),
+    proficiency: z.number().min(1).max(5),
+  })).min(1, "Please add at least one skill."),
   preferences: z.object({
     domain: z.string().min(1, 'Domain preference is required.'),
     internshipType: z.string().min(1, 'Internship type is required.'),
     otherDomain: z.string().optional(),
   }),
   resumeSummary: z.string().min(50, 'Resume summary must be at least 50 characters.'),
-  resumeFile: z.any().optional(),
+  certificates: z.any().optional(),
   eligibility: z.object({
     isNotEmployedFullTime: z.boolean().refine(val => val === true, { message: 'You must not be employed full-time.' }),
     isNotEnrolledFullTime: z.boolean().refine(val => val === true, { message: 'You must not be enrolled full-time.' }),
@@ -90,7 +94,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         stream: profile?.personalInfo.stream || '',
         graduatingYear: profile?.personalInfo.graduatingYear || new Date().getFullYear() + 1,
       },
-      skills: profile?.skills.join(', ') || '',
+      skills: profile?.skills || [{ name: '', proficiency: 3 }],
       preferences: {
         domain: profile?.preferences.domain || '',
         internshipType: profile?.preferences.internshipType || '',
@@ -107,13 +111,20 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
     },
   });
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "skills",
+  });
+
   const domainPreference = form.watch('preferences.domain');
 
   function onSubmit(data: ProfileFormValues) {
+    const certificateFiles = data.certificates as FileList | undefined;
+    const certificateNames = certificateFiles ? Array.from(certificateFiles).map(file => ({ name: file.name })) : [];
+
     const newProfile: StudentProfile = {
       ...data,
-      skills: data.skills.split(',').map(s => s.trim()).filter(Boolean),
-      resumeFilename: (data.resumeFile as FileList)?.[0]?.name,
+      certificates: certificateNames,
     };
     onSave(newProfile);
     toast({
@@ -304,24 +315,72 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         <Card>
           <CardHeader>
             <CardTitle>Skills & Preferences</CardTitle>
-            <CardDescription>Help us find the best matches for you.</CardDescription>
+            <CardDescription>Help us find the best matches for you by listing your skills and proficiency.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="skills"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Skills</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="e.g. React, Python, Figma" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter skills separated by commas.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <FormLabel>Skills</FormLabel>
+              {fields.map((item, index) => (
+                <div key={item.id} className="p-4 border rounded-lg space-y-4">
+                  <div className="flex gap-4 items-end">
+                    <FormField
+                      control={form.control}
+                      name={`skills.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex-grow">
+                          <FormLabel>Skill Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Python" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => remove(index)}
+                      disabled={fields.length <= 1}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                   <FormField
+                    control={form.control}
+                    name={`skills.${index}.proficiency`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Proficiency Level: {field.value}</FormLabel>
+                        <FormControl>
+                          <Slider
+                            min={1}
+                            max={5}
+                            step={1}
+                            defaultValue={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                          />
+                        </FormControl>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Beginner</span>
+                          <span>Intermediate</span>
+                          <span>Advanced</span>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => append({ name: "", proficiency: 3 })}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Skill
+              </Button>
+            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                 <FormField
                 control={form.control}
                 name="preferences.domain"
@@ -394,32 +453,33 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
 
         <Card>
           <CardHeader>
-            <CardTitle>Resume</CardTitle>
+            <CardTitle>Certificates & Portfolio</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="resumeSummary"
-              render={({ field }) => (
+             <FormField
+                control={form.control}
+                name="resumeSummary"
+                render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Resume Summary</FormLabel>
-                  <FormControl>
+                    <FormLabel>Professional Summary</FormLabel>
+                    <FormControl>
                     <Textarea placeholder="A brief summary of your experience and career goals..." rows={5} {...field} />
-                  </FormControl>
-                  <FormMessage />
+                    </FormControl>
+                    <FormDescription>This will be shown to recruiters as your resume summary.</FormDescription>
+                    <FormMessage />
                 </FormItem>
-              )}
+                )}
             />
             <FormField
                 control={form.control}
-                name="resumeFile"
+                name="certificates"
                 render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Upload Resume</FormLabel>
+                    <FormLabel>Upload Certificates/Portfolio</FormLabel>
                     <FormControl>
-                    <Input type="file" onChange={(e) => field.onChange(e.target.files)} />
+                    <Input type="file" multiple onChange={(e) => field.onChange(e.target.files)} />
                     </FormControl>
-                    <FormDescription>Upload your resume in PDF format.</FormDescription>
+                    <FormDescription>Upload any relevant certificates or portfolio items in PDF format.</FormDescription>
                     <FormMessage />
                 </FormItem>
                 )}

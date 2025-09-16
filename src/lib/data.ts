@@ -819,7 +819,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/priya-sharma-example',
       university: 'Indian Institute of Technology Bombay',
     },
-    skills: ['Python', 'Machine Learning', 'Data Analysis', 'Pandas'],
+    skills: [
+        { name: 'Python', proficiency: 4 },
+        { name: 'Machine Learning', proficiency: 3 },
+        { name: 'Data Analysis', proficiency: 4 },
+        { name: 'Pandas', proficiency: 4 },
+    ],
     preferences: {
       domain: 'Data Science',
       internshipType: 'Full-time',
@@ -842,7 +847,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/rohan-verma-example',
       university: 'Delhi Technological University',
     },
-    skills: ['React', 'TypeScript', 'Node.js', 'Tailwind CSS'],
+    skills: [
+        { name: 'React', proficiency: 4 },
+        { name: 'TypeScript', proficiency: 3 },
+        { name: 'Node.js', proficiency: 3 },
+        { name: 'Tailwind CSS', proficiency: 4 },
+    ],
     preferences: {
       domain: 'Web Development',
       internshipType: 'Remote',
@@ -865,7 +875,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/anika-singh-example',
       university: 'National Institute of Design',
     },
-    skills: ['Figma', 'UI Design', 'UX Research', 'Adobe XD'],
+    skills: [
+        { name: 'Figma', proficiency: 5 },
+        { name: 'UI Design', proficiency: 4 },
+        { name: 'UX Research', proficiency: 3 },
+        { name: 'Adobe XD', proficiency: 3 },
+    ],
     preferences: {
       domain: 'Design',
       internshipType: 'Full-time',
@@ -888,7 +903,12 @@ export const studentProfiles: StudentProfile[] = [
         linkedin: 'https://linkedin.com/in/arjun-reddy-example',
         university: 'Vellore Institute of Technology',
     },
-    skills: ['Flutter', 'Dart', 'Firebase', 'GetX'],
+    skills: [
+        { name: 'Flutter', proficiency: 4 },
+        { name: 'Dart', proficiency: 4 },
+        { name: 'Firebase', proficiency: 3 },
+        { name: 'GetX', proficiency: 3 },
+    ],
     preferences: {
         domain: 'Mobile Development',
         internshipType: 'Full-time',
@@ -911,7 +931,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/sneha-gupta-example',
       university: 'Shri Ram College of Commerce',
     },
-    skills: ['Financial Modeling', 'Excel', 'Valuation', 'Accounting'],
+    skills: [
+        { name: 'Financial Modeling', proficiency: 4 },
+        { name: 'Excel', proficiency: 5 },
+        { name: 'Valuation', proficiency: 3 },
+        { name: 'Accounting', proficiency: 4 },
+    ],
     preferences: {
       domain: 'Finance',
       internshipType: 'Full-time',
@@ -934,7 +959,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/vikram-singh-example',
       university: 'Symbiosis Centre for Media & Communication',
     },
-    skills: ['SEO', 'Content Marketing', 'Google Analytics', 'Social Media'],
+    skills: [
+        { name: 'SEO', proficiency: 4 },
+        { name: 'Content Marketing', proficiency: 3 },
+        { name: 'Google Analytics', proficiency: 4 },
+        { name: 'Social Media', proficiency: 5 },
+    ],
     preferences: {
       domain: 'Marketing',
       internshipType: 'Remote',
@@ -957,7 +987,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/pooja-desai-example',
       university: 'Veermata Jijabai Technological Institute',
     },
-    skills: ['AutoCAD', 'Structural Analysis', 'STAAD Pro', 'Project Management'],
+    skills: [
+        { name: 'AutoCAD', proficiency: 5 },
+        { name: 'Structural Analysis', proficiency: 4 },
+        { name: 'STAAD Pro', proficiency: 3 },
+        { name: 'Project Management', proficiency: 3 },
+    ],
     preferences: {
       domain: 'Engineering',
       internshipType: 'Full-time',
@@ -980,7 +1015,12 @@ export const studentProfiles: StudentProfile[] = [
       linkedin: 'https://linkedin.com/in/rajesh-kumar-example',
       university: 'Acharya N.G. Ranga Agricultural University',
     },
-    skills: ['Agronomy', 'Supply Chain Management', 'Rural Marketing', 'Data Collection'],
+    skills: [
+        { name: 'Agronomy', proficiency: 4 },
+        { name: 'Supply Chain Management', proficiency: 2 },
+        { name: 'Rural Marketing', proficiency: 3 },
+        { name: 'Data Collection', proficiency: 5 },
+    ],
     preferences: {
       domain: 'Agriculture',
       internshipType: 'Full-time',

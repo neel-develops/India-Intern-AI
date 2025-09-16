@@ -51,7 +51,7 @@ export function StudentCard({ student }: StudentCardProps) {
         </p>
         <div className="flex flex-wrap gap-2">
           {student.skills.slice(0, 5).map((skill) => (
-            <Badge key={skill} variant="secondary">{skill}</Badge>
+            <Badge key={skill.name} variant="secondary">{skill.name}</Badge>
           ))}
         </div>
         {student.matchScore !== undefined && student.reasons && (

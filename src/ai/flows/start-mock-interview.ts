@@ -19,7 +19,7 @@ const prompt = ai.definePrompt({
 
   **Interview Context:**
   - Role: {{{internshipTitle}}}
-  - Candidate's Skills: {{#if userSkills}}{{#each userSkills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}No skills provided.{{/if}}
+  - Candidate's Skills: {{#if userSkills}}{{#each userSkills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}{{else}}No skills provided.{{/if}}
 
   **Your Task:**
   - Engage in a realistic interview conversation.

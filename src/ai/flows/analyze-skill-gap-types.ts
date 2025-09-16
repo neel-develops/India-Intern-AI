@@ -2,9 +2,13 @@
  * @fileOverview Types and Zod schemas for the skill gap analysis flow.
  */
 import { z } from 'zod';
+import type { Skill } from '@/lib/types';
 
 export const AnalyzeSkillGapInputSchema = z.object({
-  userSkills: z.array(z.string()).describe("A list of the user's current skills."),
+  userSkills: z.array(z.object({
+    name: z.string(),
+    proficiency: z.number(),
+  })).describe("A list of the user's current skills with proficiency."),
   internshipDescription: z.string().describe("The full job description for the target internship."),
 });
 export type AnalyzeSkillGapInput = z.infer<typeof AnalyzeSkillGapInputSchema>;
