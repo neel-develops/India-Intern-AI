@@ -50,7 +50,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
       const result: SuggestRelevantInternshipsOutput = await suggestRelevantInternships({
         studentProfile: studentProfileForAI,
-        internshipListings: allInternships.map(i => ({...i, description: i.longDescription})),
+        internshipListings: allInternships.map(i => ({...i, description: i.description})),
       });
 
       const enrichedInternships = result.map(suggested => {
