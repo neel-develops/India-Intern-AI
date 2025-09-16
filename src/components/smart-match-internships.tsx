@@ -64,15 +64,14 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
         };
       }).filter((i): i is Internship & { matchReason: string } => i !== null);
 
+      if (enrichedInternships.length === 0 && result.length === 0) {
+        setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+      }
 
       setSuggestedInternships(enrichedInternships);
     } catch (error: any) {
       console.error('AI match error:', error);
-      if (error.message && error.message.includes('429')) {
-         setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
-      } else {
-         setApiError('Could not fetch AI-powered suggestions. Please try again later.');
-      }
+      setApiError('Could not fetch AI-powered suggestions. Please try again later.');
       toast({
         variant: 'destructive',
         title: 'Error',
