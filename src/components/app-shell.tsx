@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -208,11 +209,11 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  const isPublicPage = ['/login', '/register', '/eligibility', '/phone-login'].includes(pathname) || pathname.startsWith('/companies');
+  const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
   const isLandingPage = pathname === '/';
 
   // If user is not logged in and on a public page, or on landing page, show a simpler layout
-  if (!user && (isLandingPage || isPublicPage)) {
+  if ((!user && !loading) && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
              <header className="flex h-28 items-center justify-between gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40 px-4 lg:px-6 sticky top-0 z-30 py-4">

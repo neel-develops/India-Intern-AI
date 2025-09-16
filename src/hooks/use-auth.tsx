@@ -4,20 +4,34 @@
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
 import { useStudentProfile } from './use-student-profile.tsx';
+import { useToast } from './use-toast';
 
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  signInWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpWithEmail: (email: string, pass: string) => Promise<void>;
-  signOut: () => Promise<void>;
-}
+// --- Helper Functions ---
+const AUTH_STORAGE_KEY = 'firebase-auth-user';
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const getStoredUser = (): User | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const item = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error("Failed to parse user from localStorage", error);
+    return null;
+  }
+};
 
-// Mock a user object since we are bypassing actual Firebase Auth
+const setStoredUser = (user: User | null) => {
+  if (typeof window === 'undefined') return;
+  if (user) {
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+  } else {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  }
+};
+
+// Mock a user object for prototype
 const createMockUser = (email: string): User => ({
-  uid: email, // Use email as UID for simplicity
+  uid: email,
   email: email,
   displayName: 'Prototype User',
   photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`,
@@ -42,46 +56,89 @@ const createMockUser = (email: string): User => ({
   toJSON: () => ({}),
 });
 
+
+// --- Auth Context ---
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string) => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// --- Auth Provider ---
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { loadProfileForUser, clearProfile } = useStudentProfile();
-  
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+      const storedUser = getStoredUser();
+      if (storedUser) {
+        setUser(storedUser);
+        await loadProfileForUser(storedUser.uid);
+      }
+      setLoading(false);
+    };
+    initializeAuth();
+  }, [loadProfileForUser]);
+
   const handleLogin = useCallback(async (newUser: User) => {
+    setStoredUser(newUser);
     setUser(newUser);
     await loadProfileForUser(newUser.uid);
-    setLoading(false);
   },[loadProfileForUser]);
+
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    // Any email/password is valid in prototype mode
-    const mockUser = createMockUser(email);
-    await handleLogin(mockUser);
+    try {
+      // Any email/password is valid in prototype mode
+      const mockUser = createMockUser(email);
+      await handleLogin(mockUser);
+    } catch (error) {
+       console.error("Sign in failed:", error);
+       toast({
+           variant: 'destructive',
+           title: 'Sign In Failed',
+           description: 'An unexpected error occurred.',
+       })
+    } finally {
+        setLoading(false);
+    }
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
+    try {
      // Any email/password is valid in prototype mode
-    const mockUser = createMockUser(email);
-    await handleLogin(mockUser);
+      const mockUser = createMockUser(email);
+      await handleLogin(mockUser);
+    } catch (error) {
+       console.error("Sign up failed:", error);
+       toast({
+           variant: 'destructive',
+           title: 'Sign Up Failed',
+           description: 'An unexpected error occurred.',
+       })
+    } finally {
+        setLoading(false);
+    }
   };
 
   const signOut = async () => {
     setLoading(true);
     setUser(null);
+    setStoredUser(null);
     clearProfile();
     setLoading(false);
   };
-
-  useEffect(() => {
-    // On initial load, if there's no user, we should stop loading.
-    // This handles the case where the app is loaded for the first time without any user session.
-    if (!user) {
-        setLoading(false);
-    }
-  }, [user]);
-
+  
   return (
     <AuthContext.Provider value={{ user, loading, signInWithEmail, signUpWithEmail, signOut }}>
       {children}
