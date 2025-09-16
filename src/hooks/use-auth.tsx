@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedUser = getStoredUser();
       if (storedUser) {
         setUser(storedUser);
+        // Wait for the profile to load before we finish loading
         await loadProfileForUser(storedUser.uid);
       }
       setLoading(false);
@@ -136,6 +137,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setStoredUser(null);
     clearProfile();
+    // No need to delay here, we want the UI to update immediately on sign out
     setLoading(false);
   };
   
