@@ -76,9 +76,10 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 interface StudentProfileFormProps {
   profile: StudentProfile | null;
   onSave: (data: StudentProfile) => void;
+  userEmail: string;
 }
 
-export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps) {
+export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfileFormProps) {
   const { toast } = useToast();
 
   const form = useForm<ProfileFormValues>({
@@ -87,7 +88,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
       personalInfo: {
         name: profile?.personalInfo.name || '',
         age: profile?.personalInfo.age || 21,
-        email: profile?.personalInfo.email || '',
+        email: profile?.personalInfo.email || userEmail,
         location: profile?.personalInfo.location || '',
         linkedin: profile?.personalInfo.linkedin || '',
         university: profile?.personalInfo.university || '',
@@ -177,8 +178,9 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                     <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input type="email" placeholder="priya.sharma@example.com" {...field} />
+                        <Input type="email" readOnly {...field} className="bg-muted" />
                     </FormControl>
+                     <FormDescription>Your email is linked to your account and cannot be changed.</FormDescription>
                     <FormMessage />
                     </FormItem>
                 )}

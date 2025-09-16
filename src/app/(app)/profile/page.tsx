@@ -57,7 +57,7 @@ export default function ProfilePage() {
           {profile ? 'Keep your profile updated to get the best internship matches.' : 'Complete your profile to start finding internships.'}
         </p>
       </div>
-      <StudentProfileForm profile={profile} onSave={handleSave} />
+      <StudentProfileForm profile={profile} onSave={handleSave} userEmail={user.email || ''} />
     </div>
   );
 }
