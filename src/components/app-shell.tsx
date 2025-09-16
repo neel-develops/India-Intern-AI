@@ -77,6 +77,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 
   const aiTools = [
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
+     { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
   ]
   
   const sidebarHeader = (
