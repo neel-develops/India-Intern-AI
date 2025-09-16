@@ -10,12 +10,14 @@
 import {ai} from '@/ai/genkit';
 import { SuggestRelevantInternshipsInputSchema, SuggestRelevantInternshipsOutputSchema } from './suggest-relevant-internships-types';
 import type { SuggestRelevantInternshipsInput, SuggestRelevantInternshipsOutput } from './suggest-relevant-internships-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 // Define the prompt
 const suggestRelevantInternshipsPrompt = ai.definePrompt({
   name: 'suggestRelevantInternshipsPrompt',
   input: {schema: SuggestRelevantInternshipsInputSchema},
   output: {schema: SuggestRelevantInternshipsOutputSchema},
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an AI assistant tasked with suggesting relevant internships to students.
 
 Your goal is to provide the most suitable matches based on the student's profile and the available internship listings.

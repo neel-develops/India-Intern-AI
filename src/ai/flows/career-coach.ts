@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -14,6 +13,7 @@ import type { CareerCoachInput, CareerCoachOutput } from './career-coach-types';
 import { generateLearningPlan as generateLearningPlanFlow } from './generate-learning-plan';
 import { GenerateLearningPlanInputSchema, GenerateLearningPlanOutputSchema } from './generate-learning-plan-types';
 import { z } from 'zod';
+import { googleAI } from '@genkit-ai/googleai';
 
 const generateLearningPlanTool = ai.defineTool(
     {
@@ -31,17 +31,7 @@ const prompt = ai.definePrompt({
   input: { schema: CareerCoachInputSchema },
   output: { schema: z.object({ answer: z.string() }) }, // The direct text answer
   tools: [generateLearningPlanTool],
-  helpers: {
-    eq: (a: any, b: any) => a === b,
-  },
-  config: {
-    custom: {
-      knownHelpers: {
-        eq: true,
-      },
-      knownHelpersOnly: true,
-    }
-  },
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert AI Career Coach for students in India. Your name is 'CoachAI'. Your goal is to provide supportive, insightful, and actionable advice to help students navigate their internship journey and career development.
 
   Your advice should be:
@@ -66,6 +56,17 @@ const prompt = ai.definePrompt({
 
   Your Answer:
   `,
+  helpers: {
+    eq: (a: any, b: any) => a === b,
+  },
+  config: {
+    custom: {
+      knownHelpers: {
+        eq: true,
+      },
+      knownHelpersOnly: true,
+    }
+  },
   
 });
 

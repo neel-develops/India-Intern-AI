@@ -9,11 +9,13 @@
 import { ai } from '@/ai/genkit';
 import { AnalyzeSkillGapInputSchema, AnalyzeSkillGapOutputSchema } from './analyze-skill-gap-types';
 import type { AnalyzeSkillGapInput, AnalyzeSkillGapOutput } from './analyze-skill-gap-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 const prompt = ai.definePrompt({
   name: 'analyzeSkillGapPrompt',
   input: { schema: AnalyzeSkillGapInputSchema },
   output: { schema: AnalyzeSkillGapOutputSchema },
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are a career development AI. Your task is to analyze the gap between a user's skills and the requirements of an internship.
 
   {{#if userSkills}}

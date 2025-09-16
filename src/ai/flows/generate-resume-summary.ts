@@ -7,11 +7,13 @@
 import {ai} from '@/ai/genkit';
 import type { GenerateResumeSummaryInput, GenerateResumeSummaryOutput } from './generate-resume-summary-types';
 import { GenerateResumeSummaryInputSchema, GenerateResumeSummaryOutputSchema } from './generate-resume-summary-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 const prompt = ai.definePrompt({
   name: 'generateResumeSummaryPrompt',
   input: {schema: GenerateResumeSummaryInputSchema},
   output: {schema: GenerateResumeSummaryOutputSchema},
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert resume writer and career coach.
   Based on the user's original resume text and the list of their key skills, please rewrite the resume summary.
 

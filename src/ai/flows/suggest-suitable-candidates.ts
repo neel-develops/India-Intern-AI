@@ -9,6 +9,7 @@
 import {ai} from '@/ai/genkit';
 import { SuggestSuitableCandidatesInputSchema, SuggestSuitableCandidatesOutputSchema } from './suggest-suitable-candidates-types';
 import type { SuggestSuitableCandidatesInput, SuggestSuitableCandidatesOutput } from './suggest-suitable-candidates-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 
 export async function suggestSuitableCandidates(
@@ -21,6 +22,7 @@ const prompt = ai.definePrompt({
   name: 'suggestSuitableCandidatesPrompt',
   input: {schema: SuggestSuitableCandidatesInputSchema},
   output: {schema: SuggestSuitableCandidatesOutputSchema},
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an AI recruiter for the PM Internship Scheme. Your task is to identify the best student candidates for a given internship, following specific allocation guidelines.
 
   Evaluate each student against the internship description. Your evaluation must be based on a combination of merit and affirmative action principles.

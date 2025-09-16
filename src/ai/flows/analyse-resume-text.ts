@@ -10,11 +10,13 @@
 import {ai} from '@/ai/genkit';
 import type { AnalyseResumeInput, AnalyseResumeOutput } from './analyse-resume-text-types';
 import { AnalyseResumeInputSchema, AnalyseResumeOutputSchema } from './analyse-resume-text-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 const prompt = ai.definePrompt({
   name: 'analyseResumePrompt',
   input: {schema: AnalyseResumeInputSchema},
   output: {schema: AnalyseResumeOutputSchema},
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert career coach AI specializing in helping students create impactful resumes for internships.
   A student has provided their resume text. Your task is to analyze it and provide constructive feedback.
 

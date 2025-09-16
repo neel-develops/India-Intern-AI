@@ -10,12 +10,14 @@
 import {ai} from '@/ai/genkit';
 import type { GenerateLearningPlanInput, GenerateLearningPlanOutput } from './generate-learning-plan-types';
 import { GenerateLearningPlanInputSchema, GenerateLearningPlanOutputSchema } from './generate-learning-plan-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 
 const prompt = ai.definePrompt({
   name: 'generateLearningPlanPrompt',
   input: {schema: GenerateLearningPlanInputSchema},
   output: {schema: GenerateLearningPlanOutputSchema},
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are a helpful career coach AI. A user wants to learn a new skill: {{{skill}}}.
 
   Your task is to generate a concise, actionable learning plan to help them get started. The plan should be broken down into 3-4 logical steps. For each step, provide a brief description and include the following, ensuring all provided URLs are real, valid, and lead to high-quality content:

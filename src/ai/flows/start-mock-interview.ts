@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -11,11 +10,13 @@
 import { ai } from '@/ai/genkit';
 import { StartMockInterviewInputSchema, StartMockInterviewOutputSchema } from './start-mock-interview-types';
 import type { StartMockInterviewInput, StartMockInterviewOutput } from './start-mock-interview-types';
+import { googleAI } from '@genkit-ai/googleai';
 
 const prompt = ai.definePrompt({
   name: 'mockInterviewPrompt',
   input: { schema: StartMockInterviewInputSchema },
   output: { schema: StartMockInterviewOutputSchema },
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an experienced technical interviewer conducting a mock interview.
 
 **Interview Topic:** {{{skillToInterview}}}
