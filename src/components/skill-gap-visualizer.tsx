@@ -14,6 +14,7 @@ import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
 import type { Internship } from '@/lib/types';
 import { SmartMatchInternships } from './smart-match-internships';
+import { useRouter } from 'next/navigation';
 
 export function SkillGapVisualizer() {
     const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
@@ -21,6 +22,7 @@ export function SkillGapVisualizer() {
     const [isAiLoading, setIsAiLoading] = useState(false);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
+    const router = useRouter();
 
     const handleAnalyze = useCallback(async (internship: Internship) => {
         if (!profile) {
@@ -44,6 +46,13 @@ export function SkillGapVisualizer() {
             setIsAiLoading(false);
         }
     }, [profile, toast]);
+    
+    const handleGenerateLearningPlan = () => {
+        if (!analysis || analysis.missingSkills.length === 0) return;
+        const missingSkillsText = analysis.missingSkills.map(s => s.skill).join(', ');
+        const prompt = `Please generate a detailed learning plan for me to acquire the following skills: ${missingSkillsText}.`;
+        router.push(`/career-coach?prompt=${encodeURIComponent(prompt)}`);
+    }
     
     if (isProfileLoading) return <Skeleton className="h-64 w-full" />;
 
@@ -133,11 +142,9 @@ export function SkillGapVisualizer() {
                                 )}
                             </div>
                              {analysis.missingSkills.length > 0 && (
-                                <Button asChild className="mt-4">
-                                    <Link href="/career-coach">
-                                        <GraduationCap className="mr-2 h-4 w-4"/>
-                                        Generate a Learning Plan with AI
-                                    </Link>
+                                <Button onClick={handleGenerateLearningPlan} className="mt-4">
+                                    <GraduationCap className="mr-2 h-4 w-4"/>
+                                    Generate a Learning Plan with AI
                                 </Button>
                              )}
                         </div>

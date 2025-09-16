@@ -3,7 +3,12 @@
  * @fileOverview Types for the AI Career Advisor flow.
  */
 import {z} from 'zod';
-import type { StudentProfile } from '@/lib/types';
+
+export const MessageSchema = z.object({
+    role: z.enum(['user', 'model']),
+    content: z.string(),
+});
+export type Message = z.infer<typeof MessageSchema>;
 
 export const CareerCoachInputSchema = z.object({
   studentProfile: z.object({

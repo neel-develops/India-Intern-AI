@@ -7,43 +7,60 @@
 import {ai} from '@/ai/genkit';
 import { googleAI } from '@genkit-ai/googleai';
 import { CareerCoachInputSchema, CareerCoachOutputSchema } from './career-coach-types';
-import type { CareerCoachInput, CareerCoachOutput } from './career-coach-types';
+import type { CareerCoachInput, CareerCoachOutput, Message } from './career-coach-types';
+import { z } from 'zod';
+
+const CareerCoachChatInputSchema = z.object({
+  studentProfile: CareerCoachInputSchema.shape.studentProfile,
+  history: z.array(z.object({
+    role: z.enum(['user', 'model']),
+    content: z.string(),
+  })).optional().describe("The history of the conversation so far."),
+});
+type CareerCoachChatInput = z.infer<typeof CareerCoachChatInputSchema>;
+
+
+const CareerCoachChatOutputSchema = z.object({
+  response: z.string().describe("The career coach's response."),
+});
+type CareerCoachChatOutput = z.infer<typeof CareerCoachChatOutputSchema>;
+
 
 const prompt = ai.definePrompt({
-  name: 'careerCoachPrompt',
-  input: {schema: CareerCoachInputSchema},
-  output: {schema: CareerCoachOutputSchema},
+  name: 'careerCoachChatPrompt',
+  input: {schema: CareerCoachChatInputSchema},
+  output: {schema: CareerCoachChatOutputSchema},
   model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are a professional career advisor AI for the IndiaIntern.ai platform. Your goal is to provide friendly, encouraging, and practical advice to students to help them achieve their career goals.
+  prompt: `You are a professional, friendly, and encouraging AI career advisor for the IndiaIntern.ai platform. Your goal is to provide practical and personalized advice to students to help them achieve their career goals.
 
-  The user has provided their profile information. Based on this, you must perform a comprehensive analysis and provide the following:
+  You are having a conversation with a student. Use their profile information as context for your answers.
 
-  User Profile:
+  **Student Profile:**
   - Name: {{{studentProfile.personalInfo.name}}}
   - Education: {{{studentProfile.personalInfo.degree}}} in {{{studentProfile.personalInfo.stream}}}
   - Skills: {{#each studentProfile.skills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}
   - Career Interests: Domain of {{{studentProfile.preferences.domain}}}
 
-  Your Tasks:
-  1.  **Skill Analysis**: Analyze the user's current skills. Identify their strengths and pinpoint any critical skill gaps they might have for their stated career interests.
-  2.  **Suggest Career Paths**: Suggest 2-3 specific and realistic career paths, internships, or entry-level jobs that are a good match for their current profile. For each suggestion, explain *why* it's a good fit.
-  3.  **Create a Learning Plan**: Provide a step-by-step plan to close the identified skill gaps. For each major gap, suggest concrete actions like specific types of projects to build, topics to study, or tasks to practice.
-  4.  **Provide Resources**: For each step in the learning plan, include a list of accessible resources. Prioritize online courses, free workshops, or low-data options suitable for all users, including those in rural areas (e.g., freeCodeCamp, NPTEL, Coursera's free courses).
-  5.  **Professional Development Tips**: Give actionable tips on:
-      -   **Resume Building**: How can they tailor their resume to highlight their strengths for their desired roles?
-      -   **Interview Prep**: What are some key things they should prepare for when interviewing for jobs in their domain?
-      -   **Networking**: How can a student start networking effectively?
+  **Conversation History**:
+  {{#each history}}
+    **{{role}}**: {{content}}
+  {{/each}}
 
-  Keep your advice friendly, encouraging, and practical. Ensure all generated URLs are valid.
+  **Your Task**:
+  Based on the conversation history and the student's profile, provide a helpful and encouraging response to their latest message.
+  
+  If the user asks for a learning plan for specific skills, provide a detailed plan with actionable steps and links to accessible online resources (prioritize free or low-cost options like freeCodeCamp, NPTEL, Coursera's free courses).
+  
+  Keep your advice practical and tailored to the student. Ensure any generated URLs are valid.
   `,
 });
 
 
-const careerCoachFlow = ai.defineFlow(
+const careerCoachChatFlow = ai.defineFlow(
   {
-    name: 'careerCoachFlow',
-    inputSchema: CareerCoachInputSchema,
-    outputSchema: CareerCoachOutputSchema,
+    name: 'careerCoachChatFlow',
+    inputSchema: CareerCoachChatInputSchema,
+    outputSchema: CareerCoachChatOutputSchema,
   },
   async input => {
     const {output} = await prompt(input);
@@ -51,9 +68,8 @@ const careerCoachFlow = ai.defineFlow(
   }
 );
 
-
-export async function getCareerAdvice(
-  input: CareerCoachInput
-): Promise<CareerCoachOutput> {
-  return careerCoachFlow(input);
+export async function chatWithCareerCoach(
+  input: CareerCoachChatInput
+): Promise<CareerCoachChatOutput> {
+  return careerCoachChatFlow(input);
 }
