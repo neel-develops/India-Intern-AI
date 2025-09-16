@@ -57,7 +57,6 @@ export function SkillGapVisualizer() {
     );
 
     const matchPercentage = analysis ? (analysis.matchingSkills.length / (analysis.requiredSkills.length || 1)) * 100 : 0;
-    const firstMissingSkill = analysis?.missingSkills?.[0]?.skill;
 
     return (
         <div className="space-y-6">
@@ -131,21 +130,11 @@ export function SkillGapVisualizer() {
                                 )}
                             </div>
                         </div>
-                         {firstMissingSkill && (
-                            <div className="pt-4 border-t">
-                                <h3 className="text-lg font-semibold mb-2">Next Step</h3>
-                                <p className="text-muted-foreground mb-4">Bridge the gap! Click below to get a personalized learning plan for your first missing skill from the AI Career Coach.</p>
-                                <Button asChild>
-                                    <Link href={`/career-coach?prompt=${encodeURIComponent(`Create a learning plan for ${firstMissingSkill}`)}`}>
-                                        <GraduationCap className="mr-2 h-4 w-4" />
-                                        Learn "{firstMissingSkill}"
-                                    </Link>
-                                </Button>
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
             )}
         </div>
     );
 }
+
+    

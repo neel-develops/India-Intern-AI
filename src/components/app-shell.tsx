@@ -74,9 +74,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   ];
 
   const aiTools = [
-     { href: '/career-coach', icon: Sparkles, label: 'AI Career Coach', auth: true },
      { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
-     { href: '/mock-interview', icon: MessageSquare, label: 'Mock Interview', auth: true },
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
   ]
   
@@ -280,3 +278,5 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </NotificationsProvider>
     )
 }
+
+    
