@@ -252,7 +252,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                       <Command>
                         <CommandInput placeholder="Search university..." />
                         <CommandEmpty>No university found.</CommandEmpty>
-                        <CommandGroup>
+                        <CommandGroup className="max-h-64 overflow-y-auto">
                           {universities.map((uni) => (
                             <CommandItem
                               value={uni}
