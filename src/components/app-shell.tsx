@@ -17,10 +17,8 @@ import {
   LayoutDashboard,
   Home,
   Bell,
-  BrainCircuit,
   FileScan,
   Sparkles,
-  GraduationCap,
   MessageSquare,
   BarChart3,
 } from 'lucide-react';

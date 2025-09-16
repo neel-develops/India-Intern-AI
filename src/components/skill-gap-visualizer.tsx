@@ -2,7 +2,7 @@
 'use client';
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Target, Lightbulb, Check, X, GraduationCap, BarChart3, Wand2 } from 'lucide-react';
+import { Target, Lightbulb, Check, X, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -134,9 +134,9 @@ export function SkillGapVisualizer() {
                          {firstMissingSkill && (
                             <div className="pt-4 border-t">
                                 <h3 className="text-lg font-semibold mb-2">Next Step</h3>
-                                <p className="text-muted-foreground mb-4">Bridge the gap! Click below to get a personalized learning plan for your first missing skill.</p>
+                                <p className="text-muted-foreground mb-4">Bridge the gap! Click below to get a personalized learning plan for your first missing skill from the AI Career Coach.</p>
                                 <Button asChild>
-                                    <Link href={`/learn?skill=${encodeURIComponent(firstMissingSkill)}`}>
+                                    <Link href={`/career-coach?prompt=${encodeURIComponent(`Create a learning plan for ${firstMissingSkill}`)}`}>
                                         <GraduationCap className="mr-2 h-4 w-4" />
                                         Learn "{firstMissingSkill}"
                                     </Link>

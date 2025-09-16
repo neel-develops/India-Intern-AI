@@ -1,6 +1,7 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Sparkles, Bot, User, Send, BrainCircuit, BookOpen, Rocket, Youtube, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -24,6 +25,14 @@ export function AICareerCoach() {
     const [userInput, setUserInput] = useState('');
     const [isAiLoading, setIsAiLoading] = useState(false);
     const { toast } = useToast();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const prompt = searchParams.get('prompt');
+        if (prompt) {
+            handleSendMessage(prompt);
+        }
+    }, [searchParams]);
     
     const suggestedPrompts = [
         "How do I prepare for a technical interview?",
