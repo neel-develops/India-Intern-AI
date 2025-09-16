@@ -15,7 +15,7 @@ const prompt = ai.definePrompt({
   name: 'analyzeSkillGapPrompt',
   input: { schema: AnalyzeSkillGapInputSchema },
   output: { schema: AnalyzeSkillGapOutputSchema },
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-pro'),
   prompt: `You are a career development AI. Your task is to analyze the gap between a user's skills and the requirements of an internship.
 
   {{#if userSkills}}
