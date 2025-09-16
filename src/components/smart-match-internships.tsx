@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InternshipCard } from '@/components/internship-card';
 import { useToast } from '@/hooks/use-toast';
-import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships';
+import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-relevant-internships-types';
 import type { Internship } from '@/lib/types';
 import { Input } from './ui/input';
 
@@ -38,7 +38,11 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
     try {
       const studentProfileForAI = {
-        personalInfo: profile.personalInfo,
+        personalInfo: {
+          name: profile.personalInfo.name || '',
+          age: profile.personalInfo.age || 0,
+          location: profile.personalInfo.location || '',
+        },
         skills: profile.skills,
         preferences: profile.preferences,
         resumeText: profile.resumeSummary,

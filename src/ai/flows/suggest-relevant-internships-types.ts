@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Types and Zod schemas for the internship suggestion flow.
  */
@@ -47,14 +46,8 @@ export type SuggestRelevantInternshipsInput = z.infer<
 // Define the output schema for the flow
 export const SuggestRelevantInternshipsOutputSchema = z.array(z.object({
   id: z.string().describe('The unique ID of the internship listing.'),
-  title: z.string(),
-  company: z.string(),
-  description: z.string(),
-  skills: z.array(z.string()),
-  domain: z.string(),
-  location: z.string(),
   matchReason: z.string().describe('The reason why this internship is a good match for the student.'),
 }));
 
 // This is a workaround to make the AI output compatible with our Internship type
-export type SuggestRelevantInternshipsOutput = (Omit<Internship, 'longDescription' | 'responsibilities' | 'qualifications' | 'image'> & { matchReason: string })[];
+export type SuggestRelevantInternshipsOutput = { id: string, matchReason: string }[];

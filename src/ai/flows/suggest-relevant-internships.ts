@@ -31,7 +31,7 @@ Student Profile:
 Internship Listings:
 {{{json internshipListings}}}
 
-Based on these rules, output a JSON array of the top 3-5 internship objects that are the best fit for the student. Ensure the original internship 'id' is included in your response.
+Based on these rules, output a JSON array of the top 3-5 internship objects that are the best fit for the student. Your response should ONLY contain the internship 'id' and the 'matchReason'.
       `,
 });
 
