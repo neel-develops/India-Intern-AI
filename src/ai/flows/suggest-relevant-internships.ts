@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -18,16 +19,12 @@ const suggestRelevantInternshipsPrompt = ai.definePrompt({
   input: {schema: SuggestRelevantInternshipsInputSchema},
   output: {schema: SuggestRelevantInternshipsOutputSchema},
   model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are an AI assistant tasked with suggesting relevant internships to students.
+  prompt: `You are an expert AI career counselor. Your task is to find the most relevant internships for a student from a list of available openings.
 
-Your goal is to provide the most suitable matches based on the student's profile and the available internship listings.
-
-You must consider the following factors:
-*   Match the student's skills with the skills required for the internship.
-*   Match the student's preferred domain and internship type. If the domain is 'Other', use the 'otherDomain' field as their preference.
-*   Consider the student's location preferences.
-
-For each suggested internship, you must provide a clear 'matchReason' that explains why it's a good fit, referencing the student's skills and preferences.
+You MUST follow these rules strictly:
+1.  **Skill-Based Matching is the #1 Priority**: The internships you suggest MUST require skills that the student possesses. The more skills that overlap, the better the match. Do NOT suggest internships where the student has zero matching skills.
+2.  **Adhere to Domain Preference**: The student has specified a preferred domain. Your suggestions should fall within this domain. For example, if the student's domain is 'Data Science', do not suggest a 'Civil Engineering' internship.
+3.  **Provide Clear Justification**: For each match, the 'matchReason' field is mandatory. It must clearly and concisely explain *why* the internship is a good fit, mentioning the specific skills the student has that are relevant to the role.
 
 Student Profile:
 {{{json studentProfile}}}
@@ -35,7 +32,7 @@ Student Profile:
 Internship Listings:
 {{{json internshipListings}}}
 
-Output a JSON array of internship objects that best match the student's profile based on the criteria above. Include the original internship 'id' in your response. Only return the top 3-5 matches.
+Based on these rules, output a JSON array of the top 3-5 internship objects that are the best fit for the student. Ensure the original internship 'id' is included in your response.
       `,
 });
 
