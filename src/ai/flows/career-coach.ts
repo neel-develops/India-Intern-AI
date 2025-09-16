@@ -55,16 +55,6 @@ const prompt = ai.definePrompt({
 
   Your Answer:
   `,
-  
-  config: {
-      custom: {
-        handlebars: {
-            helpers: {
-                eq: (v1: any, v2: any) => v1 === v2,
-            }
-        }
-      }
-  }
 });
 
 const careerCoachFlow = ai.defineFlow(
