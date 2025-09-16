@@ -78,6 +78,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const aiTools = [
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
      { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
+     { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer', auth: true },
   ]
   
   const sidebarHeader = (
@@ -280,5 +281,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </NotificationsProvider>
     )
 }
-
-    
