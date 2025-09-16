@@ -55,6 +55,7 @@ const prompt = ai.definePrompt({
 
   Your Answer:
   `,
+  
 });
 
 const careerCoachFlow = ai.defineFlow(
@@ -64,10 +65,8 @@ const careerCoachFlow = ai.defineFlow(
     outputSchema: CareerCoachOutputSchema,
   },
   async (input) => {
-    // A little bit of a hack to make the prompt work with roles
-    const historyWithRoles = input.history?.map(h => ({...h, isUser: h.role === 'user', isModel: h.role === 'model' }))
-
-    const response = await prompt({...input, history: historyWithRoles as any});
+    
+    const response = await prompt(input);
     const toolCalls = response.toolCalls('generateLearningPlan');
     
     let learningPlan: CareerCoachOutput['learningPlan'] = null;
