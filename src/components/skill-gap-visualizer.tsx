@@ -21,6 +21,7 @@ import { internships as allInternships } from '@/lib/data';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from './ui/command';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 const getPriorityBadgeClass = (priority: 'Critical' | 'High' | 'Moderate') => {
     switch(priority) {
@@ -41,6 +42,7 @@ export function SkillGapVisualizer() {
     const { toast } = useToast();
     const router = useRouter();
     const [open, setOpen] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleAnalyze = useCallback(async (internship: Internship | null) => {
         if (!profile) {
@@ -54,6 +56,7 @@ export function SkillGapVisualizer() {
         }
         
         setSelectedInternship(internship);
+        setSearchQuery(internship.title);
         setIsAiLoading(true);
         setAnalysis(null);
         setApiError(null);
@@ -108,6 +111,15 @@ export function SkillGapVisualizer() {
             </CardContent>
         </Card>
     );
+    
+    const filteredInternships = useMemo(() => {
+        if (!searchQuery) return [];
+        return allInternships.filter(internship => 
+            internship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            internship.company.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery]);
+
 
     return (
         <div className="space-y-6">
@@ -118,57 +130,50 @@ export function SkillGapVisualizer() {
                         Skill Gap Visualizer
                     </CardTitle>
                     <CardDescription>
-                        Select your dream internship from the list below to analyze your skill gap and get a personalized action plan to land the job.
+                        Enter your dream internship in the text box below to analyze your skill gap and get a personalized action plan to land the job.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium">Search for your dream internship</label>
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={open}
-                                className="w-full md:w-[500px] justify-between"
+                     <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                            <div className="relative w-full md:w-[500px]">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input 
+                                    placeholder="Enter your dream internship title or company..."
+                                    className="w-full pl-10"
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        if (!open) setOpen(true);
+                                        if (selectedInternship) setSelectedInternship(null);
+                                        if (analysis) setAnalysis(null);
+                                    }}
+                                />
+                            </div>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[500px] p-0" align="start">
+                            <Command>
+                            <CommandEmpty>{searchQuery.length > 2 && filteredInternships.length === 0 ? "No internships found." : "Keep typing to see results..."}</CommandEmpty>
+                            <CommandGroup>
+                                {filteredInternships.map((internship) => (
+                                <CommandItem
+                                    key={internship.id}
+                                    value={internship.title}
+                                    onSelect={() => {
+                                        handleAnalyze(internship);
+                                        setOpen(false);
+                                    }}
                                 >
-                                {selectedInternship
-                                    ? selectedInternship.title
-                                    : "Select internship..."}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[500px] p-0">
-                                <Command>
-                                <CommandInput placeholder="Search internship..." />
-                                <CommandEmpty>No internship found.</CommandEmpty>
-                                <CommandGroup>
-                                    {allInternships.map((internship) => (
-                                    <CommandItem
-                                        key={internship.id}
-                                        value={internship.title}
-                                        onSelect={() => {
-                                            handleAnalyze(internship);
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        <Check
-                                        className={cn(
-                                            "mr-2 h-4 w-4",
-                                            selectedInternship?.id === internship.id ? "opacity-100" : "opacity-0"
-                                        )}
-                                        />
-                                        <div className="flex flex-col">
-                                            <span>{internship.title}</span>
-                                            <span className="text-xs text-muted-foreground">{internship.company}</span>
-                                        </div>
-                                    </CommandItem>
-                                    ))}
-                                </CommandGroup>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
-                    </div>
+                                    <div className="flex flex-col">
+                                        <span>{internship.title}</span>
+                                        <span className="text-xs text-muted-foreground">{internship.company}</span>
+                                    </div>
+                                </CommandItem>
+                                ))}
+                            </CommandGroup>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
                 </CardContent>
             </Card>
 
@@ -316,5 +321,3 @@ export function SkillGapVisualizer() {
         </div>
     );
 }
-
-    
