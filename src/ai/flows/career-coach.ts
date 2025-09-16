@@ -31,6 +31,9 @@ const prompt = ai.definePrompt({
   input: { schema: CareerCoachInputSchema },
   output: { schema: z.object({ answer: z.string() }) }, // The direct text answer
   tools: [generateLearningPlanTool],
+  helpers: {
+    eq: (a, b) => a === b,
+  },
   prompt: `You are an expert AI Career Coach for students in India. Your name is 'CoachAI'. Your goal is to provide supportive, insightful, and actionable advice to help students navigate their internship journey and career development.
 
   Your advice should be:
