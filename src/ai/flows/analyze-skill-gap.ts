@@ -54,11 +54,19 @@ const analyzeSkillGapFlow = ai.defineFlow(
     outputSchema: AnalyzeSkillGapOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    try {
+        const { output } = await prompt(input);
+        return output!;
+    } catch (error: any) {
+        if (error.message && error.message.includes('429')) {
+            console.warn('AI quota limit reached for analyzeSkillGap. Returning null.');
+            return null;
+        }
+        throw error;
+    }
   }
 );
 
-export async function analyzeSkillGap(input: AnalyzeSkillGapInput): Promise<AnalyzeSkillGapOutput> {
+export async function analyzeSkillGap(input: AnalyzeSkillGapInput): Promise<AnalyzeSkillGapOutput | null> {
   return analyzeSkillGapFlow(input);
 }

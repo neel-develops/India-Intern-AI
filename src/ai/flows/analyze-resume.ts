@@ -45,11 +45,19 @@ const analyzeResumeFlow = ai.defineFlow(
     outputSchema: AnalyzeResumeOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    try {
+      const { output } = await prompt(input);
+      return output!;
+    } catch (error: any) {
+      if (error.message && error.message.includes('429')) {
+        console.warn('AI quota limit reached for analyzeResume. Returning null.');
+        return null;
+      }
+      throw error;
+    }
   }
 );
 
-export async function analyzeResume(input: AnalyzeResumeInput): Promise<AnalyzeResumeOutput> {
+export async function analyzeResume(input: AnalyzeResumeInput): Promise<AnalyzeResumeOutput | null> {
   return analyzeResumeFlow(input);
 }

@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { FileScan, Wand2, Lightbulb, ThumbsUp, ThumbsDown, User, ArrowRight } from 'lucide-react';
+import { FileScan, Wand2, Lightbulb, ThumbsUp, ThumbsDown, User, ArrowRight, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +19,7 @@ export function ResumeAnalyser() {
   const [resumeText, setResumeText] = useState('');
   const [analysis, setAnalysis] = useState<AnalyzeResumeOutput | null>(null);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { toast } = useToast();
   const { profile, isLoading: profileLoading } = useStudentProfile();
 
@@ -29,11 +30,17 @@ export function ResumeAnalyser() {
     }
     setIsAiLoading(true);
     setAnalysis(null);
+    setApiError(null);
     try {
       const result = await analyzeResume({ resumeText });
-      setAnalysis(result);
+      if (result) {
+        setAnalysis(result);
+      } else {
+        setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+      }
     } catch (error) {
       console.error('Resume analysis error:', error);
+      setApiError('Could not analyze your resume. Please try again later.');
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -103,6 +110,16 @@ export function ResumeAnalyser() {
       </Card>
 
       {isAiLoading && <Skeleton className="h-80 w-full" />}
+      
+      {apiError && (
+        <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>API Limit Reached</AlertTitle>
+            <AlertDescription>
+                {apiError}
+            </AlertDescription>
+        </Alert>
+      )}
 
       {analysis && (
         <Card>

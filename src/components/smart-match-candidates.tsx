@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Wand2 } from 'lucide-react';
+import { Wand2, AlertTriangle } from 'lucide-react';
 import { suggestSuitableCandidates } from '@/ai/flows/suggest-suitable-candidates';
 import { studentProfiles as allStudentProfiles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,13 @@ import { useToast } from '@/hooks/use-toast';
 import type { SuggestSuitableCandidatesOutput } from '@/ai/flows/suggest-suitable-candidates';
 import { StudentCard } from './student-card';
 import { Skeleton } from './ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 export function SmartMatchCandidates() {
   const [internshipDescription, setInternshipDescription] = useState('');
   const [suggestedCandidates, setSuggestedCandidates] = useState<SuggestSuitableCandidatesOutput>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleFindCandidates = async () => {
@@ -31,6 +33,7 @@ export function SmartMatchCandidates() {
 
     setIsAiLoading(true);
     setSuggestedCandidates([]);
+    setApiError(null);
 
     try {
         const profilesForAI = allStudentProfiles.map(p => ({
@@ -40,7 +43,7 @@ export function SmartMatchCandidates() {
                 email: p.personalInfo.email,
                 location: p.personalInfo.location,
             },
-            skills: p.skills,
+            skills: p.skills.map(s => s.name),
             preferences: [`Domain: ${p.preferences.domain}`, `Type: ${p.preferences.internshipType}`],
             resumeSummary: p.resumeSummary,
             affirmativeAction: {
@@ -55,13 +58,19 @@ export function SmartMatchCandidates() {
         internshipDescription,
         studentProfiles: profilesForAI,
       });
+      
+      if (result) {
+        // Sort results by match score descending
+        const sortedResult = result.sort((a, b) => b.matchScore - a.matchScore);
+        setSuggestedCandidates(sortedResult);
+      } else {
+        setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+      }
 
-      // Sort results by match score descending
-      const sortedResult = result.sort((a, b) => b.matchScore - a.matchScore);
-      setSuggestedCandidates(sortedResult);
 
     } catch (error) {
       console.error('AI match error:', error);
+      setApiError('Could not fetch AI-powered suggestions. Please try again later.');
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -115,6 +124,16 @@ export function SmartMatchCandidates() {
             </Card>
           ))}
         </div>
+      )}
+
+      {apiError && (
+        <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>API Limit Reached</AlertTitle>
+            <AlertDescription>
+                {apiError}
+            </AlertDescription>
+        </Alert>
       )}
 
       {!isAiLoading && suggestedCandidates.length > 0 && (

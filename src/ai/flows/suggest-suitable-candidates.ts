@@ -63,7 +63,15 @@ const suggestSuitableCandidatesFlow = ai.defineFlow(
     outputSchema: SuggestSuitableCandidatesOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+        const {output} = await prompt(input);
+        return output!;
+    } catch (error: any) {
+        if (error.message && error.message.includes('429')) {
+            console.warn('AI quota limit reached for suggestSuitableCandidates. Returning empty array.');
+            return [];
+        }
+        throw error;
+    }
   }
 );

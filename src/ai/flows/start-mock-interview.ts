@@ -54,8 +54,19 @@ const mockInterviewFlow = ai.defineFlow(
     outputSchema: StartMockInterviewOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const {output} = await prompt(input);
+      return output!;
+    } catch (error: any) {
+        if (error.message && error.message.includes('429')) {
+            console.warn('AI quota limit reached for mockInterviewFlow.');
+            return {
+                response: "I'm sorry, but it looks like we've reached the daily limit for AI interactions on our free plan. Please try again tomorrow.",
+                interviewFinished: true,
+            };
+        }
+        throw error;
+    }
   }
 );
 

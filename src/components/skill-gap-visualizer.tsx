@@ -2,7 +2,7 @@
 'use client';
 import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { Target, Lightbulb, Check, Award, GraduationCap, BarChart, ListTodo, Bot, User } from 'lucide-react';
+import { Target, Lightbulb, Check, Award, GraduationCap, BarChart, ListTodo, Bot, User, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { Separator } from './ui/separator';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 const getPriorityBadgeClass = (priority: 'Critical' | 'High' | 'Moderate') => {
     switch(priority) {
@@ -32,6 +33,7 @@ export function SkillGapVisualizer() {
     const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
     const [analysis, setAnalysis] = useState<AnalyzeSkillGapOutput | null>(null);
     const [isAiLoading, setIsAiLoading] = useState(false);
+    const [apiError, setApiError] = useState<string | null>(null);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
     const router = useRouter();
@@ -46,15 +48,21 @@ export function SkillGapVisualizer() {
         setSelectedInternship(internship);
         setIsAiLoading(true);
         setAnalysis(null);
+        setApiError(null);
         try {
             const result = await analyzeSkillGap({
                 userSkills: profile.skills.map(s => ({name: s.name, proficiency: s.proficiency})),
                 internshipDescription: internship.longDescription,
                 internshipTitle: internship.title,
             });
-            setAnalysis(result);
+            if (result) {
+                setAnalysis(result);
+            } else {
+                 setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+            }
         } catch (error) {
             console.error("Skill gap analysis error:", error);
+            setApiError('Could not analyze skill gap. Please try again later.');
             toast({ variant: 'destructive', title: 'Error analyzing skill gap.' });
         } finally {
             setIsAiLoading(false);
@@ -108,6 +116,16 @@ export function SkillGapVisualizer() {
             </Card>
 
             <SmartMatchInternships onInternshipSelect={handleAnalyze} selectedInternshipId={selectedInternship?.id}/>
+            
+            {apiError && (
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>API Limit Reached</AlertTitle>
+                    <AlertDescription>
+                        {apiError}
+                    </AlertDescription>
+                </Alert>
+            )}
 
             {isAiLoading && (
                 <Card>
