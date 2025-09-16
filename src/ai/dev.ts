@@ -6,7 +6,6 @@ import '@/ai/flows/suggest-relevant-internships.ts';
 import '@/ai/flows/generate-learning-plan.ts';
 import '@/ai/flows/analyse-resume-text.ts';
 import '@/ai/flows/generate-resume-summary.ts';
-import '@/ai/flows/generate-personalized-roadmap.ts';
 import '@/ai/flows/ask-ai-mentor.ts';
 import '@/ai/flows/start-mock-interview.ts';
 import '@/ai/flows/analyze-skill-gap.ts';

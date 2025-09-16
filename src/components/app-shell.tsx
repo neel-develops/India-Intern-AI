@@ -78,9 +78,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const aiTools = [
      { href: '/learn', icon: BrainCircuit, label: 'Learn a Skill', auth: true },
      { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
-     { href: '/personalized-roadmap', icon: GraduationCap, label: 'Personalized Roadmap', auth: true },
      { href: '/ai-mentor', icon: Sparkles, label: 'AI Mentor', auth: true },
-     { href: '/portfolio-builder', icon: FileText, label: 'Portfolio Builder', auth: true },
      { href: '/mock-interview', icon: MessageSquare, label: 'Mock Interview', auth: true },
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
   ]
