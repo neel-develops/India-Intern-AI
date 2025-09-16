@@ -13,7 +13,7 @@ const prompt = ai.definePrompt({
   name: 'generateResumeSummaryPrompt',
   input: {schema: GenerateResumeSummaryInputSchema},
   output: {schema: GenerateResumeSummaryOutputSchema},
-  model: googleAI.model('gemini-1.5-pro'),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert resume writer and career coach.
   Based on the user's original resume text and the list of their key skills, please rewrite the resume summary.
 
