@@ -132,6 +132,14 @@ export function SkillGapVisualizer() {
                                     <p className="text-sm text-muted-foreground">You have all the required skills for this role!</p>
                                 )}
                             </div>
+                             {analysis.missingSkills.length > 0 && (
+                                <Button asChild className="mt-4">
+                                    <Link href="/career-coach">
+                                        <GraduationCap className="mr-2 h-4 w-4"/>
+                                        Generate a Learning Plan with AI
+                                    </Link>
+                                </Button>
+                             )}
                         </div>
                     </CardContent>
                 </Card>
