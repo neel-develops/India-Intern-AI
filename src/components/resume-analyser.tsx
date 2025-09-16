@@ -141,7 +141,7 @@ export function ResumeAnalyser() {
                   <CardHeader>
                     <CardTitle className="text-base">Original</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground">
+                  <CardContent className="text-sm text-muted-foreground whitespace-pre-wrap">
                     {resumeText}
                   </CardContent>
                 </Card>
