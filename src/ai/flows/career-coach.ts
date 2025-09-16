@@ -61,9 +61,16 @@ const careerCoachChatFlow = ai.defineFlow(
     outputSchema: CareerCoachChatOutputSchema,
   },
   async input => {
-     try {
-        const {output} = await prompt(input);
-        return output!;
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
+
+export async function chatWithCareerCoach(
+  input: CareerCoachChatInput
+): Promise<CareerCoachChatOutput> {
+   try {
+        return await careerCoachChatFlow(input);
     } catch (error: any) {
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for careerCoachChatFlow.');
@@ -71,11 +78,4 @@ const careerCoachChatFlow = ai.defineFlow(
         }
         throw error;
     }
-  }
-);
-
-export async function chatWithCareerCoach(
-  input: CareerCoachChatInput
-): Promise<CareerCoachChatOutput> {
-  return careerCoachChatFlow(input);
 }

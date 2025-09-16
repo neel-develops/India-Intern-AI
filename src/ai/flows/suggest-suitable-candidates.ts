@@ -12,13 +12,6 @@ import { SuggestSuitableCandidatesInputSchema, SuggestSuitableCandidatesOutputSc
 import type { SuggestSuitableCandidatesInput, SuggestSuitableCandidatesOutput } from './suggest-suitable-candidates-types';
 import { googleAI } from '@genkit-ai/googleai';
 
-
-export async function suggestSuitableCandidates(
-  input: SuggestSuitableCandidatesInput
-): Promise<SuggestSuitableCandidatesOutput> {
-  return suggestSuitableCandidatesFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'suggestSuitableCandidatesPrompt',
   input: {schema: SuggestSuitableCandidatesInputSchema},
@@ -63,9 +56,17 @@ const suggestSuitableCandidatesFlow = ai.defineFlow(
     outputSchema: SuggestSuitableCandidatesOutputSchema,
   },
   async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
+
+
+export async function suggestSuitableCandidates(
+  input: SuggestSuitableCandidatesInput
+): Promise<SuggestSuitableCandidatesOutput> {
     try {
-        const {output} = await prompt(input);
-        return output!;
+        return await suggestSuitableCandidatesFlow(input);
     } catch (error: any) {
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for suggestSuitableCandidates. Returning empty array.');
@@ -73,5 +74,4 @@ const suggestSuitableCandidatesFlow = ai.defineFlow(
         }
         throw error;
     }
-  }
-);
+}

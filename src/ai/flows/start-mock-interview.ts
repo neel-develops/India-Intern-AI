@@ -54,9 +54,16 @@ const mockInterviewFlow = ai.defineFlow(
     outputSchema: StartMockInterviewOutputSchema,
   },
   async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
+
+export async function startMockInterview(
+  input: StartMockInterviewInput
+): Promise<StartMockInterviewOutput> {
     try {
-      const {output} = await prompt(input);
-      return output!;
+      return await mockInterviewFlow(input);
     } catch (error: any) {
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for mockInterviewFlow.');
@@ -67,11 +74,4 @@ const mockInterviewFlow = ai.defineFlow(
         }
         throw error;
     }
-  }
-);
-
-export async function startMockInterview(
-  input: StartMockInterviewInput
-): Promise<StartMockInterviewOutput> {
-  return mockInterviewFlow(input);
 }

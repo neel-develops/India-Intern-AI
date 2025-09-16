@@ -17,7 +17,7 @@ const prompt = ai.definePrompt({
   input: { schema: AnalyzeResumeInputSchema },
   output: { schema: AnalyzeResumeOutputSchema },
   model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are an expert career coach AI. Analyze the provided resume text and return a structured JSON object with constructive feedback.
+  prompt: `You are an expert career coach AI. Your task is to analyze the provided resume text and provide the output in a structured JSON format.
 
   Resume Text:
   ---
@@ -45,19 +45,19 @@ const analyzeResumeFlow = ai.defineFlow(
     outputSchema: AnalyzeResumeOutputSchema,
   },
   async (input) => {
-    try {
-      const { output } = await prompt(input);
-      return output!;
-    } catch (error: any) {
-      if (error.message && error.message.includes('429')) {
-        console.warn('AI quota limit reached for analyzeResume. Returning null.');
-        return null;
-      }
-      throw error;
-    }
+    const { output } = await prompt(input);
+    return output!;
   }
 );
 
 export async function analyzeResume(input: AnalyzeResumeInput): Promise<AnalyzeResumeOutput | null> {
-  return analyzeResumeFlow(input);
+  try {
+    return await analyzeResumeFlow(input);
+  } catch (error: any) {
+    if (error.message && error.message.includes('429')) {
+      console.warn('AI quota limit reached for analyzeResume. Returning null.');
+      return null;
+    }
+    throw error;
+  }
 }
