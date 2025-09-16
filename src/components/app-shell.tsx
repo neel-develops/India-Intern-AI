@@ -18,6 +18,10 @@ import {
   Bell,
   BrainCircuit,
   FileScan,
+  Sparkles,
+  GraduationCap,
+  MessageSquare,
+  BarChart3,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -65,12 +69,20 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
     { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
-    { href: '/learn', icon: BrainCircuit, label: 'Learn a Skill', auth: true },
-    { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
     { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
     { href: '/profile', icon: User, label: 'My Profile', auth: true },
     { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
   ];
+
+  const aiTools = [
+     { href: '/learn', icon: BrainCircuit, label: 'Learn a Skill', auth: true },
+     { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
+     { href: '/personalized-roadmap', icon: GraduationCap, label: 'Personalized Roadmap', auth: true },
+     { href: '/ai-mentor', icon: Sparkles, label: 'AI Mentor', auth: true },
+     { href: '/portfolio-builder', icon: FileText, label: 'Portfolio Builder', auth: true },
+     { href: '/mock-interview', icon: MessageSquare, label: 'Mock Interview', auth: true },
+     { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
+  ]
   
   const sidebarHeader = (
     <Link href="/" className="flex flex-col items-start gap-2">
@@ -80,7 +92,8 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   );
   
   const sidebarNav = (
-    <nav className="flex-1 px-4 py-2 space-y-2">
+    <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+      <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
       {navItems.map((item) => {
           if (item.auth === true && !user) return null;
           if (item.href === '/' && user) return null; // Hide home link for logged in users in sidebar
@@ -99,6 +112,24 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
               </Link>
           )
       })}
+      {user && (
+        <>
+            <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
+            {aiTools.map((item) => (
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+                    pathname === item.href && 'bg-accent text-primary font-medium'
+                    )}
+                >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                </Link>
+            ))}
+        </>
+      )}
     </nav>
   );
 
@@ -177,7 +208,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
+  const isPublicPage = ['/login', '/register', '/eligibility', '/phone-login'].includes(pathname) || pathname.startsWith('/companies');
   const isLandingPage = pathname === '/';
 
   // If user is not logged in and on a public page, or on landing page, show a simpler layout
