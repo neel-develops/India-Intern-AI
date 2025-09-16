@@ -32,7 +32,15 @@ const prompt = ai.definePrompt({
   output: { schema: z.object({ answer: z.string() }) }, // The direct text answer
   tools: [generateLearningPlanTool],
   helpers: {
-    eq: (a, b) => a === b,
+    eq: (a: any, b: any) => a === b,
+  },
+  config: {
+    custom: {
+      knownHelpers: {
+        eq: true,
+      },
+      knownHelpersOnly: true,
+    }
   },
   prompt: `You are an expert AI Career Coach for students in India. Your name is 'CoachAI'. Your goal is to provide supportive, insightful, and actionable advice to help students navigate their internship journey and career development.
 
