@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Genkit flow that acts as a professional career advisor for students.
@@ -30,7 +29,7 @@ const prompt = ai.definePrompt({
   name: 'careerCoachChatPrompt',
   input: {schema: CareerCoachChatInputSchema},
   output: {schema: CareerCoachChatOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-1.5-pro'),
   prompt: `You are a professional, friendly, and encouraging AI career advisor for the IndiaIntern.ai platform. Your goal is to provide practical and personalized advice to students to help them achieve their career goals.
 
   You are having a conversation with a student. Use their profile information as context for your answers.

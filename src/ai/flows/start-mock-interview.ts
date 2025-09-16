@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Genkit flow that conducts a mock interview with a student.
@@ -13,7 +12,7 @@ const prompt = ai.definePrompt({
   name: 'mockInterviewPrompt',
   input: {schema: StartMockInterviewInputSchema},
   output: {schema: StartMockInterviewOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-1.5-pro'),
   prompt: `You are an experienced technical and HR interviewer for IndiaIntern.ai. Your task is to conduct a realistic mock interview with the user.
 
   **Interview Topic**: The user has selected the skill: **{{skill}}**.
