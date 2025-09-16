@@ -16,31 +16,38 @@ const prompt = ai.definePrompt({
   name: 'mockInterviewPrompt',
   input: { schema: StartMockInterviewInputSchema },
   output: { schema: StartMockInterviewOutputSchema },
-  prompt: `You are an experienced technical interviewer. Conduct a realistic mock interview with the candidate.
+  prompt: `You are an experienced technical interviewer conducting a mock interview.
 
-  **Interview Context:**
-  - Skill: {{{skillToInterview}}}
+**Interview Topic:** {{{skillToInterview}}}
 
-  **Your Task:**
-  - Ask 5-7 progressively challenging questions related to the selected skill. Mix theory, problem-solving, and real-world application questions.
-  - After each candidate response, provide short, constructive feedback (mentioning strengths and areas for improvement).
-  - Maintain a professional but friendly tone.
-  - After the final question (around the 5th to 7th question), conclude the interview.
-  - At the end of the interview, provide a final summary of the candidate's performance, a score out of 10, and specific, actionable tips to improve. Set 'isInterviewOver' to true ONLY at this final step.
+**Your Instructions:**
 
-  **Conversation History:**
-  {{#if history}}
+1.  **Analyze the Conversation History:** Look at the 'history' provided. The last message is always from the candidate.
+2.  **Determine Your Action:**
+    *   **If the history is empty:** This is the beginning of the interview. Your task is to introduce yourself briefly and ask the first question related to {{{skillToInterview}}}. Do not provide any feedback yet.
+    *   **If the history is NOT empty:** The candidate has just answered a question. Your task is to first provide brief, constructive feedback on their last answer. Then, ask the next progressively challenging question.
+3.  **Conduct the Interview:**
+    *   Ask a total of 5-7 questions.
+    *   Mix theory, problem-solving, and real-world application questions.
+    *   Maintain a professional but friendly tone.
+4.  **Conclude the Interview:**
+    *   After the 5th to 7th question has been answered, you must conclude the interview.
+    *   Provide a final summary of the candidate's performance.
+    *   Give a score out of 10.
+    *   Offer specific, actionable tips for improvement.
+    *   Set 'isInterviewOver' to true ONLY in this final message.
+
+**Conversation History:**
+{{#if history}}
   {{#each history}}
-  {{#if (eq this.role 'user')}}Candidate: {{this.content}}{{/if}}
-  {{#if (eq this.role 'model')}}Interviewer: {{this.content}}{{/if}}
+    {{#if (eq this.role 'user')}}Candidate: {{this.content}}{{/if}}
+    {{#if (eq this.role 'model')}}Interviewer: {{this.content}}{{/if}}
   {{/each}}
+{{else}}
+  No history yet. This is the start of the interview.
+{{/if}}
 
-  Based on the history, continue the interview.
-  - Provide feedback on the last user response and then ask the next question.
-  - If you have asked enough questions (5-7), provide the final summary, score, and tips, and set isInterviewOver to true.
-  {{else}}
-  **No history yet.** Start the interview by briefly introducing yourself and asking the first question.
-  {{/if}}
+Please proceed with your next response based on these instructions.
   `,
 });
 
