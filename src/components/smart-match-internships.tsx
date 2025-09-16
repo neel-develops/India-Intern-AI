@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Wand2, BellRing, Mail } from 'lucide-react';
+import { Wand2, BellRing, Mail, AlertTriangle } from 'lucide-react';
 import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
 import { suggestRelevantInternships } from '@/ai/flows/suggest-relevant-internships';
 import { internships as allInternships } from '@/lib/data';
@@ -27,6 +27,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
   const [suggestedInternships, setSuggestedInternships] = useState<(Internship & { matchReason: string })[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleFindMatches = async () => {
@@ -35,6 +36,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
     setIsAiLoading(true);
     setSearchPerformed(true);
     setSuggestedInternships([]);
+    setApiError(null);
 
     try {
       const studentProfileForAI = {
@@ -64,12 +66,17 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
 
 
       setSuggestedInternships(enrichedInternships);
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI match error:', error);
+      if (error.message && error.message.includes('429')) {
+         setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+      } else {
+         setApiError('Could not fetch AI-powered suggestions. Please try again later.');
+      }
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Could not fetch AI-powered suggestions. Please try again later.',
+        description: 'Could not fetch AI-powered suggestions.',
       });
     } finally {
       setIsAiLoading(false);
@@ -150,8 +157,18 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
           ))}
         </div>
       )}
+      
+      {apiError && (
+        <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>API Limit Reached</AlertTitle>
+            <AlertDescription>
+                {apiError}
+            </AlertDescription>
+        </Alert>
+      )}
 
-      {!isAiLoading && searchPerformed && suggestedInternships.length > 0 && (
+      {!isAiLoading && searchPerformed && !apiError && suggestedInternships.length > 0 && (
         <div className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">Your Top Matches</h2>
              <p className="text-muted-foreground">
@@ -171,7 +188,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
         </div>
       )}
 
-      {!isAiLoading && searchPerformed && suggestedInternships.length === 0 && (
+      {!isAiLoading && searchPerformed && !apiError && suggestedInternships.length === 0 && (
           <Card className="text-center bg-accent/50 border-accent">
             <CardContent className="p-8">
                 <BellRing className="mx-auto h-12 w-12 text-primary mb-4" />
@@ -195,7 +212,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
           </Card>
       )}
 
-      {!isAiLoading && !searchPerformed && (
+      {!isAiLoading && !searchPerformed && !apiError && (
          <Alert className="bg-accent/50 border-accent">
             <Wand2 className="h-4 w-4" />
             <AlertTitle>Ready for your matches?</AlertTitle>
