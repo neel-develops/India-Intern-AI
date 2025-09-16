@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { GraduationCap, Send, User, Bot } from 'lucide-react';
@@ -15,6 +15,7 @@ import { Skeleton } from './ui/skeleton';
 import { Textarea } from './ui/textarea';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { marked } from 'marked';
 
 export function AICareerCoach() {
   const searchParams = useSearchParams();
@@ -35,22 +36,7 @@ export function AICareerCoach() {
     }
   }, [conversation]);
   
-   useEffect(() => {
-    if (profile && !hasInitialized.current) {
-      const initialPrompt = searchParams.get('prompt');
-      if (initialPrompt) {
-        hasInitialized.current = true;
-        setUserInput(initialPrompt);
-        // We can't call handleSendMessage directly here due to state updates
-        // So we trigger it via a button click effect or similar, but for now, just setting the input
-        // is a good first step. The user can then send the message.
-        // Or, more robustly:
-        handleSendMessage(initialPrompt);
-      }
-    }
-  }, [profile, searchParams]);
-
-  const handleSendMessage = async (message?: string) => {
+  const handleSendMessage = useCallback(async (message?: string) => {
     const currentInput = message || userInput;
     if (!currentInput.trim() || !profile) return;
 
@@ -80,10 +66,22 @@ export function AICareerCoach() {
         title: 'Error',
         description: 'Could not get career advice. Please try again.',
       });
+      // Add the user's message back if the API fails
+      setConversation(conversation);
     } finally {
       setIsAiLoading(false);
     }
-  };
+  }, [conversation, profile, userInput, toast]);
+
+   useEffect(() => {
+    if (profile && !hasInitialized.current) {
+      const initialPrompt = searchParams.get('prompt');
+      if (initialPrompt) {
+        hasInitialized.current = true;
+        handleSendMessage(initialPrompt);
+      }
+    }
+  }, [profile, searchParams, handleSendMessage]);
 
   if (profileLoading) return <Skeleton className="h-96 w-full" />;
 
@@ -128,8 +126,8 @@ export function AICareerCoach() {
               {conversation.map((msg, index) => (
                 <div key={index} className={cn("flex items-start gap-3", msg.role === 'user' ? 'justify-end' : '')}>
                   {msg.role === 'model' && <Bot className="h-6 w-6 text-primary shrink-0" />}
-                  <div className={cn("p-3 rounded-lg max-w-lg prose", msg.role === 'model' ? 'bg-muted' : 'bg-primary text-primary-foreground')}>
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                  <div className={cn("p-3 rounded-lg max-w-lg prose prose-sm", msg.role === 'model' ? 'bg-muted' : 'bg-primary text-primary-foreground prose-invert')}>
+                     <div dangerouslySetInnerHTML={{ __html: marked.parse(msg.content) }} />
                   </div>
                   {msg.role === 'user' && <User className="h-6 w-6 shrink-0" />}
                 </div>

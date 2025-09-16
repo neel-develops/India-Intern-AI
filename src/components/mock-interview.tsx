@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { BrainCircuit, Send, User, Bot, Info, Star } from 'lucide-react';
+import { BrainCircuit, Send, User, Bot, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Textarea } from './ui/textarea';
 import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { Badge } from './ui/badge';
+import { marked } from 'marked';
+
 
 export function MockInterview() {
   const [selectedSkill, setSelectedSkill] = useState<string>('');
@@ -47,7 +48,7 @@ export function MockInterview() {
     setInterviewStarted(true);
     setIsAiLoading(true);
     try {
-      const result = await startMockInterview({ skill: selectedSkill });
+      const result = await startMockInterview({ skill: selectedSkill, history: [] });
       setConversation([{ role: 'model', content: result.response }]);
     } catch (error) {
       toast({ variant: 'destructive', title: 'Error starting interview.' });
@@ -69,7 +70,7 @@ export function MockInterview() {
       const result = await startMockInterview({ skill: selectedSkill, history: newConversation });
       let modelResponse = result.response;
       if (result.feedback) {
-          modelResponse = `**Feedback:** ${result.feedback}\n\n${result.response}`;
+          modelResponse = `**Feedback on your last answer:** ${result.feedback}\n\n**Next Question:**\n${result.response}`;
       }
       setConversation([...newConversation, { role: 'model', content: modelResponse }]);
 
@@ -149,8 +150,8 @@ export function MockInterview() {
                 {conversation.map((msg, index) => (
                   <div key={index} className={cn("flex items-start gap-3", msg.role === 'user' ? 'justify-end' : '')}>
                     {msg.role === 'model' && <Bot className="h-6 w-6 text-primary shrink-0" />}
-                    <div className={cn("p-3 rounded-lg max-w-lg", msg.role === 'model' ? 'bg-muted' : 'bg-primary text-primary-foreground')}>
-                      <p className="whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}}/>
+                    <div className={cn("p-3 rounded-lg max-w-lg prose prose-sm", msg.role === 'model' ? 'bg-muted' : 'bg-primary text-primary-foreground prose-invert')}>
+                      <div dangerouslySetInnerHTML={{ __html: marked.parse(msg.content) }}/>
                     </div>
                     {msg.role === 'user' && <User className="h-6 w-6 shrink-0" />}
                   </div>
