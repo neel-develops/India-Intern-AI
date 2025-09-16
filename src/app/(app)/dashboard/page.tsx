@@ -5,9 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { SmartMatchInternships } from '@/components/smart-match-internships';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth.tsx';
+import { useAuth } from '@/hooks/use-auth';
 import { useEffect, useMemo } from 'react';
-import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
+import { useStudentProfile } from '@/hooks/use-student-profile';
 import { useApplications } from '@/hooks/use-applications';
 import { Progress } from '@/components/ui/progress';
 import { InfoCard } from '@/components/info-card';
