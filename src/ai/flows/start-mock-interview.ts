@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -39,7 +40,7 @@ const prompt = ai.definePrompt({
   Based on the history, continue the interview.
   - If the history is empty, start with your introduction and the first question.
   - If the history is not empty, provide feedback on the last user response and then ask the next question.
-  - If you have asked enough questions, provide the final summary, score, and tips, and set isInterviewOver to true.
+  - If you have asked enough questions (5-7), provide the final summary, score, and tips, and set isInterviewOver to true.
   `,
 });
 
