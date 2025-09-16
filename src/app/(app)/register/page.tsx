@@ -37,7 +37,7 @@ export default function RegisterPage() {
     }
     try {
       await signUpWithEmail(email, password);
-      router.push('/profile');
+      // Let the useEffect handle the redirect
     } catch (error: any) {
       console.error(error);
       toast({
