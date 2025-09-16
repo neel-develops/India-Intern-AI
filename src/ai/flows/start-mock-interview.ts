@@ -19,20 +19,22 @@ const prompt = ai.definePrompt({
 
   **Interview Context:**
   - Role: {{{internshipTitle}}}
-  - Candidate's Skills: {{#each userSkills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  - Candidate's Skills: {{#if userSkills}}{{#each userSkills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}No skills provided.{{/if}}
 
   **Your Task:**
   - Engage in a realistic interview conversation.
   - Ask a mix of behavioral, situational, and technical questions relevant to the role and the candidate's skills.
-  - After the candidate answers a question, provide brief, constructive feedback on their response before asking the next question.
+  - After the candidate answers a question (i.e., when the history has at least one 'user' entry), provide brief, constructive feedback on their response before asking the next question.
   - Keep the interview flowing for about 4-5 questions.
   - After the last question, conclude the interview professionally and set 'isInterviewOver' to true.
 
   **Conversation History:**
+  {{#if history}}
   {{#each history}}
   {{#if (eq this.role 'user')}}Candidate: {{this.content}}{{/if}}
   {{#if (eq this.role 'model')}}Interviewer: {{this.content}}{{/if}}
   {{/each}}
+  {{/if}}
 
   Based on the history, continue the interview. If the history is empty, start with a greeting and the first question.
   `,

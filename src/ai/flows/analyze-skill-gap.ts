@@ -16,8 +16,12 @@ const prompt = ai.definePrompt({
   output: { schema: AnalyzeSkillGapOutputSchema },
   prompt: `You are a career development AI. Your task is to analyze the gap between a user's skills and the requirements of an internship.
 
+  {{#if userSkills}}
   User's Skills:
   - {{#each userSkills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  {{else}}
+  User has not listed any skills.
+  {{/if}}
 
   Internship Description:
   ---

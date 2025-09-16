@@ -1,11 +1,10 @@
 
 'use client';
-import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Target, Lightbulb, Check, X } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import Link from 'next/link';
+import { Target, Lightbulb, Check, X, GraduationCap, BarChart3, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useStudentProfile } from '@/hooks/use-student-profile';
 import { analyzeSkillGap } from '@/ai/flows/analyze-skill-gap';
@@ -13,29 +12,30 @@ import type { AnalyzeSkillGapOutput } from '@/ai/flows/analyze-skill-gap-types';
 import { Skeleton } from './ui/skeleton';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
-import { internships } from '@/lib/data';
+import type { Internship } from '@/lib/types';
+import { SmartMatchInternships } from './smart-match-internships';
 
 export function SkillGapVisualizer() {
-    const [internshipDescription, setInternshipDescription] = useState('');
+    const [selectedInternship, setSelectedInternship] = useState<Internship | null>(null);
     const [analysis, setAnalysis] = useState<AnalyzeSkillGapOutput | null>(null);
     const [isAiLoading, setIsAiLoading] = useState(false);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
-    const searchParams = useSearchParams();
-    const internshipId = searchParams.get('internshipId');
 
-    const handleAnalyze = useCallback(async () => {
-        if (!profile) return;
-        if (!internshipDescription.trim()) {
-            toast({ variant: 'destructive', title: 'Please paste an internship description.' });
+    const handleAnalyze = useCallback(async (internship: Internship) => {
+        if (!profile) {
+            toast({ variant: 'destructive', title: 'Please complete your profile first.' });
             return;
         }
+        if (!internship) return;
+        
+        setSelectedInternship(internship);
         setIsAiLoading(true);
         setAnalysis(null);
         try {
             const result = await analyzeSkillGap({
                 userSkills: profile.skills,
-                internshipDescription,
+                internshipDescription: internship.longDescription,
             });
             setAnalysis(result);
         } catch (error) {
@@ -43,21 +43,8 @@ export function SkillGapVisualizer() {
         } finally {
             setIsAiLoading(false);
         }
-    }, [profile, internshipDescription, toast]);
+    }, [profile, toast]);
     
-    useEffect(() => {
-        if (internshipId) {
-            const selectedInternship = internships.find(i => i.id === internshipId);
-            if (selectedInternship) {
-                setInternshipDescription(selectedInternship.longDescription);
-                // Automatically trigger analysis if profile is loaded
-                if (profile) {
-                    handleAnalyze();
-                }
-            }
-        }
-    }, [internshipId, profile, handleAnalyze]);
-
     if (isProfileLoading) return <Skeleton className="h-64 w-full" />;
 
     if (!profile) return (
@@ -70,6 +57,7 @@ export function SkillGapVisualizer() {
     );
 
     const matchPercentage = analysis ? (analysis.matchingSkills.length / (analysis.requiredSkills.length || 1)) * 100 : 0;
+    const firstMissingSkill = analysis?.missingSkills?.[0]?.skill;
 
     return (
         <div className="space-y-6">
@@ -79,29 +67,20 @@ export function SkillGapVisualizer() {
                         <Target className="h-8 w-8 text-primary" />
                         Skill Gap Visualizer
                     </CardTitle>
-                    <CardDescription>Paste an internship description to see how your skills match up and what you need to learn.</CardDescription>
+                    <CardDescription>
+                        First, find your AI-powered internship matches. Then, select a card to analyze your skill gap.
+                    </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <Textarea
-                        placeholder="Paste the full internship description here..."
-                        rows={10}
-                        value={internshipDescription}
-                        onChange={(e) => setInternshipDescription(e.target.value)}
-                    />
-                </CardContent>
-                <CardContent>
-                     <Button onClick={handleAnalyze} disabled={isAiLoading}>
-                        {isAiLoading ? 'Analyzing...' : 'Analyze My Skill Gap'}
-                    </Button>
-                </CardContent>
             </Card>
+
+            <SmartMatchInternships onInternshipSelect={handleAnalyze} selectedInternshipId={selectedInternship?.id}/>
 
             {isAiLoading && <Skeleton className="h-80 w-full" />}
 
-            {analysis && (
+            {analysis && selectedInternship && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Your Skill Gap Analysis</CardTitle>
+                        <CardTitle>Your Skill Gap Analysis for: <span className="text-primary">{selectedInternship.title}</span></CardTitle>
                         <CardDescription>Here's a breakdown of your skills compared to the internship requirements.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
@@ -152,6 +131,18 @@ export function SkillGapVisualizer() {
                                 )}
                             </div>
                         </div>
+                         {firstMissingSkill && (
+                            <div className="pt-4 border-t">
+                                <h3 className="text-lg font-semibold mb-2">Next Step</h3>
+                                <p className="text-muted-foreground mb-4">Bridge the gap! Click below to get a personalized learning plan for your first missing skill.</p>
+                                <Button asChild>
+                                    <Link href={`/learn?skill=${encodeURIComponent(firstMissingSkill)}`}>
+                                        <GraduationCap className="mr-2 h-4 w-4" />
+                                        Learn "{firstMissingSkill}"
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             )}

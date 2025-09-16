@@ -17,8 +17,12 @@ import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-releva
 import type { Internship } from '@/lib/types';
 import { Input } from './ui/input';
 
+interface SmartMatchInternshipsProps {
+    onInternshipSelect?: (internship: Internship) => void;
+    selectedInternshipId?: string;
+}
 
-export function SmartMatchInternships() {
+export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId }: SmartMatchInternshipsProps) {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
   const [suggestedInternships, setSuggestedInternships] = useState<(Internship & { matchReason: string })[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -146,12 +150,17 @@ export function SmartMatchInternships() {
       {!isAiLoading && searchPerformed && suggestedInternships.length > 0 && (
         <div className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">Your Top Matches</h2>
+             <p className="text-muted-foreground">
+                {onInternshipSelect ? 'Click a card below to analyze your skill gap.' : 'Here are your best matches based on your profile.'}
+            </p>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {suggestedInternships.map((internship, index) => (
                 <InternshipCard
                 key={`${internship.id}-${index}`}
                 internship={internship}
                 matchReason={internship.matchReason}
+                onSelect={onInternshipSelect}
+                isSelected={selectedInternshipId === internship.id}
                 />
             ))}
             </div>

@@ -20,7 +20,7 @@ const prompt = ai.definePrompt({
   Student's Profile:
   - Name: {{{name}}}
   - Summary: {{{resumeSummary}}}
-  - Skills: {{#each skills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  - Skills: {{#if skills}}{{#each skills}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}No skills provided{{/if}}
 
   Based on this, generate the following portfolio content:
   1.  **Professional Title**: Create a concise and impactful professional title for the student.

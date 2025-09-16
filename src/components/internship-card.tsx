@@ -11,11 +11,13 @@ import { Briefcase, MapPin, Tag, Cpu, BarChart3 } from 'lucide-react';
 interface InternshipCardProps {
   internship: Internship;
   matchReason?: string;
+  onSelect?: (internship: Internship) => void;
+  isSelected?: boolean;
 }
 
-export function InternshipCard({ internship, matchReason }: InternshipCardProps) {
-  return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg">
+export function InternshipCard({ internship, matchReason, onSelect, isSelected }: InternshipCardProps) {
+  const cardContent = (
+    <>
       <div className="relative h-48 w-full">
         <Image
           src={internship.image}
@@ -57,19 +59,27 @@ export function InternshipCard({ internship, matchReason }: InternshipCardProps)
         )}
       </CardContent>
       <Separator />
-      <CardFooter className="pt-6 flex flex-col sm:flex-row gap-2">
+      <CardFooter className="pt-6">
         <Button asChild className="w-full">
             <Link href={`/internships/${internship.id}`}>View Details</Link>
         </Button>
-        {matchReason && (
-            <Button asChild variant="outline" className="w-full">
-                <Link href={`/skill-gap-visualizer?internshipId=${internship.id}`}>
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Analyze Skill Gap
-                </Link>
-            </Button>
-        )}
       </CardFooter>
+    </>
+  )
+
+  if (onSelect) {
+    return (
+        <div onClick={() => onSelect(internship)} className="cursor-pointer">
+            <Card className={`flex flex-col h-full overflow-hidden transition-all hover:shadow-lg ${isSelected ? 'ring-2 ring-primary' : ''}`}>
+                {cardContent}
+            </Card>
+        </div>
+    )
+  }
+
+  return (
+    <Card className="flex flex-col h-full overflow-hidden transition-all hover:shadow-lg">
+        {cardContent}
     </Card>
   );
 }
