@@ -3,7 +3,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
-import { useStudentProfile } from './use-student-profile.tsx';
+import { useStudentProfile } from './use-student-profile';
 import { useToast } from './use-toast';
 
 // --- Helper Functions ---
