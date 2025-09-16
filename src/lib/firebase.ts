@@ -3,13 +3,12 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
   projectId: "internship-aligner",
-  appId: "1:440687570290:web:d2ebd88ceafd2f067501eb",
-  storageBucket: "internship-aligner.firebasestorage.app",
-  apiKey: "AIzaSyAnndiBhtYgdGth2_mcj2fJmxR3TT8mZnM",
-  authDomain: "internship-aligner.firebaseapp.com",
-  messagingSenderId: "440687570290",
-  measurementId: "G-XXXXXXXXXX",
+  storageBucket: "internship-aligner.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
 
 // Initialize Firebase
