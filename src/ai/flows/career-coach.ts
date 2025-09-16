@@ -46,8 +46,8 @@ const prompt = ai.definePrompt({
   {{#if history}}
   Conversation History:
   {{#each history}}
-  {{#if (this.role == 'user')}}User: {{this.content}}{{/if}}
-  {{#if (this.role == 'model')}}CoachAI: {{this.content}}{{/if}}
+    {{#if (eq this.role "user")}}User: {{this.content}}{{/if}}
+    {{#if (eq this.role "model")}}CoachAI: {{this.content}}{{/if}}
   {{/each}}
   {{/if}}
 
@@ -55,6 +55,16 @@ const prompt = ai.definePrompt({
 
   Your Answer:
   `,
+  
+  config: {
+      custom: {
+        handlebars: {
+            helpers: {
+                eq: (v1: any, v2: any) => v1 === v2,
+            }
+        }
+      }
+  }
 });
 
 const careerCoachFlow = ai.defineFlow(
