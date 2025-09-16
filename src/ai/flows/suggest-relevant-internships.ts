@@ -17,7 +17,7 @@ const suggestRelevantInternshipsPrompt = ai.definePrompt({
   name: 'suggestRelevantInternshipsPrompt',
   input: {schema: SuggestRelevantInternshipsInputSchema},
   output: {schema: SuggestRelevantInternshipsOutputSchema},
-  model: googleAI.model('gemini-pro'),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert AI career counselor. Your task is to find the most relevant internships for a student from a list of available openings.
 
 You MUST follow these rules strictly:

@@ -16,7 +16,7 @@ const prompt = ai.definePrompt({
   name: 'analyzeResumePrompt',
   input: { schema: AnalyzeResumeInputSchema },
   output: { schema: AnalyzeResumeOutputSchema },
-  model: googleAI.model('gemini-pro'),
+  model: googleAI.model('gemini-1.5-flash'),
   prompt: `You are an expert career coach and professional resume writer for the IndiaIntern.ai platform. Your task is to analyze the provided resume text and give constructive, actionable feedback.
 
   **Resume Text:**
