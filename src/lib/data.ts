@@ -820,9 +820,9 @@ export const studentProfiles: StudentProfile[] = [
       university: 'Indian Institute of Technology Bombay',
     },
     skills: [
-        { name: 'Python', proficiency: 4 },
+        { name: 'Python', proficiency: 4, certificate: 'https://coursera.org/verify/python-cert' },
         { name: 'Machine Learning', proficiency: 3 },
-        { name: 'Data Analysis', proficiency: 4 },
+        { name: 'Data Analysis', proficiency: 4, certificate: 'https://coursera.org/verify/data-analysis-cert' },
         { name: 'Pandas', proficiency: 4 },
     ],
     preferences: {
@@ -848,7 +848,7 @@ export const studentProfiles: StudentProfile[] = [
       university: 'Delhi Technological University',
     },
     skills: [
-        { name: 'React', proficiency: 4 },
+        { name: 'React', proficiency: 4, certificate: 'https://coursera.org/verify/react-cert' },
         { name: 'TypeScript', proficiency: 3 },
         { name: 'Node.js', proficiency: 3 },
         { name: 'Tailwind CSS', proficiency: 4 },
@@ -878,7 +878,7 @@ export const studentProfiles: StudentProfile[] = [
     skills: [
         { name: 'Figma', proficiency: 5 },
         { name: 'UI Design', proficiency: 4 },
-        { name: 'UX Research', proficiency: 3 },
+        { name: 'UX Research', proficiency: 3, certificate: 'https://coursera.org/verify/ux-cert' },
         { name: 'Adobe XD', proficiency: 3 },
     ],
     preferences: {
@@ -904,7 +904,7 @@ export const studentProfiles: StudentProfile[] = [
         university: 'Vellore Institute of Technology',
     },
     skills: [
-        { name: 'Flutter', proficiency: 4 },
+        { name: 'Flutter', proficiency: 4, certificate: 'https://coursera.org/verify/flutter-cert' },
         { name: 'Dart', proficiency: 4 },
         { name: 'Firebase', proficiency: 3 },
         { name: 'GetX', proficiency: 3 },
@@ -962,7 +962,7 @@ export const studentProfiles: StudentProfile[] = [
     skills: [
         { name: 'SEO', proficiency: 4 },
         { name: 'Content Marketing', proficiency: 3 },
-        { name: 'Google Analytics', proficiency: 4 },
+        { name: 'Google Analytics', proficiency: 4, certificate: 'https://coursera.org/verify/ga-cert' },
         { name: 'Social Media', proficiency: 5 },
     ],
     preferences: {

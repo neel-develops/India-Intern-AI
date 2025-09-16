@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Types and Zod schemas for the internship suggestion flow.
  */
@@ -17,6 +18,7 @@ export const SuggestRelevantInternshipsInputSchema = z.object({
     skills: z.array(z.object({
       name: z.string(),
       proficiency: z.number(),
+      certificate: z.string().optional(),
     })).describe('A list of the student s skills with proficiency.'),
     preferences: z.object({
       domain: z.string().describe('The preferred domain of the student.'),

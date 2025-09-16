@@ -45,6 +45,7 @@ const profileSchema = z.object({
   skills: z.array(z.object({
     name: z.string().min(1, "Skill name is required."),
     proficiency: z.number().min(1).max(5),
+    certificate: z.string().url().optional().or(z.literal('')),
   })).min(1, "Please add at least one skill."),
   preferences: z.object({
     domain: z.string().min(1, 'Domain preference is required.'),
@@ -94,7 +95,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
         stream: profile?.personalInfo.stream || '',
         graduatingYear: profile?.personalInfo.graduatingYear || new Date().getFullYear() + 1,
       },
-      skills: profile?.skills || [{ name: '', proficiency: 3 }],
+      skills: profile?.skills || [{ name: '', proficiency: 3, certificate: '' }],
       preferences: {
         domain: profile?.preferences.domain || '',
         internshipType: profile?.preferences.internshipType || '',
@@ -336,6 +337,19 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                         </FormItem>
                       )}
                     />
+                     <FormField
+                      control={form.control}
+                      name={`skills.${index}.certificate`}
+                      render={({ field }) => (
+                        <FormItem className="flex-grow">
+                          <FormLabel>Certificate URL (Optional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://coursera.org/verify/..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <Button
                       type="button"
                       variant="destructive"
@@ -374,7 +388,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => append({ name: "", proficiency: 3 })}
+                onClick={() => append({ name: "", proficiency: 3, certificate: "" })}
               >
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Skill

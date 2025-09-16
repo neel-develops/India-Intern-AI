@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Types and Zod schemas for the skill gap analysis flow.
  */
@@ -8,6 +9,7 @@ export const AnalyzeSkillGapInputSchema = z.object({
   userSkills: z.array(z.object({
     name: z.string(),
     proficiency: z.number(),
+    certificate: z.string().optional(),
   })).describe("A list of the user's current skills with proficiency."),
   internshipDescription: z.string().describe("The full job description for the target internship."),
 });
