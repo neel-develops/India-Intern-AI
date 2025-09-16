@@ -42,7 +42,7 @@ export default function CompanyDetailsPage() {
 
         <div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-8">
-                Training Programs at {company.name}
+                Internships at {company.name}
             </h2>
 
             {companyInternships.length > 0 ? (
@@ -54,9 +54,9 @@ export default function CompanyDetailsPage() {
             ) : (
                 <div className="text-center py-12 bg-muted/30 rounded-lg">
                     <Briefcase className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium text-muted-foreground">No open programs</h3>
+                    <h3 className="mt-4 text-lg font-medium text-muted-foreground">No open internships</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        {company.name} does not have any open training programs at the moment. Please check back later.
+                        {company.name} does not have any open internships at the moment. Please check back later.
                     </p>
                 </div>
             )}

@@ -37,10 +37,10 @@ export default function InternshipsPage() {
     <div className="container mx-auto py-8 px-4 md:px-6 space-y-8">
       <div className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Find Your Training Program
+          Find Your Internship
         </h1>
         <p className="text-lg text-muted-foreground">
-          Use our AI-powered matchmaking or browse and filter through our curated list of training programs.
+          Use our AI-powered matchmaking or browse and filter through our curated list of internships.
         </p>
       </div>
 
@@ -62,9 +62,9 @@ export default function InternshipsPage() {
         ) : (
           <Alert>
               <Briefcase className="h-4 w-4" />
-              <AlertTitle>No Programs Found</AlertTitle>
+              <AlertTitle>No Internships Found</AlertTitle>
               <AlertDescription>
-                  No training programs match your current filter criteria. Try adjusting your filters.
+                  No internships match your current filter criteria. Try adjusting your filters.
               </AlertDescription>
           </Alert>
         )}

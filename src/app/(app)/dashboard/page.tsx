@@ -82,7 +82,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <InfoCard title="Applications Sent" value={applications.length} icon={<FileText />} description="Keep track of all your applications."/>
-            <InfoCard title="New Programs" value="10+" icon={<Briefcase />} description="New programs available this week."/>
+            <InfoCard title="New Internships" value="10+" icon={<Briefcase />} description="New internships available this week."/>
             <Card className="bg-card/70 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="text-base font-medium">Profile Completion</CardTitle>

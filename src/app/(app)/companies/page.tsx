@@ -14,7 +14,7 @@ export default function CompaniesPage() {
           Our Training Institutes
         </h1>
         <p className="text-lg text-muted-foreground">
-          Explore the reputed institutes offering high-quality training programs.
+          Explore the reputed institutes offering high-quality internships.
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function CompaniesPage() {
             </CardContent>
             <div className="p-6 pt-0">
                 <Button asChild className="w-full">
-                    <Link href={`/companies/${company.id}`}>View Profile & Programs</Link>
+                    <Link href={`/companies/${company.id}`}>View Profile & Internships</Link>
                 </Button>
             </div>
           </Card>

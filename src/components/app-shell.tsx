@@ -68,7 +68,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const navItems = [
     { href: '/', icon: Home, label: 'Home', auth: 'any' },
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
-    { href: '/internships', icon: Briefcase, label: 'Training Programs', auth: 'any' },
+    { href: '/internships', icon: Briefcase, label: 'Internships', auth: 'any' },
     { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
     { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
     { href: '/profile', icon: User, label: 'My Profile', auth: true },
@@ -219,7 +219,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
                     <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
                   </Link>
                   <nav className="hidden md:flex gap-4">
-                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Training Programs</Link>
+                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Internships</Link>
                       <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
                       <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
                   </nav>
