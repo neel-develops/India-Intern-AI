@@ -18,7 +18,7 @@ const suggestRelevantInternshipsPrompt = ai.definePrompt({
   name: 'suggestRelevantInternshipsPrompt',
   input: {schema: SuggestRelevantInternshipsInputSchema},
   output: {schema: SuggestRelevantInternshipsOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
+  model: googleAI.model('gemini-1.5-pro-latest'),
   prompt: `You are an expert AI career counselor. Your task is to find the most relevant internships for a student from a list of available openings and return a JSON array of the top 3-5 matches.
 
 You MUST follow these rules strictly:
@@ -43,8 +43,18 @@ const suggestRelevantInternshipsFlow = ai.defineFlow(
     outputSchema: SuggestRelevantInternshipsOutputSchema,
   },
   async input => {
-    const {output} = await suggestRelevantInternshipsPrompt(input);
-    return output!;
+    try {
+      const {output} = await suggestRelevantInternshipsPrompt(input);
+      return output!;
+    } catch (error: any) {
+        // Handle rate limiting errors gracefully
+        if (error.message && error.message.includes('429')) {
+            console.warn('AI quota limit reached for suggestRelevantInternships. Returning empty array.');
+            return [];
+        }
+        // Re-throw other errors
+        throw error;
+    }
   }
 );
 
