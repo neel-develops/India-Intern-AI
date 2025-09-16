@@ -818,12 +818,16 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Mumbai',
       linkedin: 'https://linkedin.com/in/priya-sharma-example',
       university: 'Indian Institute of Technology Bombay',
+      degree: 'Bachelor of Technology',
+      stream: 'Computer Science',
+      graduatingYear: 2025,
     },
     skills: [
         { name: 'Python', proficiency: 4, certificate: 'https://coursera.org/verify/python-cert' },
         { name: 'Machine Learning', proficiency: 3 },
         { name: 'Data Analysis', proficiency: 4, certificate: 'https://coursera.org/verify/data-analysis-cert' },
         { name: 'Pandas', proficiency: 4 },
+        { name: 'SQL', proficiency: 3 },
     ],
     preferences: {
       domain: 'Data Science',
@@ -846,6 +850,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Remote',
       linkedin: 'https://linkedin.com/in/rohan-verma-example',
       university: 'Delhi Technological University',
+      degree: 'Bachelor of Engineering',
+      stream: 'Software Engineering',
+      graduatingYear: 2026,
     },
     skills: [
         { name: 'React', proficiency: 4, certificate: 'https://coursera.org/verify/react-cert' },
@@ -874,6 +881,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Bangalore',
       linkedin: 'https://linkedin.com/in/anika-singh-example',
       university: 'National Institute of Design',
+      degree: 'Bachelor of Design',
+      stream: 'Graphic Design',
+      graduatingYear: 2024,
     },
     skills: [
         { name: 'Figma', proficiency: 5 },
@@ -902,6 +912,9 @@ export const studentProfiles: StudentProfile[] = [
         location: 'Pune',
         linkedin: 'https://linkedin.com/in/arjun-reddy-example',
         university: 'Vellore Institute of Technology',
+        degree: 'Bachelor of Technology',
+        stream: 'Information Technology',
+        graduatingYear: 2024,
     },
     skills: [
         { name: 'Flutter', proficiency: 4, certificate: 'https://coursera.org/verify/flutter-cert' },
@@ -930,6 +943,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Delhi',
       linkedin: 'https://linkedin.com/in/sneha-gupta-example',
       university: 'Shri Ram College of Commerce',
+      degree: 'Bachelor of Commerce',
+      stream: 'Finance',
+      graduatingYear: 2025,
     },
     skills: [
         { name: 'Financial Modeling', proficiency: 4 },
@@ -958,6 +974,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Pune',
       linkedin: 'https://linkedin.com/in/vikram-singh-example',
       university: 'Symbiosis Centre for Media & Communication',
+      degree: 'Bachelor of Arts',
+      stream: 'Mass Communication',
+      graduatingYear: 2024,
     },
     skills: [
         { name: 'SEO', proficiency: 4 },
@@ -986,6 +1005,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Mumbai',
       linkedin: 'https://linkedin.com/in/pooja-desai-example',
       university: 'Veermata Jijabai Technological Institute',
+      degree: 'Bachelor of Engineering',
+      stream: 'Civil Engineering',
+      graduatingYear: 2025,
     },
     skills: [
         { name: 'AutoCAD', proficiency: 5 },
@@ -1014,6 +1036,9 @@ export const studentProfiles: StudentProfile[] = [
       location: 'Hyderabad',
       linkedin: 'https://linkedin.com/in/rajesh-kumar-example',
       university: 'Acharya N.G. Ranga Agricultural University',
+      degree: 'Bachelor of Science',
+      stream: 'Agriculture',
+      graduatingYear: 2026,
     },
     skills: [
         { name: 'Agronomy', proficiency: 4 },

@@ -37,7 +37,7 @@ const profileSchema = z.object({
     email: z.string().email('Invalid email address.'),
     location: z.string().min(2, 'Location is required.'),
     linkedin: z.string().url().optional().or(z.literal('')),
-    university: z.string().optional(),
+    university: z.string().min(2, "University is required."),
     degree: z.string().min(2, "Degree is required."),
     stream: z.string().min(2, "Stream is required."),
     graduatingYear: z.coerce.number().min(new Date().getFullYear(), "Year must be in the future.").max(new Date().getFullYear() + 5, "Year seems too far in the future."),
@@ -139,7 +139,7 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Personal & Academic Information</CardTitle>
+            <CardTitle>Personal Information</CardTitle>
             <CardDescription>This information will be visible to recruiters.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -184,42 +184,15 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 )}
                 />
             </div>
-            <FormField
-              control={form.control}
-              name="personalInfo.location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Mumbai, India" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={form.control}
-              name="personalInfo.linkedin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>LinkedIn Profile</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Separator />
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                 control={form.control}
-                name="personalInfo.degree"
+                name="personalInfo.location"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Degree</FormLabel>
+                    <FormLabel>Current Location</FormLabel>
                     <FormControl>
-                        <Input placeholder="e.g. Bachelor of Technology" {...field} />
+                        <Input placeholder="e.g. Mumbai, India" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -227,31 +200,26 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 />
                 <FormField
                 control={form.control}
-                name="personalInfo.stream"
+                name="personalInfo.linkedin"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Stream / Major</FormLabel>
+                    <FormLabel>LinkedIn Profile URL</FormLabel>
                     <FormControl>
-                        <Input placeholder="e.g. Computer Science" {...field} />
+                        <Input placeholder="https://linkedin.com/in/your-profile" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
             </div>
-             <FormField
-                control={form.control}
-                name="personalInfo.graduatingYear"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Graduating Year</FormLabel>
-                    <FormControl>
-                        <Input type="number" placeholder="e.g. 2025" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Academic Information</CardTitle>
+          </CardHeader>
+           <CardContent className="space-y-4">
             <FormField
               control={form.control}
               name="personalInfo.university"
@@ -310,6 +278,47 @@ export function StudentProfileForm({ profile, onSave }: StudentProfileFormProps)
                 </FormItem>
               )}
             />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                control={form.control}
+                name="personalInfo.degree"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Degree</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g. Bachelor of Technology" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="personalInfo.stream"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Stream / Major</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g. Computer Science" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
+             <FormField
+                control={form.control}
+                name="personalInfo.graduatingYear"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Graduating Year</FormLabel>
+                    <FormControl>
+                        <Input type="number" placeholder="e.g. 2025" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
           </CardContent>
         </Card>
 
