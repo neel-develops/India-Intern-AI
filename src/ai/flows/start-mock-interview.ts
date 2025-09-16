@@ -22,7 +22,6 @@ const prompt = ai.definePrompt({
   - Skill: {{{skillToInterview}}}
 
   **Your Task:**
-  - Start by briefly introducing yourself as the interviewer.
   - Ask 5-7 progressively challenging questions related to the selected skill. Mix theory, problem-solving, and real-world application questions.
   - After each candidate response, provide short, constructive feedback (mentioning strengths and areas for improvement).
   - Maintain a professional but friendly tone.
@@ -35,12 +34,13 @@ const prompt = ai.definePrompt({
   {{#if (eq this.role 'user')}}Candidate: {{this.content}}{{/if}}
   {{#if (eq this.role 'model')}}Interviewer: {{this.content}}{{/if}}
   {{/each}}
-  {{/if}}
 
   Based on the history, continue the interview.
-  - If the history is empty, start with your introduction and the first question.
-  - If the history is not empty, provide feedback on the last user response and then ask the next question.
+  - Provide feedback on the last user response and then ask the next question.
   - If you have asked enough questions (5-7), provide the final summary, score, and tips, and set isInterviewOver to true.
+  {{else}}
+  **No history yet.** Start the interview by briefly introducing yourself and asking the first question.
+  {{/if}}
   `,
 });
 
