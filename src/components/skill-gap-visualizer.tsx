@@ -34,7 +34,7 @@ export function SkillGapVisualizer() {
         setAnalysis(null);
         try {
             const result = await analyzeSkillGap({
-                userSkills: profile.skills,
+                userSkills: profile.skills.map(s => ({name: s.name, proficiency: s.proficiency})),
                 internshipDescription: internship.longDescription,
             });
             setAnalysis(result);
@@ -53,6 +53,9 @@ export function SkillGapVisualizer() {
                 <CardTitle>Skill Gap Visualizer</CardTitle>
                 <CardDescription>Please create your profile to analyze your skill gap.</CardDescription>
             </CardHeader>
+            <CardContent>
+                <Button asChild><Link href="/profile">Create Profile</Link></Button>
+            </CardContent>
         </Card>
     );
 
@@ -136,5 +139,3 @@ export function SkillGapVisualizer() {
         </div>
     );
 }
-
-    
