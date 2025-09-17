@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils';
 import { universities } from '@/lib/universities';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
+import { useState } from 'react';
 
 
 const profileSchema = z.object({
@@ -81,6 +82,7 @@ interface StudentProfileFormProps {
 
 export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfileFormProps) {
   const { toast } = useToast();
+  const [openUniversityPopover, setOpenUniversityPopover] = useState(false);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -228,7 +230,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>University / College</FormLabel>
-                  <Popover>
+                  <Popover open={openUniversityPopover} onOpenChange={setOpenUniversityPopover}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -259,6 +261,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                               key={uni}
                               onSelect={() => {
                                 form.setValue("personalInfo.university", uni);
+                                setOpenUniversityPopover(false);
                               }}
                             >
                               <Check
