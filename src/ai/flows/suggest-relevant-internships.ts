@@ -61,20 +61,10 @@ const suggestRelevantInternshipsFlow = ai.defineFlow(
     outputSchema: SuggestRelevantInternshipsOutputSchema,
   },
   async input => {
-    try {
-      const {output} = await suggestRelevantInternshipsPrompt(input);
-      // Sort results by match percentage descending
-      const sortedOutput = output?.sort((a, b) => b.matchPercentage - a.matchPercentage);
-      return sortedOutput!;
-    } catch (error: any) {
-        // Handle rate limiting errors gracefully
-        if (error.message && error.message.includes('429')) {
-            console.warn('AI quota limit reached for suggestRelevantInternships. Returning empty array.');
-            return [];
-        }
-        // Re-throw other errors
-        throw error;
-    }
+    const {output} = await suggestRelevantInternshipsPrompt(input);
+    // Sort results by match percentage descending
+    const sortedOutput = output?.sort((a, b) => b.matchPercentage - a.matchPercentage);
+    return sortedOutput!;
   }
 );
 
@@ -86,5 +76,14 @@ const suggestRelevantInternshipsFlow = ai.defineFlow(
 export async function suggestRelevantInternships(
   input: SuggestRelevantInternshipsInput
 ): Promise<SuggestRelevantInternshipsOutput> {
-  return suggestRelevantInternshipsFlow(input);
+  try {
+    return await suggestRelevantInternshipsFlow(input);
+  } catch (error: any) {
+    console.error('Error in suggestRelevantInternships flow:', error);
+    if (error.message && error.message.includes('429')) {
+      console.warn('AI quota limit reached for suggestRelevantInternships. Returning empty array.');
+      return [];
+    }
+    throw new Error('An unexpected error occurred while suggesting internships.');
+  }
 }

@@ -65,6 +65,7 @@ export async function startMockInterview(
     try {
       return await mockInterviewFlow(input);
     } catch (error: any) {
+        console.error('Error in mockInterviewFlow:', error);
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for mockInterviewFlow.');
             return {
@@ -72,6 +73,6 @@ export async function startMockInterview(
                 interviewFinished: true,
             };
         }
-        throw error;
+        throw new Error('An unexpected error occurred during the mock interview.');
     }
 }

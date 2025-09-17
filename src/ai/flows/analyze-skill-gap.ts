@@ -63,10 +63,11 @@ export async function analyzeSkillGap(input: AnalyzeSkillGapInput): Promise<Anal
     try {
         return await analyzeSkillGapFlow(input);
     } catch (error: any) {
+        console.error('Error in analyzeSkillGap flow:', error);
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for analyzeSkillGap. Returning null.');
             return null;
         }
-        throw error;
+        throw new Error('An unexpected error occurred during skill gap analysis.');
     }
 }

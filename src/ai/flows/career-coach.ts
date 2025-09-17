@@ -72,10 +72,11 @@ export async function chatWithCareerCoach(
    try {
         return await careerCoachChatFlow(input);
     } catch (error: any) {
+        console.error('Error in careerCoachChatFlow:', error);
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for careerCoachChatFlow.');
             return { response: "I'm sorry, but it looks like we've reached the daily limit for AI interactions on our free plan. Please try again tomorrow." };
         }
-        throw error;
+        throw new Error('An unexpected error occurred while chatting with the career coach.');
     }
 }

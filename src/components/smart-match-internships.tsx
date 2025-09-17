@@ -72,22 +72,24 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
         }).filter((i): i is EnrichedInternship => i !== null);
          setSuggestedInternships(enrichedInternships);
       } else {
-         if (result && result.length === 0) {
-            // This case handles when AI runs but finds no matches
-             setSuggestedInternships([]);
-         } else {
-            // This case handles when the API call fails (e.g., rate limit)
-            setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
-         }
+        // This case handles when AI runs but finds no matches, or if the API call returns an empty array due to rate limiting
+        setSuggestedInternships([]);
+        if (result.length === 0 && searchPerformed) {
+            // Check if it was a rate limit error specifically
+             const testForRateLimitError = await suggestRelevantInternships({
+                studentProfile: studentProfileForAI,
+                internshipListings: [allInternships[0]].map(i => ({...i, description: i.longDescription})),
+             }).catch(() => null);
+
+             if (testForRateLimitError === null || testForRateLimitError.length === 0) {
+                 setApiError('You may have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
+             }
+        }
       }
 
     } catch (error: any) {
       console.error('AI match error:', error);
-       if (error.message && error.message.includes('429')) {
-         setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');
-       } else {
-        setApiError('Could not fetch AI-powered suggestions. Please try again later.');
-       }
+      setApiError('Could not fetch AI-powered suggestions. Please try again later.');
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -176,7 +178,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
       {apiError && (
         <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>API Limit Reached</AlertTitle>
+            <AlertTitle>API Error</AlertTitle>
             <AlertDescription>
                 {apiError}
             </AlertDescription>

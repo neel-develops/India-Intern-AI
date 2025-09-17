@@ -54,10 +54,12 @@ export async function analyzeResume(input: AnalyzeResumeInput): Promise<AnalyzeR
   try {
     return await analyzeResumeFlow(input);
   } catch (error: any) {
+    console.error('Error in analyzeResume flow:', error);
     if (error.message && error.message.includes('429')) {
       console.warn('AI quota limit reached for analyzeResume. Returning null.');
       return null;
     }
-    throw error;
+    // Re-throw other types of errors if they are not related to rate limiting
+    throw new Error('An unexpected error occurred during resume analysis.');
   }
 }

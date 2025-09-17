@@ -68,10 +68,11 @@ export async function suggestSuitableCandidates(
     try {
         return await suggestSuitableCandidatesFlow(input);
     } catch (error: any) {
+        console.error('Error in suggestSuitableCandidates flow:', error);
         if (error.message && error.message.includes('429')) {
             console.warn('AI quota limit reached for suggestSuitableCandidates. Returning empty array.');
             return [];
         }
-        throw error;
+        throw new Error('An unexpected error occurred while suggesting candidates.');
     }
 }
