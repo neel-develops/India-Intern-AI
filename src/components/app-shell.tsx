@@ -85,6 +85,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const industryNavItems = [
     { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/recruiter/internships', icon: PlusCircle, label: 'Manage Internships' },
+    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
   ];
 
   const studentAiTools = [
@@ -95,8 +96,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   ];
   
   const industryAiTools = [
-     { href: '/recruiter', icon: Wand2, label: 'Find Top Talent' },
-     { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool Browser' },
+     { href: '/recruiter', icon: Wand2, label: 'AI Candidate Matching' },
   ];
 
 
