@@ -16,7 +16,10 @@ export const SuggestSuitableCandidatesInputSchema = z.object({
         email: z.string().email(),
         location: z.string(),
       }),
-      skills: z.array(z.string()),
+      skills: z.array(z.object({
+        name: z.string(),
+        proficiency: z.number(),
+      })),
       preferences: z.array(z.string()),
       resumeSummary: z
         .string()

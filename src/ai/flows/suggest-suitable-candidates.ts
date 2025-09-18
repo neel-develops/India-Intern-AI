@@ -26,7 +26,7 @@ const prompt = ai.definePrompt({
   {{#each studentProfiles}}
   ---
   Student Name: {{this.personalInfo.name}}
-  Skills: {{this.skills}}
+  Skills: {{#each this.skills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}
   Resume Summary: {{this.resumeSummary}}
   Social Category: {{this.affirmativeAction.socialCategory}}
   From Aspirational District: {{this.affirmativeAction.isFromAspirationalDistrict}}
