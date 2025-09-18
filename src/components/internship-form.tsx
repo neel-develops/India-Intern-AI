@@ -24,6 +24,8 @@ const internshipSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters.'),
   location: z.string().min(2, 'Location is required.'),
   domain: z.string().min(1, 'Domain is required.'),
+  stipend: z.coerce.number().min(0, "Stipend cannot be negative.").optional(),
+  duration: z.string().min(2, "Duration is required.").optional(),
   description: z.string().min(20, 'Description must be at least 20 characters.'),
   longDescription: z.string().min(50, 'Detailed description must be at least 50 characters.'),
   responsibilities: z.array(z.object({ value: z.string().min(5, 'Responsibility is required.') })).min(1),
@@ -45,6 +47,8 @@ export function InternshipForm({ internship, onSave }: InternshipFormProps) {
       title: internship?.title || '',
       location: internship?.location || '',
       domain: internship?.domain || '',
+      stipend: internship?.stipend || undefined,
+      duration: internship?.duration || undefined,
       description: internship?.description || '',
       longDescription: internship?.longDescription || '',
       responsibilities: internship?.responsibilities.map(r => ({ value: r })) || [{ value: '' }],
@@ -130,6 +134,30 @@ export function InternshipForm({ internship, onSave }: InternshipFormProps) {
                     )}
                     />
             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                control={form.control}
+                name="stipend"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Monthly Stipend (INR)</FormLabel>
+                    <FormControl><Input type="number" placeholder="e.g. 25000" {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                 <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Duration</FormLabel>
+                    <FormControl><Input placeholder="e.g. 6 Months" {...field} /></FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            </div>
             <FormField
               control={form.control}
               name="description"
@@ -163,7 +191,7 @@ export function InternshipForm({ internship, onSave }: InternshipFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-2">
                             <Input {...field} placeholder={`Responsibility #${index + 1}`} />
                             <Button type="button" variant="destructive" size="icon" onClick={() => removeResp(index)} disabled={respFields.length <= 1}><Trash className="h-4 w-4" /></Button>
                         </div>
@@ -186,7 +214,7 @@ export function InternshipForm({ internship, onSave }: InternshipFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-2">
                             <Input {...field} placeholder={`Qualification #${index + 1}`} />
                             <Button type="button" variant="destructive" size="icon" onClick={() => removeQual(index)} disabled={qualFields.length <= 1}><Trash className="h-4 w-4" /></Button>
                         </div>
@@ -210,7 +238,7 @@ export function InternshipForm({ internship, onSave }: InternshipFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-2">
                             <Input {...field} placeholder={`Skill #${index + 1}`} />
                             <Button type="button" variant="destructive" size="icon" onClick={() => removeSkill(index)} disabled={skillFields.length <= 1}><Trash className="h-4 w-4" /></Button>
                         </div>

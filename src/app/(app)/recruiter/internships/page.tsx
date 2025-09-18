@@ -3,7 +3,7 @@
 import { useInternships } from '@/hooks/use-internships';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { PlusCircle, Edit, Trash, Users, Briefcase } from 'lucide-react';
+import { PlusCircle, Edit, Trash, Users, Briefcase, IndianRupee, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -37,8 +37,11 @@ export default function ManageInternshipsPage() {
             <Card key={internship.id}>
               <CardHeader>
                 <CardTitle>{internship.title}</CardTitle>
-                <CardDescription>
-                  <span className="font-semibold">{internship.location}</span> &bull; <span className="capitalize">{internship.domain}</span>
+                <CardDescription className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <span className="font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4"/>{internship.location}</span>
+                  <span className="capitalize flex items-center gap-2"><Badge variant="outline">{internship.domain}</Badge></span>
+                   {internship.stipend && <span className="flex items-center gap-2"><IndianRupee className="h-4 w-4"/> {internship.stipend.toLocaleString()}/month</span>}
+                   {internship.duration && <span className="flex items-center gap-2"><Calendar className="h-4 w-4"/> {internship.duration}</span>}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -52,9 +55,11 @@ export default function ManageInternshipsPage() {
                     <Users className="mr-2 h-4 w-4" />
                     View Applicants (Coming Soon)
                 </Button>
-                <Button variant="outline" size="sm" disabled>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/recruiter/internships/edit/${internship.id}`}>
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit (Coming Soon)
+                    Edit
+                  </Link>
                 </Button>
                 <Button variant="destructive" size="sm" onClick={() => deleteInternship(internship.id)}>
                     <Trash className="mr-2 h-4 w-4" />

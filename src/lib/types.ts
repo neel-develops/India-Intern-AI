@@ -17,6 +17,8 @@ export interface Internship {
   domain: string;
   location: string;
   image: string;
+  stipend?: number;
+  duration?: string;
 }
 
 export interface StudentProfile {
