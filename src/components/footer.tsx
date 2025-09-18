@@ -1,8 +1,32 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
 
 export function Footer() {
+  const { user, userType } = useAuth();
+
+  const industryLinks = [
+      { href: "/industry/register", label: "Post an Internship"},
+      { href: "/recruiter", label: "Find Talent"},
+      { href: "/industry/login", label: "Industry Login"},
+  ];
+
+  const studentLinks = [
+       { href: "/register", label: "Create Profile"},
+       { href: "/internships", label: "Browse Internships"},
+       { href: "/eligibility", label: "Check Eligibility"},
+       { href: "/login", label: "Student Login"},
+  ];
+
+  // If a user is logged in, filter out the login/register links
+  const getLinks = (links: {href: string, label: string}[], type: 'student' | 'industry') => {
+      if (user && userType === type) {
+          return links.filter(link => !link.href.includes('login') && !link.href.includes('register'));
+      }
+      return links;
+  }
+
   return (
     <footer className="bg-muted/20 border-t">
       <div className="container mx-auto py-12 px-4 md:px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -15,18 +39,17 @@ export function Footer() {
         <div className="space-y-4">
           <h4 className="font-semibold text-lg text-foreground">For Students</h4>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/register" className="text-muted-foreground hover:text-primary">Create Profile</Link></li>
-            <li><Link href="/internships" className="text-muted-foreground hover:text-primary">Browse Internships</Link></li>
-            <li><Link href="/eligibility" className="text-muted-foreground hover:text-primary">Check Eligibility</Link></li>
-            <li><Link href="/login" className="text-muted-foreground hover:text-primary">Student Login</Link></li>
+            {getLinks(studentLinks, 'student').map(link => (
+                <li key={link.href}><Link href={link.href} className="text-muted-foreground hover:text-primary">{link.label}</Link></li>
+            ))}
           </ul>
         </div>
         <div className="space-y-4">
           <h4 className="font-semibold text-lg text-foreground">For Industry</h4>
            <ul className="space-y-2 text-sm">
-            <li><Link href="/industry/register" className="text-muted-foreground hover:text-primary">Post an Internship</Link></li>
-            <li><Link href="/recruiter" className="text-muted-foreground hover:text-primary">Find Talent</Link></li>
-            <li><Link href="/industry/login" className="text-muted-foreground hover:text-primary">Industry Login</Link></li>
+             {getLinks(industryLinks, 'industry').map(link => (
+                <li key={link.href}><Link href={link.href} className="text-muted-foreground hover:text-primary">{link.label}</Link></li>
+            ))}
           </ul>
         </div>
       </div>

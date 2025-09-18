@@ -42,6 +42,10 @@ export default function IndustryLoginPage() {
     e.preventDefault();
     try {
       await signInWithEmail(email, password, 'industry');
+      toast({
+          title: "Sign In Successful",
+          description: "Redirecting to your dashboard..."
+      })
     } catch (error: any) {
       console.error(error);
       toast({
@@ -65,9 +69,9 @@ export default function IndustryLoginPage() {
         <form onSubmit={handleSignIn}>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                <Building /> Industry Portal
+                <Building /> Industry Portal Login
             </CardTitle>
-            <CardDescription>Sign in to find top talent and manage internships.</CardDescription>
+            <CardDescription>Sign in to find top talent for your company.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -123,7 +127,7 @@ export default function IndustryLoginPage() {
             </Button>
              <p className="text-sm text-muted-foreground">
                 Don't have an account?{' '}
-                <Link href="/industry/register" className="text-secondary hover:underline">
+                <Link href="/industry/register" className="text-secondary hover:underline font-semibold">
                     Register your company
                 </Link>
             </p>

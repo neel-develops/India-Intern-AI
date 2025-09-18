@@ -73,7 +73,7 @@ interface AuthContextType {
   user: User | null;
   userType: 'student' | 'industry' | null;
   loading: boolean;
-  signInWithEmail: (email: string, pass: string, type: 'student' | 'industry') => Promise<void>;
+  signInWithEmail: (email: string, pass: string, type?: 'student' | 'industry') => Promise<void>;
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signUpIndustryUser: (data: Omit<IndustryProfile, 'email'> & { email: string, password?: string }) => Promise<void>;
   signOut: () => Promise<void>;
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [loadStudentProfile, loadIndustryProfile]);
 
 
-  const signInWithEmail = async (email: string, pass: string, type: 'student' | 'industry') => {
+  const signInWithEmail = async (email: string, pass: string, type: 'student' | 'industry' = 'student') => {
     setLoading(true);
     try {
       // Any email/password is valid in prototype mode
