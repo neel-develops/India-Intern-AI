@@ -23,13 +23,12 @@ import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
-import { Check, ChevronsUpDown, PlusCircle, Trash, Hourglass, ShieldCheck, ShieldX } from 'lucide-react';
+import { Check, ChevronsUpDown, PlusCircle, Trash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { universities } from '@/lib/universities';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { useState } from 'react';
-import { indianStates } from '@/lib/indian-states';
 
 
 const profileSchema = z.object({
@@ -54,12 +53,6 @@ const profileSchema = z.object({
     internshipType: z.string().min(1, 'Internship type is required.'),
     otherDomain: z.string().optional(),
   }),
-  familyInfo: z.object({
-      rationCardNumber: z.string().optional().or(z.literal('')),
-      rationCardState: z.string().optional().or(z.literal('')),
-      incomeCategory: z.enum(['APL', 'BPL', 'AAY']).optional(),
-      verificationStatus: z.enum(['Verified', 'Invalid', 'Pending']).optional(),
-  }).optional(),
   resumeSummary: z.string().min(50, 'Resume summary must be at least 50 characters.'),
   certificates: z.any().optional(),
   eligibility: z.object({
@@ -90,7 +83,6 @@ interface StudentProfileFormProps {
 export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfileFormProps) {
   const { toast } = useToast();
   const [openUniversityPopover, setOpenUniversityPopover] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -112,12 +104,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
         internshipType: profile?.preferences.internshipType || '',
         otherDomain: profile?.preferences.otherDomain || '',
       },
-      familyInfo: {
-        rationCardNumber: profile?.familyInfo?.rationCardNumber || '',
-        rationCardState: profile?.familyInfo?.rationCardState || '',
-        incomeCategory: profile?.familyInfo?.incomeCategory || undefined,
-        verificationStatus: profile?.familyInfo?.verificationStatus || 'Pending',
-      },
       resumeSummary: profile?.resumeSummary || '',
       eligibility: {
           isNotEmployedFullTime: profile?.eligibility.isNotEmployedFullTime || false,
@@ -135,7 +121,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
   });
 
   const domainPreference = form.watch('preferences.domain');
-  const verificationStatus = form.watch('familyInfo.verificationStatus');
 
   function onSubmit(data: ProfileFormValues) {
     const certificateFiles = data.certificates as FileList | undefined;
@@ -150,34 +135,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
       title: 'Profile Saved',
       description: 'Your profile has been updated successfully.',
     });
-  }
-  
-  const handleVerify = () => {
-    setIsVerifying(true);
-    const rationCardNumber = form.getValues('familyInfo.rationCardNumber');
-    // Mock API call
-    setTimeout(() => {
-        if (rationCardNumber && rationCardNumber.length > 5) {
-            const lastDigit = parseInt(rationCardNumber.slice(-1));
-            let category: 'APL' | 'BPL' | 'AAY' = 'APL';
-            let income = 150000;
-            if (lastDigit <= 3) {
-                 category = 'AAY';
-                 income = 25000;
-            } else if (lastDigit <= 6) {
-                category = 'BPL';
-                income = 75000;
-            }
-            form.setValue('familyInfo.incomeCategory', category);
-            form.setValue('eligibility.familyIncome', income);
-            form.setValue('familyInfo.verificationStatus', 'Verified');
-            toast({ title: 'Verification Successful', description: `Your income category is ${category}.`});
-        } else {
-             form.setValue('familyInfo.verificationStatus', 'Invalid');
-             toast({ variant: 'destructive', title: 'Verification Failed', description: 'Invalid Ration Card number.'});
-        }
-        setIsVerifying(false);
-    }, 1500);
   }
 
   return (
@@ -368,74 +325,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                 )}
                 />
           </CardContent>
-        </Card>
-
-         <Card>
-            <CardHeader>
-                <CardTitle>Family Income & Verification</CardTitle>
-                <CardDescription>Verify your family income using your Ration Card to meet eligibility criteria.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                     <FormField
-                        control={form.control}
-                        name="familyInfo.rationCardNumber"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Ration Card Number</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Enter your ration card number" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                     <FormField
-                        control={form.control}
-                        name="familyInfo.rationCardState"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>State of Issue</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a state" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {indianStates.map(state => <SelectItem key={state} value={state}>{state}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                 <div className="flex items-center gap-4">
-                    <Button type="button" onClick={handleVerify} disabled={isVerifying}>
-                        {isVerifying ? 'Verifying...' : 'Verify Now'}
-                    </Button>
-                    <div className="flex items-center gap-2 text-sm">
-                        {verificationStatus === 'Pending' && <><Hourglass className="h-4 w-4 text-yellow-500" /> <span className="text-muted-foreground">Pending Verification</span></>}
-                        {verificationStatus === 'Verified' && <><ShieldCheck className="h-4 w-4 text-green-500" /> <span className="text-green-600 font-medium">Verified</span></>}
-                        {verificationStatus === 'Invalid' && <><ShieldX className="h-4 w-4 text-red-500" /> <span className="text-red-600 font-medium">Invalid</span></>}
-                    </div>
-                </div>
-                <FormDescription>If API is unavailable, you can upload a scan of your ration card below.</FormDescription>
-                <FormField
-                    control={form.control}
-                    name="certificates"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Upload Ration Card Scan</FormLabel>
-                        <FormControl>
-                        <Input type="file" onChange={(e) => field.onChange(e.target.files)} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-            </CardContent>
         </Card>
 
         <Card>
@@ -652,11 +541,8 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                         <FormItem>
                         <FormLabel>Annual Family Income (in INR)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="e.g. 500000" {...field} disabled={verificationStatus === 'Verified'} />
+                            <Input type="number" placeholder="e.g. 500000" {...field} />
                         </FormControl>
-                        {verificationStatus === 'Verified' ? 
-                            <FormDescription className='text-green-600'>This has been auto-filled based on your verified Ration Card.</FormDescription>
-                             : <FormDescription>This value will be auto-filled upon successful ration card verification.</FormDescription>}
                         <FormMessage />
                         </FormItem>
                     )}

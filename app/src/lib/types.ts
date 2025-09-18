@@ -39,12 +39,6 @@ export interface StudentProfile {
     internshipType: string;
     otherDomain?: string;
   };
-  familyInfo?: {
-    rationCardNumber?: string;
-    rationCardState?: string;
-    incomeCategory?: 'APL' | 'BPL' | 'AAY';
-    verificationStatus?: 'Verified' | 'Invalid' | 'Pending';
-  };
   resumeSummary: string;
   resumeFilename?: string;
   certificates?: { name: string }[];
