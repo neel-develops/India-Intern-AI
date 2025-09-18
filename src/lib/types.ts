@@ -49,6 +49,13 @@ export interface StudentProfile {
   };
 }
 
+export interface IndustryProfile {
+    name: string;
+    email: string;
+    companyName: string;
+    position: string;
+}
+
 export interface Company {
     id: string;
     name: string;

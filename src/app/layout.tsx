@@ -3,8 +3,9 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
-import { StudentProfileProvider } from '@/hooks/use-student-profile.tsx';
-import { AuthProvider } from '@/hooks/use-auth.tsx';
+import { StudentProfileProvider } from '@/hooks/use-student-profile';
+import { IndustryProfileProvider } from '@/hooks/use-industry-profile';
+import { AuthProvider } from '@/hooks/use-auth';
 import { Inter } from 'next/font/google';
 import { AppShell } from '@/components/app-shell';
 import { ClientOnly } from '@/components/client-only';
@@ -36,6 +37,7 @@ export default function RootLayout({
                 disableTransitionOnChange
             >
                 <StudentProfileProvider>
+                  <IndustryProfileProvider>
                     <AuthProvider>
                         <AppShell>
                             {children}
@@ -44,6 +46,7 @@ export default function RootLayout({
                             <Toaster />
                         </ClientOnly>
                     </AuthProvider>
+                  </IndustryProfileProvider>
                 </StudentProfileProvider>
             </ThemeProvider>
         </body>
