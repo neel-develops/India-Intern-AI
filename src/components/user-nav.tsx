@@ -73,9 +73,14 @@ export function UserNav({ user }: UserNavProps) {
             </>
         )}
         {userType === 'industry' && (
-             <DropdownMenuItem asChild>
-                <Link href="/recruiter">Recruiter Dashboard</Link>
-            </DropdownMenuItem>
+            <>
+                <DropdownMenuItem asChild>
+                    <Link href="/recruiter">Recruiter Dashboard</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/recruiter/profile">Company Profile</Link>
+                </DropdownMenuItem>
+            </>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logOut()}>

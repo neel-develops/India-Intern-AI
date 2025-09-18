@@ -54,6 +54,8 @@ export interface IndustryProfile {
     email: string;
     companyName: string;
     position: string;
+    website?: string;
+    description?: string;
 }
 
 export interface Company {
