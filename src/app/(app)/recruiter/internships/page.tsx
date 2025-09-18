@@ -37,11 +37,13 @@ export default function ManageInternshipsPage() {
             <Card key={internship.id}>
               <CardHeader>
                 <CardTitle>{internship.title}</CardTitle>
-                <CardDescription className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <span className="font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4"/>{internship.location}</span>
-                  <span className="capitalize flex items-center gap-2"><Badge variant="outline">{internship.domain}</Badge></span>
-                   {internship.stipend && <span className="flex items-center gap-2"><IndianRupee className="h-4 w-4"/> {internship.stipend.toLocaleString()}/month</span>}
-                   {internship.duration && <span className="flex items-center gap-2"><Calendar className="h-4 w-4"/> {internship.duration}</span>}
+                <CardDescription asChild>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                    <span className="font-semibold flex items-center gap-2"><Briefcase className="h-4 w-4"/>{internship.location}</span>
+                    <span className="capitalize flex items-center gap-2"><Badge variant="outline">{internship.domain}</Badge></span>
+                    {internship.stipend && <span className="flex items-center gap-2"><IndianRupee className="h-4 w-4"/> {internship.stipend.toLocaleString()}/month</span>}
+                    {internship.duration && <span className="flex items-center gap-2"><Calendar className="h-4 w-4"/> {internship.duration}</span>}
+                  </div>
                 </CardDescription>
               </CardHeader>
               <CardContent>
