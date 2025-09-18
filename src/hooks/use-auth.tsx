@@ -3,8 +3,8 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
-import { useStudentProfile } from './use-student-profile';
-import { useIndustryProfile } from './use-industry-profile';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import { useToast } from './use-toast';
 import type { IndustryProfile } from '@/lib/types';
 
@@ -73,7 +73,7 @@ interface AuthContextType {
   user: User | null;
   userType: 'student' | 'industry' | null;
   loading: boolean;
-  signInWithEmail: (email: string, pass: string, type?: 'student' | 'industry') => Promise<void>;
+  signInWithEmail: (email: string, pass: string, type: 'student' | 'industry') => Promise<void>;
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signUpIndustryUser: (data: Omit<IndustryProfile, 'email'> & { email: string, password?: string }) => Promise<void>;
   signOut: () => Promise<void>;
@@ -109,24 +109,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
   }, [loadStudentProfile, loadIndustryProfile]);
 
-  const handleLogin = useCallback(async (newUser: User, type: 'student' | 'industry') => {
-    setStoredUser(newUser, type);
-    setUser(newUser);
-    setUserType(type);
-    if (type === 'student') {
-        await loadStudentProfile(newUser.uid);
-    } else {
-        await loadIndustryProfile(newUser.uid);
-    }
-  }, [loadStudentProfile, loadIndustryProfile]);
-
-
-  const signInWithEmail = async (email: string, pass: string, type: 'student' | 'industry' = 'student') => {
+  const signInWithEmail = async (email: string, pass: string, type: 'student' | 'industry') => {
     setLoading(true);
     try {
-      // Any email/password is valid in prototype mode
       const mockUser = createMockUser(email);
-      await handleLogin(mockUser, type);
+      setStoredUser(mockUser, type);
+      setUser(mockUser);
+      setUserType(type);
+      if (type === 'student') {
+        await loadStudentProfile(mockUser.uid);
+      } else if (type === 'industry') {
+        await loadIndustryProfile(mockUser.uid);
+      }
     } catch (error) {
        console.error("Sign in failed:", error);
        toast({
@@ -142,9 +136,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-     // Any email/password is valid in prototype mode
-      const mockUser = createMockUser(email);
-      await handleLogin(mockUser, 'student');
+     const mockUser = createMockUser(email);
+      setStoredUser(mockUser, 'student');
+      setUser(mockUser);
+      setUserType('student');
+      await loadStudentProfile(mockUser.uid);
     } catch (error) {
        console.error("Sign up failed:", error);
        toast({
@@ -161,7 +157,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
         const mockUser = createMockUser(data.email, data.name);
-        await handleLogin(mockUser, 'industry');
+        setStoredUser(mockUser, 'industry');
+        setUser(mockUser);
+        setUserType('industry');
         // Save the profile data after login
         await saveIndustryProfile(mockUser.uid, {
             name: data.name,

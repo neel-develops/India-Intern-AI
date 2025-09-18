@@ -40,9 +40,8 @@ export const StudentProfileProvider = ({ children }: { children: ReactNode }) =>
 
   const saveProfile = useCallback((userId: string, newProfile: StudentProfile) => {
     try {
-      const profileToSave = { ...newProfile, resumeFilename: newProfile.resumeFilename || 'resume.pdf' };
-      window.localStorage.setItem(getStorageKey(userId), JSON.stringify(profileToSave));
-      setProfile(profileToSave);
+      window.localStorage.setItem(getStorageKey(userId), JSON.stringify(newProfile));
+      setProfile(newProfile);
     } catch (error) {
       console.error('Failed to save profile to local storage:', error);
     }

@@ -1,21 +1,24 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/use-auth.tsx';
+import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LandingContent } from '@/components/landing-content';
-import DashboardPage from '@/app/(app)/dashboard/page';
 
 export default function HomePage() {
-    const { user, loading } = useAuth();
+    const { user, userType, loading } from useAuth();
     const router = useRouter();
 
     useEffect(() => {
         if (!loading && user) {
-            router.replace('/dashboard');
+            if (userType === 'student') {
+                router.replace('/dashboard');
+            } else if (userType === 'industry') {
+                router.replace('/recruiter');
+            }
         }
-    }, [user, loading, router]);
+    }, [user, userType, loading, router]);
 
 
     if (loading) {
@@ -26,12 +29,12 @@ export default function HomePage() {
         );
     }
     
-    // If there is a user, the effect will redirect to /dashboard.
+    // If there is a user, the effect will redirect.
     // If no user, show the landing content.
     if (user) {
         return (
              <div className="flex items-center justify-center min-h-screen">
-                <div className="text-lg">Redirecting to your dashboard...</div>
+                <div className="text-lg">Redirecting...</div>
             </div>
         );
     }
