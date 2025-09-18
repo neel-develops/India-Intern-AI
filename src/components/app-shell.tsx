@@ -85,7 +85,6 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const industryNavItems = [
     { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/recruiter/internships', icon: PlusCircle, label: 'Manage Internships' },
-    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
   ];
 
   const studentAiTools = [
