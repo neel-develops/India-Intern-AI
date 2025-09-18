@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -24,7 +25,7 @@ export default function ApplicantsPage() {
   const { id: internshipId } = params;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [skillFilter, setSkillFilter] = useState('');
+  const [skillFilter, setSkillFilter] = useState('all');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   
   const internship = internships.find(i => i.id === internshipId);
@@ -47,7 +48,7 @@ export default function ApplicantsPage() {
     return applicants.filter(app => {
       const nameMatch = app.student.personalInfo.name.toLowerCase().includes(searchTerm.toLowerCase());
       const statusMatch = statusFilter === 'all' || app.application.status === statusFilter;
-      const skillMatch = !skillFilter || app.student.skills.some(s => s.name.toLowerCase().includes(skillFilter.toLowerCase()));
+      const skillMatch = skillFilter === 'all' || !skillFilter || app.student.skills.some(s => s.name.toLowerCase().includes(skillFilter.toLowerCase()));
       return nameMatch && statusMatch && skillMatch;
     });
   }, [applicants, searchTerm, statusFilter, skillFilter]);
@@ -104,7 +105,7 @@ export default function ApplicantsPage() {
             <SelectValue placeholder="Filter by skill" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Skills</SelectItem>
+            <SelectItem value="all">All Skills</SelectItem>
             {allSkills.map(skill => (
                 <SelectItem key={skill} value={skill}>{skill}</SelectItem>
             ))}
