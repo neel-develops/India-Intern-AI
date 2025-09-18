@@ -82,6 +82,9 @@ export function UserNav({ user }: UserNavProps) {
                 </DropdownMenuItem>
             </>
         )}
+         <DropdownMenuItem asChild>
+            <Link href="/settings">Settings</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logOut()}>
           Log out
