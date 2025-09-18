@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function TalentPoolPage() {
-  const { user, userType, loading } = useAuth();
+  const { user, userType, loading } from useAuth();
   const router = useRouter();
 
   useEffect(() => {
