@@ -27,10 +27,11 @@ export function useInternships() {
       setIsLoading(true);
       try {
         const item = window.localStorage.getItem(getStorageKey(user.uid));
-        setInternships(item ? JSON.parse(item) : []);
+        // If they have internships, load them. Otherwise, show default ones as an example.
+        setInternships(item ? JSON.parse(item) : defaultInternships);
       } catch (error) {
         console.error('Failed to load internships from local storage:', error);
-        setInternships([]);
+        setInternships(defaultInternships); // Fallback to default
       } finally {
         setIsLoading(false);
       }
