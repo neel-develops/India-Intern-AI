@@ -1,4 +1,3 @@
-
 'use client';
 import { useParams } from 'next/navigation';
 import { studentProfiles, internships } from '@/lib/data';
