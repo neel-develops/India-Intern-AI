@@ -25,6 +25,7 @@ import {
   GraduationCap,
   Users,
   PlusCircle,
+  Wand2,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -84,7 +85,6 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const industryNavItems = [
     { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/recruiter/internships', icon: PlusCircle, label: 'Manage Internships' },
-    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
   ];
 
   const studentAiTools = [
@@ -93,6 +93,12 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
      { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer' },
      { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach' },
   ];
+  
+  const industryAiTools = [
+     { href: '/recruiter', icon: Wand2, label: 'Find Top Talent' },
+     { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool Browser' },
+  ];
+
 
   const getNavItems = () => {
     if (!user) return publicNavItems.filter(item => item.href !== '/'); // Hide home from sidebar
@@ -128,6 +134,24 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         <>
             <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
             {studentAiTools.map((item) => (
+                <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+                    pathname === item.href && 'bg-accent text-primary font-medium'
+                    )}
+                >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                </Link>
+            ))}
+        </>
+      )}
+      {user && userType === 'industry' && (
+        <>
+            <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
+            {industryAiTools.map((item) => (
                 <Link
                     key={item.href}
                     href={item.href}
