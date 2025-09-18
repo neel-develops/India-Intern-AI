@@ -22,7 +22,9 @@ import {
   MessageSquare,
   BarChart3,
   BrainCircuit,
-  GraduationCap
+  GraduationCap,
+  Users,
+  PlusCircle,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -54,7 +56,7 @@ function useIsClient() {
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, userType, loading } = useAuth();
   const router = useRouter();
   const isClient = useIsClient();
   const { notifications } = useNotifications();
@@ -65,22 +67,39 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     return null;
   }
   
-  const navItems = [
-    { href: '/', icon: Home, label: 'Home', auth: 'any' },
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
-    { href: '/internships', icon: Briefcase, label: 'Internships', auth: 'any' },
-    { href: '/companies', icon: Building2, label: 'Institutes', auth: 'any' },
-    { href: '/applications', icon: FileText, label: 'My Applications', auth: true },
-    { href: '/profile', icon: User, label: 'My Profile', auth: true },
-    { href: '/eligibility', icon: HelpCircle, label: 'Eligibility', auth: 'any'},
+  const publicNavItems = [
+    { href: '/', icon: Home, label: 'Home' },
+    { href: '/internships', icon: Briefcase, label: 'Internships' },
+    { href: '/companies', icon: Building2, label: 'Institutes' },
+    { href: '/eligibility', icon: HelpCircle, label: 'Eligibility'},
   ];
 
-  const aiTools = [
-     { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer', auth: true },
-     { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser', auth: true },
-     { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer', auth: true },
-     { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach', auth: true },
-  ]
+  const studentNavItems = [
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/internships', icon: Briefcase, label: 'Internships' },
+    { href: '/applications', icon: FileText, label: 'My Applications' },
+    { href: '/profile', icon: User, label: 'My Profile' },
+  ];
+  
+  const industryNavItems = [
+    { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/recruiter/internships', icon: PlusCircle, label: 'Manage Internships' },
+    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
+  ];
+
+  const studentAiTools = [
+     { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer' },
+     { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser' },
+     { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer' },
+     { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach' },
+  ];
+
+  const getNavItems = () => {
+    if (!user) return publicNavItems.filter(item => item.href !== '/'); // Hide home from sidebar
+    if (userType === 'student') return studentNavItems;
+    if (userType === 'industry') return industryNavItems;
+    return [];
+  }
   
   const sidebarHeader = (
     <Link href="/" className="flex flex-col items-start gap-2">
@@ -92,28 +111,23 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const sidebarNav = (
     <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
       <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
-      {navItems.map((item) => {
-          if (item.auth === true && !user) return null;
-          if (item.href === '/' && user) return null; // Hide home link for logged in users in sidebar
-          
-          return (
-              <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
-                  pathname === item.href && 'bg-accent text-primary font-medium'
-                  )}
-              >
-                  <item.icon className="h-4 w-4" />
-                  {item.label}
-              </Link>
-          )
-      })}
-      {user && (
+      {getNavItems().map((item) => (
+          <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+              pathname === item.href && 'bg-accent text-primary font-medium'
+              )}
+          >
+              <item.icon className="h-4 w-4" />
+              {item.label}
+          </Link>
+      ))}
+      {user && userType === 'student' && (
         <>
             <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
-            {aiTools.map((item) => (
+            {studentAiTools.map((item) => (
                 <Link
                     key={item.href}
                     href={item.href}
@@ -181,16 +195,18 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
       ) : user ? (
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/notifications" className="relative">
-              <Bell className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                  {unreadCount}
-                </span>
-              )}
-            </Link>
-          </Button>
+          {userType === 'student' && (
+            <Button variant="ghost" size="icon" asChild>
+                <Link href="/notifications" className="relative">
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                    {unreadCount}
+                    </span>
+                )}
+                </Link>
+            </Button>
+          )}
           <UserNav user={user} />
         </div>
       ) : (
@@ -206,7 +222,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
+  const isPublicPage = ['/login', '/register', '/eligibility', '/industry/register'].includes(pathname) || pathname.startsWith('/companies');
   const isLandingPage = pathname === '/';
 
   // If user is not logged in and on a public page, or on landing page, show a simpler layout
@@ -219,9 +235,9 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
                     <Image src="https://i.ibb.co/LdN7TD1j/image-removebg-preview.png" alt="IndiaIntern.ai Logo" width={120} height={26} />
                   </Link>
                   <nav className="hidden md:flex gap-4">
-                      <Link href="/internships" className="text-muted-foreground hover:text-primary">Internships</Link>
-                      <Link href="/companies" className="text-muted-foreground hover:text-primary">Institutes</Link>
-                      <Link href="/eligibility" className="text-muted-foreground hover:text-primary">Eligibility</Link>
+                      {publicNavItems.map(item => (
+                          <Link key={item.href} href={item.href} className="text-muted-foreground hover:text-primary">{item.label}</Link>
+                      ))}
                   </nav>
                 </div>
                 <div className="flex flex-1 items-center justify-end gap-4">

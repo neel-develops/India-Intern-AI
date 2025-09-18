@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth.tsx';
 import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
+import { useIndustryProfile } from '@/hooks/use-industry-profile.tsx';
 import type { User } from 'firebase/auth';
 
 interface UserNavProps {
@@ -26,14 +27,18 @@ function getInitials(name: string) {
 }
 
 export function UserNav({ user }: UserNavProps) {
-  const { signOut: logOut } = useAuth();
-  const { profile } = useStudentProfile();
+  const { signOut: logOut, userType } = useAuth();
+  const { profile: studentProfile } = useStudentProfile();
+  const { profile: industryProfile } = useIndustryProfile();
 
   if (!user) {
     return null;
   }
   
-  const userName = profile?.personalInfo?.name || user.displayName || 'User';
+  const userName = userType === 'student' 
+    ? studentProfile?.personalInfo?.name 
+    : industryProfile?.name || user.displayName || 'User';
+    
   const userEmail = user.email || 'No email';
   const userAvatar = user.photoURL;
 
@@ -43,7 +48,7 @@ export function UserNav({ user }: UserNavProps) {
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage src={userAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`} alt={userName} />
-            <AvatarFallback>{getInitials(userName)}</AvatarFallback>
+            <AvatarFallback>{getInitials(userName || '')}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -57,12 +62,21 @@ export function UserNav({ user }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-            <Link href="/profile">Profile</Link>
-        </DropdownMenuItem>
-         <DropdownMenuItem asChild>
-            <Link href="/applications">My Applications</Link>
-        </DropdownMenuItem>
+        {userType === 'student' && (
+            <>
+                <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/applications">My Applications</Link>
+                </DropdownMenuItem>
+            </>
+        )}
+        {userType === 'industry' && (
+             <DropdownMenuItem asChild>
+                <Link href="/recruiter">Recruiter Dashboard</Link>
+            </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logOut()}>
           Log out
