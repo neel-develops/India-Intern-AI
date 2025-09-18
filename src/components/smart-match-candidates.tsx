@@ -43,7 +43,7 @@ export function SmartMatchCandidates() {
                 email: p.personalInfo.email,
                 location: p.personalInfo.location,
             },
-            skills: p.skills.map(s => s.name),
+            skills: p.skills,
             preferences: [`Domain: ${p.preferences.domain}`, `Type: ${p.preferences.internshipType}`],
             resumeSummary: p.resumeSummary,
             affirmativeAction: {
