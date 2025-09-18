@@ -12,6 +12,7 @@ import { internships } from '@/lib/data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { MoreHorizontal } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { ClientOnly } from './client-only';
 
 type PipelineStage = 'Applied' | 'In Review' | 'Interview' | 'Offered' | 'Rejected';
 
@@ -38,11 +39,6 @@ export function RecruitmentPipeline() {
     Offered: [],
     Rejected: [],
   });
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     if (!selectedInternshipId) return;
@@ -119,7 +115,7 @@ export function RecruitmentPipeline() {
                 </Select>
             </CardContent>
         </Card>
-      {isClient ? (
+      <ClientOnly>
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-start">
             {stages.map(stage => (
@@ -173,7 +169,7 @@ export function RecruitmentPipeline() {
             ))}
           </div>
         </DragDropContext>
-      ) : <p>Loading pipeline...</p>}
+      </ClientOnly>
     </div>
   );
 }
