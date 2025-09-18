@@ -26,6 +26,7 @@ import {
   Users,
   PlusCircle,
   Wand2,
+  Columns,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -85,7 +86,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   const industryNavItems = [
     { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/recruiter/internships', icon: Briefcase, label: 'Manage Internships' },
-    { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
+    { href: '/recruiter/pipeline', icon: Columns, label: 'Recruitment Pipeline' },
   ];
 
   const studentAiTools = [
@@ -97,6 +98,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   
   const industryAiTools = [
      { href: '/recruiter/ai-matching', icon: Wand2, label: 'AI Candidate Matching' },
+     { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
   ];
 
 
