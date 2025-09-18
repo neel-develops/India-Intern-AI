@@ -136,7 +136,7 @@ export default function IndustryRegisterPage() {
                 </Button>
                 <p className="text-sm text-muted-foreground">
                     Already have an account?{' '}
-                    <Link href="/industry/login" className="text-secondary hover:underline">
+                    <Link href="/login" className="text-secondary hover:underline">
                         Sign In
                     </Link>
                 </p>

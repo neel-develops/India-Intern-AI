@@ -9,7 +9,7 @@ export function Footer() {
   const industryLinks = [
       { href: "/industry/register", label: "Post an Internship"},
       { href: "/recruiter", label: "Find Talent"},
-      { href: "/industry/login", label: "Industry Login"},
+      { href: "/login", label: "Industry Login"},
   ];
 
   const studentLinks = [
