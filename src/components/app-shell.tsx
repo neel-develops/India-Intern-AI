@@ -97,7 +97,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   ];
   
   const industryAiTools = [
-     { href: '/recruiter/ai-matching', icon: Wand2, label: 'AI Candidate Matching' },
+     { href: '/recruiter/ai-matching', icon: Wand2, label: 'AI Insights' },
      { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
   ];
 
