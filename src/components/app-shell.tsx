@@ -38,13 +38,12 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { useAuth } from '@/hooks/use-auth.tsx';
+import { useAuth } from '@/hooks/use-auth';
 import { UserNav } from '@/components/user-nav';
 import { Footer } from '@/components/footer';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
-import { useNotifications } from '@/hooks/use-notifications.tsx';
-import { NotificationsProvider } from '@/hooks/use-notifications.tsx';
+import { useNotifications } from '@/hooks/use-notifications';
 
 function useIsClient() {
   const [isClient, setIsClient] = useState(false)
@@ -56,7 +55,7 @@ function useIsClient() {
   return isClient
 }
 
-function AppShellContent({ children }: { children: React.ReactNode }) {
+export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, userType, loading } = useAuth();
   const router = useRouter();
@@ -315,12 +314,4 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         </div>
     </div>
   );
-}
-
-export function AppShell({ children }: { children: React.ReactNode }) {
-    return (
-        <NotificationsProvider>
-            <AppShellContent>{children}</AppShellContent>
-        </NotificationsProvider>
-    )
 }

@@ -9,6 +9,7 @@ import { AuthProvider } from '@/hooks/use-auth';
 import { Inter } from 'next/font/google';
 import { AppShell } from '@/components/app-shell';
 import { ClientOnly } from '@/components/client-only';
+import { NotificationsProvider } from '@/hooks/use-notifications';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,18 +37,20 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
             >
+              <AuthProvider>
                 <StudentProfileProvider>
                   <IndustryProfileProvider>
-                    <AuthProvider>
+                    <NotificationsProvider>
                         <AppShell>
                             {children}
                         </AppShell>
                         <ClientOnly>
                             <Toaster />
                         </ClientOnly>
-                    </AuthProvider>
+                    </NotificationsProvider>
                   </IndustryProfileProvider>
                 </StudentProfileProvider>
+              </AuthProvider>
             </ThemeProvider>
         </body>
     </html>
