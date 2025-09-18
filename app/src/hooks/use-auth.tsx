@@ -3,8 +3,8 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
-import { useStudentProfile } from './use-student-profile';
-import { useIndustryProfile } from './use-industry-profile';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import { useToast } from './use-toast';
 import type { IndustryProfile } from '@/lib/types';
 
