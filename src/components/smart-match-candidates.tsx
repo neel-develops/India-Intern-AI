@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import type { SuggestSuitableCandidatesOutput } from '@/ai/flows/suggest-suitable-candidates';
+import type { SuggestSuitableCandidatesOutput } from '@/ai/flows/suggest-suitable-candidates-types';
 import { StudentCard } from './student-card';
 import { Skeleton } from './ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -87,7 +87,7 @@ export function SmartMatchCandidates() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Wand2 className="text-primary" />
-            Find Top Talent with AI
+            AI Candidate Matching
           </CardTitle>
           <CardDescription>
             Paste your internship description below to find the most suitable candidates from our talent pool, based on skills and affirmative action criteria.
