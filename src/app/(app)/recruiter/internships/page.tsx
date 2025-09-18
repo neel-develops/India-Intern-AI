@@ -51,9 +51,11 @@ export default function ManageInternshipsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" disabled>
-                    <Users className="mr-2 h-4 w-4" />
-                    View Applicants (Coming Soon)
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/recruiter/internships/${internship.id}/applicants`}>
+                        <Users className="mr-2 h-4 w-4" />
+                        View Applicants
+                    </Link>
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link href={`/recruiter/internships/edit/${internship.id}`}>
