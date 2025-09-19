@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/hooks/use-auth.tsx';
-import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
-import { useIndustryProfile } from '@/hooks/use-industry-profile.tsx';
+import { useAuth } from '@/hooks/use-auth';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import type { User } from 'firebase/auth';
 
 interface UserNavProps {
