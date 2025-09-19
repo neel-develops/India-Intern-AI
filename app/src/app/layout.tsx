@@ -4,7 +4,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { StudentProfileProvider } from '@/hooks/use-student-profile';
-import { IndustryProfileProvider } from '@/hooks/use-industry-profile';
 import { AuthProvider } from '@/hooks/use-auth';
 import { Inter } from 'next/font/google';
 import { AppShell } from '@/components/app-shell';
@@ -37,20 +36,18 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
             >
-              <StudentProfileProvider>
-                <IndustryProfileProvider>
-                  <AuthProvider>
-                    <NotificationsProvider>
-                        <AppShell>
-                            {children}
-                        </AppShell>
-                        <ClientOnly>
-                            <Toaster />
-                        </ClientOnly>
-                    </NotificationsProvider>
-                  </AuthProvider>
-                </IndustryProfileProvider>
-              </StudentProfileProvider>
+              <AuthProvider>
+                <StudentProfileProvider>
+                  <NotificationsProvider>
+                      <AppShell>
+                          {children}
+                      </AppShell>
+                      <ClientOnly>
+                          <Toaster />
+                      </ClientOnly>
+                  </NotificationsProvider>
+                </StudentProfileProvider>
+              </AuthProvider>
             </ThemeProvider>
         </body>
     </html>

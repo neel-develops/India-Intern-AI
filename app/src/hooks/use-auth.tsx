@@ -4,14 +4,11 @@
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import type { IndustryProfile } from '@/lib/types';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { useIndustryProfile } from '@/hooks/use-industry-profile';
 
 
 // --- Helper Functions ---
 const AUTH_STORAGE_KEY = 'firebase-auth-user';
-const USER_TYPE_STORAGE_KEY = 'firebase-auth-user-type';
 
 const getStoredUser = (): User | null => {
   if (typeof window === 'undefined') return null;
@@ -24,19 +21,12 @@ const getStoredUser = (): User | null => {
   }
 };
 
-const getStoredUserType = (): 'student' | 'industry' | null => {
-  if (typeof window === 'undefined') return null;
-  return window.localStorage.getItem(USER_TYPE_STORAGE_KEY) as 'student' | 'industry' | null;
-}
-
-const setStoredUser = (user: User | null, userType: 'student' | 'industry' | null) => {
+const setStoredUser = (user: User | null) => {
   if (typeof window === 'undefined') return;
-  if (user && userType) {
+  if (user) {
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    window.localStorage.setItem(USER_TYPE_STORAGE_KEY, userType);
   } else {
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
-    window.localStorage.removeItem(USER_TYPE_STORAGE_KEY);
   }
 };
 
@@ -71,11 +61,9 @@ const createMockUser = (email: string, name?: string): User => ({
 // --- Auth Context ---
 interface AuthContextType {
   user: User | null;
-  userType: 'student' | 'industry' | null;
   loading: boolean;
-  signInWithEmail: (email: string, pass: string, type: 'student' | 'industry') => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpIndustryUser: (data: Omit<IndustryProfile, 'email'> & { email: string, password?: string }) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -84,43 +72,35 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // --- Auth Provider ---
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userType, setUserType] = useState<'student' | 'industry' | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loadProfileForUser: loadStudentProfile, clearProfile: clearStudentProfile } = useStudentProfile();
-  const { loadProfileForUser: loadIndustryProfile, saveProfile: saveIndustryProfile, clearProfile: clearIndustryProfile } = useIndustryProfile();
+  const { loadProfileForUser, clearProfile } = useStudentProfile();
   const { toast } = useToast();
 
   useEffect(() => {
     const initializeAuth = async () => {
       setLoading(true);
       const storedUser = getStoredUser();
-      const storedUserType = getStoredUserType();
-      if (storedUser && storedUserType) {
+      if (storedUser) {
         setUser(storedUser);
-        setUserType(storedUserType);
-        if (storedUserType === 'student') {
-            await loadStudentProfile(storedUser.uid);
-        } else if (storedUserType === 'industry') {
-            await loadIndustryProfile(storedUser.uid);
-        }
+        await loadProfileForUser(storedUser.uid);
       }
       setLoading(false);
     };
     initializeAuth();
-  }, [loadStudentProfile, loadIndustryProfile]);
+  }, [loadProfileForUser]);
 
-  const signInWithEmail = async (email: string, pass: string, type: 'student' | 'industry') => {
+  const handleAuthSuccess = useCallback(async (newUser: User) => {
+      setUser(newUser);
+      setStoredUser(newUser);
+      await loadProfileForUser(newUser.uid);
+  },[loadProfileForUser]);
+
+
+  const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
       const mockUser = createMockUser(email);
-      setStoredUser(mockUser, type);
-      setUser(mockUser);
-      setUserType(type);
-      if (type === 'student') {
-        await loadStudentProfile(mockUser.uid);
-      } else if (type === 'industry') {
-        await loadIndustryProfile(mockUser.uid);
-      }
+      await handleAuthSuccess(mockUser);
     } catch (error) {
        console.error("Sign in failed:", error);
        toast({
@@ -137,10 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
      const mockUser = createMockUser(email);
-      setStoredUser(mockUser, 'student');
-      setUser(mockUser);
-      setUserType('student');
-      await loadStudentProfile(mockUser.uid);
+     await handleAuthSuccess(mockUser);
     } catch (error) {
        console.error("Sign up failed:", error);
        toast({
@@ -153,44 +130,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUpIndustryUser = async (data: Omit<IndustryProfile, 'email'> & { email: string, password?: string }) => {
-    setLoading(true);
-    try {
-        const mockUser = createMockUser(data.email, data.name);
-        setStoredUser(mockUser, 'industry');
-        setUser(mockUser);
-        setUserType('industry');
-        // Save the profile data after login
-        await saveIndustryProfile(mockUser.uid, {
-            name: data.name,
-            email: data.email,
-            companyName: data.companyName,
-            position: data.position,
-        });
-    } catch (error) {
-        console.error("Industry sign up failed:", error);
-        toast({
-           variant: 'destructive',
-           title: 'Sign Up Failed',
-           description: 'An unexpected error occurred.',
-       })
-    } finally {
-        setLoading(false);
-    }
-  }
 
   const signOut = async () => {
     setLoading(true);
     setUser(null);
-    setUserType(null);
-    setStoredUser(null, null);
-    clearStudentProfile();
-    clearIndustryProfile();
+    setStoredUser(null);
+    clearProfile();
     setLoading(false);
   };
   
   return (
-    <AuthContext.Provider value={{ user, userType, loading, signInWithEmail, signUpWithEmail, signOut, signUpIndustryUser }}>
+    <AuthContext.Provider value={{ user, loading, signInWithEmail, signUpWithEmail, signOut }}>
       {children}
     </AuthContext.Provider>
   );
