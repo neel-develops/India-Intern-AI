@@ -3,8 +3,9 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
-import { useStudentProfile } from './use-student-profile';
-import { useToast } from './use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+
 
 // --- Helper Functions ---
 const AUTH_STORAGE_KEY = 'firebase-auth-user';
@@ -30,10 +31,10 @@ const setStoredUser = (user: User | null) => {
 };
 
 // Mock a user object for prototype
-const createMockUser = (email: string): User => ({
+const createMockUser = (email: string, name?: string): User => ({
   uid: email,
   email: email,
-  displayName: 'Prototype User',
+  displayName: name || 'Prototype User',
   photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`,
   emailVerified: true,
   isAnonymous: false,
@@ -86,21 +87,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     };
     initializeAuth();
-  }, [loadProfileForUser]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleLogin = useCallback(async (newUser: User) => {
-    setStoredUser(newUser);
-    setUser(newUser);
-    await loadProfileForUser(newUser.uid);
+  const handleAuthSuccess = useCallback(async (newUser: User) => {
+      setUser(newUser);
+      setStoredUser(newUser);
+      await loadProfileForUser(newUser.uid);
   },[loadProfileForUser]);
 
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-      // Any email/password is valid in prototype mode
       const mockUser = createMockUser(email);
-      await handleLogin(mockUser);
+      await handleAuthSuccess(mockUser);
     } catch (error) {
        console.error("Sign in failed:", error);
        toast({
@@ -116,9 +117,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-     // Any email/password is valid in prototype mode
-      const mockUser = createMockUser(email);
-      await handleLogin(mockUser);
+     const mockUser = createMockUser(email);
+     await handleAuthSuccess(mockUser);
     } catch (error) {
        console.error("Sign up failed:", error);
        toast({
@@ -131,12 +131,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+
   const signOut = async () => {
     setLoading(true);
     setUser(null);
     setStoredUser(null);
     clearProfile();
     setLoading(false);
+    // Go to home page after sign out
+    window.location.href = '/';
   };
   
   return (
