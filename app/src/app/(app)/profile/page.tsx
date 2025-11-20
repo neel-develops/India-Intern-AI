@@ -21,9 +21,19 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, router]);
 
-  const handleSave = (data: StudentProfile) => {
+  const handleSave = (data: Omit<StudentProfile, 'eligibility'>) => {
     if (user) {
-      saveProfile(user.uid, data);
+      const fullProfile: StudentProfile = {
+        ...data,
+        eligibility: profile?.eligibility || {
+          isNotEmployedFullTime: false,
+          isNotEnrolledFullTime: false,
+          familyIncome: 0,
+          hasNoGovtJobFamily: false,
+          experienceMonths: 0,
+        }
+      }
+      saveProfile(user.uid, fullProfile);
     }
   };
 
