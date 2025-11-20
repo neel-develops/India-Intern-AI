@@ -87,8 +87,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     };
     initializeAuth();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadProfileForUser]);
 
   const handleAuthSuccess = useCallback(async (newUser: User) => {
       setUser(newUser);
@@ -138,7 +137,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setStoredUser(null);
     clearProfile();
     setLoading(false);
-    // Go to home page after sign out
     window.location.href = '/';
   };
   

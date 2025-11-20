@@ -19,14 +19,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import type { StudentProfile } from '@/lib/types';
-import { Checkbox } from './ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Check, ChevronsUpDown, PlusCircle, Trash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { universities } from '@/lib/universities';
-import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { useState } from 'react';
 
@@ -34,14 +32,14 @@ import { useState } from 'react';
 const profileSchema = z.object({
   personalInfo: z.object({
     name: z.string().min(2, 'Name must be at least 2 characters.'),
-    age: z.coerce.number().min(21, "Must be at least 21").max(24, "Must be at most 24"),
+    age: z.coerce.number().min(18, "Must be at least 18").max(30, "Must be at most 30"),
     email: z.string().email('Invalid email address.'),
     location: z.string().min(2, 'Location is required.'),
     linkedin: z.string().url().optional().or(z.literal('')),
     university: z.string().min(2, "University is required."),
     degree: z.string().min(2, "Degree is required."),
     stream: z.string().min(2, "Stream is required."),
-    graduatingYear: z.coerce.number().min(new Date().getFullYear(), "Year must be in the future.").max(new Date().getFullYear() + 5, "Year seems too far in the future."),
+    graduatingYear: z.coerce.number().min(new Date().getFullYear() - 5, "Year seems too far in the past.").max(new Date().getFullYear() + 5, "Year seems too far in the future."),
   }),
   skills: z.array(z.object({
     name: z.string().min(1, "Skill name is required."),
@@ -55,13 +53,6 @@ const profileSchema = z.object({
   }),
   resumeSummary: z.string().min(50, 'Resume summary must be at least 50 characters.'),
   certificates: z.any().optional(),
-  eligibility: z.object({
-    isNotEmployedFullTime: z.boolean().refine(val => val === true, { message: 'You must not be employed full-time.' }),
-    isNotEnrolledFullTime: z.boolean().refine(val => val === true, { message: 'You must not be enrolled full-time.' }),
-    familyIncome: z.coerce.number().max(799999, 'Family income must be less than 8 Lakhs PA.'),
-    hasNoGovtJobFamily: z.boolean().refine(val => val === true, { message: 'No family member should have a government job.' }),
-    experienceMonths: z.coerce.number().min(12, 'At least 12 months of experience is required.'),
-  }),
 }).refine(data => {
     if (data.preferences.domain === 'Other') {
         return !!data.preferences.otherDomain && data.preferences.otherDomain.length > 0;
@@ -76,7 +67,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface StudentProfileFormProps {
   profile: StudentProfile | null;
-  onSave: (data: StudentProfile) => void;
+  onSave: (data: Omit<StudentProfile, 'eligibility'>) => void;
   userEmail: string;
 }
 
@@ -105,13 +96,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
         otherDomain: profile?.preferences.otherDomain || '',
       },
       resumeSummary: profile?.resumeSummary || '',
-      eligibility: {
-          isNotEmployedFullTime: profile?.eligibility.isNotEmployedFullTime || false,
-          isNotEnrolledFullTime: profile?.eligibility.isNotEnrolledFullTime || false,
-          familyIncome: profile?.eligibility.familyIncome || 0,
-          hasNoGovtJobFamily: profile?.eligibility.hasNoGovtJobFamily || false,
-          experienceMonths: profile?.eligibility.experienceMonths || 0,
-      },
     },
   });
 
@@ -126,7 +110,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
     const certificateFiles = data.certificates as FileList | undefined;
     const certificateNames = certificateFiles ? Array.from(certificateFiles).map(file => ({ name: file.name })) : [];
 
-    const newProfile: StudentProfile = {
+    const newProfile = {
       ...data,
       certificates: certificateNames,
     };
@@ -513,83 +497,6 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                 )}
             />
           </CardContent>
-        </Card>
-
-        <Card>
-            <CardHeader>
-                <CardTitle>Eligibility Criteria</CardTitle>
-                <CardDescription>Please confirm you meet the following criteria for the PM Internship Scheme.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                 <FormField
-                    control={form.control}
-                    name="eligibility.experienceMonths"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Months of Professional Experience</FormLabel>
-                        <FormControl>
-                            <Input type="number" placeholder="e.g. 18" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="eligibility.familyIncome"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Annual Family Income (in INR)</FormLabel>
-                        <FormControl>
-                            <Input type="number" placeholder="e.g. 500000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="eligibility.isNotEmployedFullTime"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                        <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                            <FormLabel>I am not currently employed full-time.</FormLabel>
-                        </div>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="eligibility.isNotEnrolledFullTime"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                        <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                            <FormLabel>I am not currently enrolled full-time in an educational institution.</FormLabel>
-                        </div>
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="eligibility.hasNoGovtJobFamily"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                        <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                            <FormLabel>No member of my immediate family holds a government job.</FormLabel>
-                        </div>
-                        </FormItem>
-                    )}
-                />
-            </CardContent>
         </Card>
 
         <Button type="submit" size="lg">Save Profile</Button>

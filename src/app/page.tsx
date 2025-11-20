@@ -5,7 +5,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { LandingContent } from '@/components/landing-content';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HomePage() {
     const { user, loading } = useAuth();
@@ -17,6 +16,7 @@ export default function HomePage() {
         }
     }, [user, loading, router]);
 
+
     if (loading || user) {
         return (
             <div className="flex items-center justify-center min-h-screen">
@@ -24,6 +24,6 @@ export default function HomePage() {
             </div>
         );
     }
-
+    
     return <LandingContent />;
 }

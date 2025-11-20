@@ -21,7 +21,7 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, router]);
 
-  const handleSave = (data: StudentProfile) => {
+  const handleSave = (data: Omit<StudentProfile, 'eligibility'>) => {
     if (user) {
       saveProfile(user.uid, data);
     }

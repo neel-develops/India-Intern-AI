@@ -22,11 +22,7 @@ import {
   MessageSquare,
   BarChart3,
   BrainCircuit,
-  GraduationCap,
-  Users,
-  PlusCircle,
-  Wand2,
-  Columns,
+  GraduationCap
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -57,7 +53,7 @@ function useIsClient() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, userType, loading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const isClient = useIsClient();
   const { notifications } = useNotifications();
@@ -82,30 +78,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     { href: '/profile', icon: User, label: 'My Profile' },
   ];
   
-  const industryNavItems = [
-    { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/recruiter/internships', icon: Briefcase, label: 'Manage Internships' },
-    { href: '/recruiter/pipeline', icon: Columns, label: 'Recruitment Pipeline' },
-  ];
-
   const studentAiTools = [
      { href: '/skill-gap-visualizer', icon: BarChart3, label: 'Skill Gap Visualizer' },
      { href: '/resume-analyser', icon: FileScan, label: 'Resume Analyser' },
      { href: '/mock-interview', icon: BrainCircuit, label: 'Mock Interviewer' },
      { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach' },
   ];
-  
-  const industryAiTools = [
-     { href: '/recruiter/ai-matching', icon: Wand2, label: 'AI Insights' },
-     { href: '/recruiter/talent-pool', icon: Users, label: 'Talent Pool' },
-  ];
-
 
   const getNavItems = () => {
     if (!user) return publicNavItems.filter(item => item.href !== '/'); // Hide home from sidebar
-    if (userType === 'student') return studentNavItems;
-    if (userType === 'industry') return industryNavItems;
-    return [];
+    return studentNavItems;
   }
   
   const sidebarHeader = (
@@ -131,28 +113,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {item.label}
           </Link>
       ))}
-      {user && userType === 'student' && (
+      {user && (
         <>
             <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
             {studentAiTools.map((item) => (
-                <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
-                    pathname === item.href && 'bg-accent text-primary font-medium'
-                    )}
-                >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                </Link>
-            ))}
-        </>
-      )}
-      {user && userType === 'industry' && (
-        <>
-            <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
-            {industryAiTools.map((item) => (
                 <Link
                     key={item.href}
                     href={item.href}
@@ -220,7 +184,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
       ) : user ? (
         <div className="flex items-center gap-4">
-          {userType === 'student' && (
             <Button variant="ghost" size="icon" asChild>
                 <Link href="/notifications" className="relative">
                 <Bell className="h-5 w-5" />
@@ -231,7 +194,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 )}
                 </Link>
             </Button>
-          )}
           <UserNav user={user} />
         </div>
       ) : (
@@ -247,7 +209,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </>
   );
 
-  const isPublicPage = ['/login', '/register', '/eligibility', '/industry/register'].includes(pathname) || pathname.startsWith('/companies');
+  const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
   const isLandingPage = pathname === '/';
 
   // If user is not logged in and on a public page, or on landing page, show a simpler layout

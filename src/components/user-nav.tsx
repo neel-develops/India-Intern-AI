@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import type { User } from 'firebase/auth';
 
 interface UserNavProps {
@@ -27,18 +26,14 @@ function getInitials(name: string) {
 }
 
 export function UserNav({ user }: UserNavProps) {
-  const { signOut: logOut, userType } = useAuth();
+  const { signOut: logOut } = useAuth();
   const { profile: studentProfile } = useStudentProfile();
-  const { profile: industryProfile } = useIndustryProfile();
 
   if (!user) {
     return null;
   }
   
-  const userName = userType === 'student' 
-    ? studentProfile?.personalInfo?.name 
-    : industryProfile?.name || user.displayName || 'User';
-    
+  const userName = studentProfile?.personalInfo?.name || user.displayName || 'User';
   const userEmail = user.email || 'No email';
   const userAvatar = user.photoURL;
 
@@ -62,26 +57,12 @@ export function UserNav({ user }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {userType === 'student' && (
-            <>
-                <DropdownMenuItem asChild>
-                    <Link href="/profile">Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href="/applications">My Applications</Link>
-                </DropdownMenuItem>
-            </>
-        )}
-        {userType === 'industry' && (
-            <>
-                <DropdownMenuItem asChild>
-                    <Link href="/recruiter">Recruiter Dashboard</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link href="/recruiter/profile">Company Profile</Link>
-                </DropdownMenuItem>
-            </>
-        )}
+        <DropdownMenuItem asChild>
+            <Link href="/profile">Profile</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+            <Link href="/applications">My Applications</Link>
+        </DropdownMenuItem>
          <DropdownMenuItem asChild>
             <Link href="/settings">Settings</Link>
         </DropdownMenuItem>

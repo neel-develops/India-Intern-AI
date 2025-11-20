@@ -6,7 +6,7 @@ import type { StudentProfile } from '@/lib/types';
 
 interface StudentProfileContextType {
   profile: StudentProfile | null;
-  saveProfile: (userId: string, newProfile: StudentProfile) => void;
+  saveProfile: (userId: string, newProfile: Omit<StudentProfile, 'eligibility'>) => void;
   isLoading: boolean;
   loadProfileForUser: (userId: string) => Promise<void>;
   clearProfile: () => void;
@@ -38,14 +38,30 @@ export const StudentProfileProvider = ({ children }: { children: ReactNode }) =>
     }
   }, []);
 
-  const saveProfile = useCallback((userId: string, newProfile: StudentProfile) => {
+  const saveProfile = useCallback((userId: string, newProfileData: Omit<StudentProfile, 'eligibility'>) => {
     try {
-      window.localStorage.setItem(getStorageKey(userId), JSON.stringify(newProfile));
-      setProfile(newProfile);
-    } catch (error) {
+      const existingProfile = profile || {
+        eligibility: {
+          isNotEmployedFullTime: false,
+          isNotEnrolledFullTime: false,
+          familyIncome: 0,
+          hasNoGovtJobFamily: false,
+          experienceMonths: 0,
+        }
+      };
+
+      const fullProfile: StudentProfile = {
+        ...existingProfile,
+        ...newProfileData,
+        eligibility: existingProfile.eligibility
+      };
+      
+      window.localStorage.setItem(getStorageKey(userId), JSON.stringify(fullProfile));
+      setProfile(fullProfile);
+    } catch (error)      {
       console.error('Failed to save profile to local storage:', error);
     }
-  }, []);
+  }, [profile]);
 
   const clearProfile = useCallback(() => {
     setProfile(null);
