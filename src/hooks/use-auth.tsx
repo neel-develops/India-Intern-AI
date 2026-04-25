@@ -4,7 +4,6 @@
 import { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import type { User } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { useStudentProfile } from '@/hooks/use-student-profile';
 
 
 // --- Helper Functions ---
@@ -73,7 +72,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { loadProfileForUser, clearProfile } = useStudentProfile();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -82,18 +80,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedUser = getStoredUser();
       if (storedUser) {
         setUser(storedUser);
-        await loadProfileForUser(storedUser.uid);
       }
       setLoading(false);
     };
     initializeAuth();
-  }, [loadProfileForUser]);
+  }, []);
 
   const handleAuthSuccess = useCallback(async (newUser: User) => {
       setUser(newUser);
       setStoredUser(newUser);
-      await loadProfileForUser(newUser.uid);
-  },[loadProfileForUser]);
+  },[]);
 
 
   const signInWithEmail = async (email: string, pass: string) => {
@@ -135,7 +131,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setUser(null);
     setStoredUser(null);
-    clearProfile();
     setLoading(false);
     window.location.href = '/';
   };

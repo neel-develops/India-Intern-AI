@@ -42,13 +42,6 @@ export interface StudentProfile {
   resumeSummary: string;
   resumeFilename?: string;
   certificates?: { name: string }[];
-  eligibility: {
-    isNotEmployedFullTime: boolean;
-    isNotEnrolledFullTime: boolean;
-    familyIncome: number;
-    hasNoGovtJobFamily: boolean;
-    experienceMonths: number;
-  };
 }
 
 export interface Company {

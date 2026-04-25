@@ -21,7 +21,7 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, router]);
 
-  const handleSave = (data: Omit<StudentProfile, 'eligibility'>) => {
+  const handleSave = (data: StudentProfile) => {
     if (user) {
       saveProfile(user.uid, data);
     }
@@ -29,7 +29,7 @@ export default function ProfilePage() {
 
   if (authLoading || profileLoading) {
     return (
-      <div className="space-y-8">
+      <div className="container mx-auto max-w-4xl py-8 space-y-8">
         <Skeleton className="h-10 w-1/3" />
         <div className="space-y-4">
             <Skeleton className="h-64 w-full" />
