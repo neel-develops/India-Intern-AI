@@ -23,8 +23,10 @@ export const StudentProfileProvider = ({ children }: { children: ReactNode }) =>
 
   const loadProfile = useCallback((userId: string) => {
     setIsLoading(true);
-    const item = window.localStorage.getItem(getStorageKey(userId));
-    setProfile(item ? JSON.parse(item) : null);
+    if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem(getStorageKey(userId));
+        setProfile(item ? JSON.parse(item) : null);
+    }
     setIsLoading(false);
   }, []);
 
@@ -38,8 +40,10 @@ export const StudentProfileProvider = ({ children }: { children: ReactNode }) =>
   }, [user, loadProfile]);
 
   const saveProfile = useCallback((userId: string, newProfile: StudentProfile) => {
-    window.localStorage.setItem(getStorageKey(userId), JSON.stringify(newProfile));
-    setProfile(newProfile);
+    if (typeof window !== 'undefined') {
+        window.localStorage.setItem(getStorageKey(userId), JSON.stringify(newProfile));
+        setProfile(newProfile);
+    }
   }, []);
 
   const clearProfile = useCallback(() => {

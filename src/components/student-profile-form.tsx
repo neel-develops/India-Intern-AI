@@ -108,6 +108,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
         <Card>
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
+            <CardDescription>Update your basic contact and identity details.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField

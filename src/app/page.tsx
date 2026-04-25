@@ -24,6 +24,7 @@ export default function HomePage() {
         );
     }
     
+    // While redirecting, don't flash content
     if (user) return null;
 
     return <LandingContent />;
