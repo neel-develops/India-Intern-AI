@@ -5,9 +5,7 @@ import { useState, useEffect, createContext, useContext, ReactNode, useCallback 
 import type { User } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 
-
-// --- Helper Functions ---
-const AUTH_STORAGE_KEY = 'firebase-auth-user';
+const AUTH_STORAGE_KEY = 'india-intern-auth-user';
 
 const getStoredUser = (): User | null => {
   if (typeof window === 'undefined') return null;
@@ -15,7 +13,6 @@ const getStoredUser = (): User | null => {
     const item = window.localStorage.getItem(AUTH_STORAGE_KEY);
     return item ? JSON.parse(item) : null;
   } catch (error) {
-    console.error("Failed to parse user from localStorage", error);
     return null;
   }
 };
@@ -29,11 +26,10 @@ const setStoredUser = (user: User | null) => {
   }
 };
 
-// Mock a user object for prototype
-const createMockUser = (email: string, name?: string): User => ({
+const createMockUser = (email: string): User => ({
   uid: email,
   email: email,
-  displayName: name || 'Prototype User',
+  displayName: email.split('@')[0],
   photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`,
   emailVerified: true,
   isAnonymous: false,
@@ -56,8 +52,6 @@ const createMockUser = (email: string, name?: string): User => ({
   toJSON: () => ({}),
 });
 
-
-// --- Auth Context ---
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -68,70 +62,36 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// --- Auth Provider ---
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      setLoading(true);
-      const storedUser = getStoredUser();
-      if (storedUser) {
-        setUser(storedUser);
-      }
-      setLoading(false);
-    };
-    initializeAuth();
+    const stored = getStoredUser();
+    if (stored) setUser(stored);
+    setLoading(false);
   }, []);
-
-  const handleAuthSuccess = useCallback(async (newUser: User) => {
-      setUser(newUser);
-      setStoredUser(newUser);
-  },[]);
-
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    try {
-      const mockUser = createMockUser(email);
-      await handleAuthSuccess(mockUser);
-    } catch (error) {
-       console.error("Sign in failed:", error);
-       toast({
-           variant: 'destructive',
-           title: 'Sign In Failed',
-           description: 'An unexpected error occurred.',
-       })
-    } finally {
-        setLoading(false);
-    }
+    const mockUser = createMockUser(email);
+    setUser(mockUser);
+    setStoredUser(mockUser);
+    setLoading(false);
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    try {
-     const mockUser = createMockUser(email);
-     await handleAuthSuccess(mockUser);
-    } catch (error) {
-       console.error("Sign up failed:", error);
-       toast({
-           variant: 'destructive',
-           title: 'Sign Up Failed',
-           description: 'An unexpected error occurred.',
-       })
-    } finally {
-        setLoading(false);
-    }
+    const mockUser = createMockUser(email);
+    setUser(mockUser);
+    setStoredUser(mockUser);
+    setLoading(false);
   };
 
-
   const signOut = async () => {
-    setLoading(true);
     setUser(null);
     setStoredUser(null);
-    setLoading(false);
     window.location.href = '/';
   };
   
@@ -142,10 +102,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (context === undefined) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

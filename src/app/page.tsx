@@ -16,14 +16,15 @@ export default function HomePage() {
         }
     }, [user, loading, router]);
 
-
-    if (loading || user) {
+    if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="text-lg">Loading...</div>
+                <div className="text-lg">Loading IndiaIntern.ai...</div>
             </div>
         );
     }
     
+    if (user) return null;
+
     return <LandingContent />;
 }
