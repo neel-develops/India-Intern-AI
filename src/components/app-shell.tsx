@@ -61,7 +61,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 
   if (!isClient) {
-    return null;
+    // On the server / before hydration, render children so Next.js serves real content.
+    // The shell chrome (nav, sidebar) is added after hydration to avoid mismatches.
+    return <>{children}</>;
   }
   
   const publicNavItems = [

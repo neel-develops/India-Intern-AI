@@ -1,10 +1,9 @@
 
-'use server';
 /**
  * @fileOverview A Genkit flow that acts as a professional career advisor for students.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '../genkit';
 import { googleAI } from '@genkit-ai/googleai';
 import { CareerCoachInputSchema, CareerCoachOutputSchema } from './career-coach-types';
 import type { CareerCoachInput, CareerCoachOutput, Message } from './career-coach-types';

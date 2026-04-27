@@ -1,10 +1,9 @@
 
-'use server';
 /**
  * @fileOverview A Genkit flow that conducts a mock interview with a student.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '../genkit';
 import { googleAI } from '@genkit-ai/googleai';
 import { StartMockInterviewInputSchema, StartMockInterviewOutputSchema } from './start-mock-interview-types';
 import type { StartMockInterviewInput, StartMockInterviewOutput } from './start-mock-interview-types';

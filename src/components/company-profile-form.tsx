@@ -96,7 +96,7 @@ export function CompanyProfileForm({ profile, onSave }: CompanyProfileFormProps)
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Work Email</FormLabel>
-                  <FormControl><Input readOnly disabled className="bg-muted" {...field} /></FormControl>
+                  <FormControl><Input {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}

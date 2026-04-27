@@ -1,5 +1,4 @@
 
-'use server';
 
 /**
  * @fileOverview AI flow to suggest suitable student candidates for an internship for the PM Internship Scheme.
@@ -7,7 +6,7 @@
  * - suggestSuitableCandidates - A function that suggests suitable candidates for an internship.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '../genkit';
 import { SuggestSuitableCandidatesInputSchema, SuggestSuitableCandidatesOutputSchema } from './suggest-suitable-candidates-types';
 import type { SuggestSuitableCandidatesInput, SuggestSuitableCandidatesOutput } from './suggest-suitable-candidates-types';
 import { googleAI } from '@genkit-ai/googleai';

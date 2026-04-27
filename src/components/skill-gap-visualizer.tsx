@@ -98,6 +98,14 @@ export function SkillGapVisualizer() {
         return config;
     }, [analysis]);
     
+    const filteredInternships = useMemo(() => {
+        if (!searchQuery) return [];
+        return allInternships.filter(internship => 
+            internship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            internship.company.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery]);
+
     if (isProfileLoading) return <Skeleton className="h-64 w-full" />;
 
     if (!profile) return (
@@ -111,14 +119,6 @@ export function SkillGapVisualizer() {
             </CardContent>
         </Card>
     );
-    
-    const filteredInternships = useMemo(() => {
-        if (!searchQuery) return [];
-        return allInternships.filter(internship => 
-            internship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            internship.company.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery]);
 
 
     return (

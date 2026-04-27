@@ -140,10 +140,34 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Email</FormLabel>
-                    <FormControl><Input type="email" readOnly {...field} className="bg-muted" /></FormControl>
+                    <FormControl><Input type="email" {...field} /></FormControl>
                     <FormMessage />
                     </FormItem>
                 )}
+                />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="personalInfo.location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl><Input placeholder="e.g. Mumbai, Maharashtra" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personalInfo.linkedin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>LinkedIn URL (Optional)</FormLabel>
+                      <FormControl><Input placeholder="https://linkedin.com/in/..." {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
             </div>
           </CardContent>
@@ -185,12 +209,85 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                 </FormItem>
               )}
             />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <FormField
+                  control={form.control}
+                  name="personalInfo.degree"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Degree</FormLabel>
+                      <FormControl><Input placeholder="e.g. B.Tech" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personalInfo.stream"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stream</FormLabel>
+                      <FormControl><Input placeholder="e.g. Computer Science" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personalInfo.graduatingYear"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Graduating Year</FormLabel>
+                      <FormControl><Input type="number" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader><CardTitle>Skills & Preferences</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="preferences.domain"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preferred Domain</FormLabel>
+                      <FormControl><Input placeholder="e.g. Software Engineering" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="preferences.internshipType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Internship Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Full-time">Full-time</SelectItem>
+                          <SelectItem value="Part-time">Part-time</SelectItem>
+                          <SelectItem value="Remote">Remote</SelectItem>
+                          <SelectItem value="Hybrid">Hybrid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="space-y-4">
+                <FormLabel className="text-base font-semibold">Skills</FormLabel>
               {fields.map((item, index) => (
                 <div key={item.id} className="p-4 border rounded-lg space-y-4">
                   <div className="flex gap-4">
@@ -205,6 +302,7 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
                 </div>
               ))}
               <Button type="button" variant="outline" onClick={() => append({ name: "", proficiency: 3 })}><PlusCircle className="mr-2 h-4 w-4" />Add Skill</Button>
+              </div>
           </CardContent>
         </Card>
 

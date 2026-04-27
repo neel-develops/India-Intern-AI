@@ -1,5 +1,4 @@
 
-'use server';
 
 /**
  * @fileOverview This file defines a Genkit flow that suggests relevant internships to students based on their profile data.
@@ -8,7 +7,7 @@
  * - `suggestRelevantInternships`: An async function that takes student profile data as input and returns a list of suggested internships.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '../genkit';
 import { SuggestRelevantInternshipsInputSchema, SuggestRelevantInternshipsOutputSchema } from './suggest-relevant-internships-types';
 import type { SuggestRelevantInternshipsInput, SuggestRelevantInternshipsOutput } from './suggest-relevant-internships-types';
 import { googleAI } from '@genkit-ai/googleai';

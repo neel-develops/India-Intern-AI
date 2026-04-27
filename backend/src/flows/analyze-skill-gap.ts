@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview A Genkit flow that analyzes the gap between a user's skills and an internship's requirements.
  *
@@ -7,7 +6,7 @@
  * - `analyzeSkillGap`: An async function that takes user skills and an internship description and returns a detailed analysis.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai } from '../genkit';
 import { AnalyzeSkillGapInputSchema, AnalyzeSkillGapOutputSchema } from './analyze-skill-gap-types';
 import type { AnalyzeSkillGapInput, AnalyzeSkillGapOutput } from './analyze-skill-gap-types';
 import { googleAI } from '@genkit-ai/googleai';

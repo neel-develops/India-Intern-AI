@@ -1,5 +1,4 @@
 
-'use server';
 /**
  * @fileOverview A Genkit flow that analyzes a user's resume text and provides feedback.
  *
@@ -7,7 +6,7 @@
  * - `analyzeResume`: An async function that takes resume text and returns a detailed analysis.
  */
 
-import { ai } from '@/ai/genkit';
+import { ai } from '../genkit';
 import { AnalyzeResumeInputSchema, AnalyzeResumeOutputSchema } from './analyze-resume-types';
 import type { AnalyzeResumeInput, AnalyzeResumeOutput } from './analyze-resume-types';
 import { googleAI } from '@genkit-ai/googleai';
