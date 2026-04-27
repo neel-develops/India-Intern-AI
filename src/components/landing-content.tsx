@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CheckCircle2, ArrowRight, Briefcase, IndianRupee, Search, Award, Users, GraduationCap } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const features = [
     "AI-Powered Matchmaking for perfect internships",
@@ -50,10 +50,10 @@ export function LandingContent() {
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg" className="rounded-full">
-                    <Link href="/register">Get Started <ArrowRight className="ml-2" /></Link>
+                    <Link to="/register">Get Started <ArrowRight className="ml-2" /></Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="rounded-full">
-                    <Link href="/eligibility">Check Eligibility</Link>
+                    <Link to="/eligibility">Check Eligibility</Link>
                   </Button>
                 </div>
               </div>

@@ -1,5 +1,4 @@
 
-'use client';
 
 import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
 import type { IndustryProfile } from '@/lib/types';

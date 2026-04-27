@@ -1,14 +1,13 @@
 
-'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { BrainCircuit, Send, User, Bot, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { startMockInterview } from '@/ai/flows/start-mock-interview';
+import { startMockInterview  } from '@/lib/api';
 import type { Message } from '@/ai/flows/start-mock-interview-types';
 import { Skeleton } from './ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
@@ -101,7 +100,7 @@ export function MockInterview() {
         </CardHeader>
         <CardContent>
           <Button asChild>
-            <Link href="/profile">Go to Profile</Link>
+            <Link to="/profile">Go to Profile</Link>
           </Button>
         </CardContent>
       </Card>

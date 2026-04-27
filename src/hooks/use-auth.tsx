@@ -1,61 +1,21 @@
-
-'use client';
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import type { User } from 'firebase/auth';
-
-const AUTH_STORAGE_KEY = 'india-intern-auth-user';
-
-const getStoredUser = (): User | null => {
-  if (typeof window === 'undefined') return null;
-  try {
-    const item = window.localStorage.getItem(AUTH_STORAGE_KEY);
-    return item ? JSON.parse(item) : null;
-  } catch (error) {
-    return null;
-  }
-};
-
-const setStoredUser = (user: User | null) => {
-  if (typeof window === 'undefined') return;
-  if (user) {
-    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-  } else {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-  }
-};
-
-const createMockUser = (email: string): User => ({
-  uid: email,
-  email: email,
-  displayName: email.split('@')[0],
-  photoURL: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`,
-  emailVerified: true,
-  isAnonymous: false,
-  metadata: {},
-  providerData: [],
-  providerId: 'password',
-  tenantId: null,
-  delete: async () => {},
-  getIdToken: async () => 'mock-token',
-  getIdTokenResult: async () => ({
-    token: 'mock-token',
-    expirationTime: '',
-    authTime: '',
-    issuedAtTime: '',
-    signInProvider: null,
-    signInSecondFactor: null,
-    claims: {},
-  }),
-  reload: async () => {},
-  toJSON: () => ({}),
-});
+import { 
+  User, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut as firebaseSignOut,
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { auth } from '../lib/firebase';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
+  userType?: string;
   loading: boolean;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpIndustryUser?: (email: string, pass: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -64,33 +24,37 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = getStoredUser();
-    if (stored) setUser(stored);
-    setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    const mockUser = createMockUser(email);
-    setUser(mockUser);
-    setStoredUser(mockUser);
-    setLoading(false);
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
-    const mockUser = createMockUser(email);
-    setUser(mockUser);
-    setStoredUser(mockUser);
-    setLoading(false);
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOut = async () => {
-    setUser(null);
-    setStoredUser(null);
-    window.location.href = '/';
+    await firebaseSignOut(auth);
+    navigate('/');
   };
   
   return (

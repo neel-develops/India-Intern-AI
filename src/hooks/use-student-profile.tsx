@@ -1,5 +1,4 @@
 
-'use client';
 
 import { useState, useCallback, createContext, useContext, ReactNode, useEffect } from 'react';
 import type { StudentProfile } from '@/lib/types';

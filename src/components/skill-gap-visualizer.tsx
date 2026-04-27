@@ -1,18 +1,17 @@
 
-'use client';
 import { useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { Target, Lightbulb, Check, Award, GraduationCap, BarChart, ListTodo, Bot, User, AlertTriangle, ChevronsUpDown, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { analyzeSkillGap } from '@/ai/flows/analyze-skill-gap';
+import { analyzeSkillGap  } from '@/lib/api';
 import type { AnalyzeSkillGapOutput } from '@/ai/flows/analyze-skill-gap-types';
 import { Skeleton } from './ui/skeleton';
 import { Badge } from './ui/badge';
 import type { Internship } from '@/lib/types';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 import { Separator } from './ui/separator';
@@ -40,7 +39,7 @@ export function SkillGapVisualizer() {
     const [apiError, setApiError] = useState<string | null>(null);
     const { profile, isLoading: isProfileLoading } = useStudentProfile();
     const { toast } = useToast();
-    const router = useRouter();
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -84,7 +83,7 @@ export function SkillGapVisualizer() {
         if (!analysis || analysis.prioritizedGaps.length === 0) return;
         const missingSkillsText = analysis.prioritizedGaps.map(s => s.skill).join(', ');
         const prompt = `Please generate a detailed learning plan for me to acquire the following skills for the ${selectedInternship?.title} role: ${missingSkillsText}.`;
-        router.push(`/career-coach?prompt=${encodeURIComponent(prompt)}`);
+        navigate(`/career-coach?prompt=${encodeURIComponent(prompt)}`);
     }
 
      const chartConfig = useMemo(() => {
@@ -115,7 +114,7 @@ export function SkillGapVisualizer() {
                 <CardDescription>Please create your profile to analyze your skill gap.</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button asChild><Link href="/profile">Create Profile</Link></Button>
+                <Button asChild><Link to="/profile">Create Profile</Link></Button>
             </CardContent>
         </Card>
     );

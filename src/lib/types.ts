@@ -42,6 +42,15 @@ export interface StudentProfile {
   resumeSummary: string;
   resumeFilename?: string;
   certificates?: { name: string }[];
+  eligibility?: {
+    isNotEmployedFullTime?: boolean;
+    isNotEnrolledFullTime?: boolean;
+    familyIncome?: number;
+    hasNoGovtJobFamily?: boolean;
+    experienceMonths?: number;
+    match?: boolean;
+    reasons?: string[];
+  };
 }
 
 export interface Company {
@@ -66,4 +75,15 @@ export interface Notification {
     date: string;
     read: boolean;
     link?: string;
+}
+
+export interface IndustryProfile {
+    uid?: string;
+    name: string;
+    email: string;
+    companyName: string;
+    position: string;
+    website?: string;
+    description?: string;
+    createdAt?: string;
 }

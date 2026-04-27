@@ -1,11 +1,10 @@
 
-'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { Wand2, BellRing, Mail, AlertTriangle, TrendingUp } from 'lucide-react';
-import { useStudentProfile } from '@/hooks/use-student-profile.tsx';
-import { suggestRelevantInternships } from '@/ai/flows/suggest-relevant-internships';
+import { useStudentProfile } from '@/hooks/use-student-profile';
+import { suggestRelevantInternships  } from '@/lib/api';
 import { internships as allInternships } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -132,7 +131,7 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
         </CardHeader>
         <CardContent>
           <Button asChild>
-            <Link href="/profile">Create My Profile</Link>
+            <Link to="/profile">Create My Profile</Link>
           </Button>
         </CardContent>
       </Card>

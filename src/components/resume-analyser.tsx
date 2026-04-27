@@ -1,14 +1,13 @@
 
-'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { FileScan, Wand2, Lightbulb, ThumbsUp, ThumbsDown, User, ArrowRight, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { analyzeResume } from '@/ai/flows/analyze-resume';
+import { analyzeResume  } from '@/lib/api';
 import type { AnalyzeResumeOutput } from '@/ai/flows/analyze-resume-types';
 import { Skeleton } from './ui/skeleton';
 import { Textarea } from './ui/textarea';
@@ -70,7 +69,7 @@ export function ResumeAnalyser() {
           <CardDescription>Please complete your profile to use the resume analyser.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild><Link href="/profile">Create Profile</Link></Button>
+          <Button asChild><Link to="/profile">Create Profile</Link></Button>
         </CardContent>
       </Card>
     );

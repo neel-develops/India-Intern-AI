@@ -1,7 +1,6 @@
 
-'use client';
 
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,13 +57,13 @@ export function UserNav({ user }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-            <Link href="/profile">Profile</Link>
+            <Link to="/profile">Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-            <Link href="/applications">My Applications</Link>
+            <Link to="/applications">My Applications</Link>
         </DropdownMenuItem>
          <DropdownMenuItem asChild>
-            <Link href="/settings">Settings</Link>
+            <Link to="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logOut()}>

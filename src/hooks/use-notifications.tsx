@@ -1,5 +1,4 @@
 
-'use client';
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import type { Notification } from '@/lib/types';
 import { useAuth } from './use-auth';

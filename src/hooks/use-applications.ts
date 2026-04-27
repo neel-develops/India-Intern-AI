@@ -1,5 +1,4 @@
 
-'use client';
 import { useState, useEffect, useCallback } from 'react';
 import type { Application } from '@/lib/types';
 import { useAuth } from './use-auth';

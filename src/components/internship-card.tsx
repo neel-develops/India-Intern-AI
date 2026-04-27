@@ -1,6 +1,6 @@
 
-import Image from 'next/image';
-import Link from 'next/link';
+
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,11 +22,11 @@ export function InternshipCard({ internship, matchReason, matchPercentage, onSel
   const cardContent = (
     <>
       <div className="relative h-48 w-full">
-        <Image
+        <img
           src={internship.image}
           alt={internship.title}
-          layout="fill"
-          objectFit="cover"
+          
+          
           className="rounded-t-lg"
           data-ai-hint={`${internship.domain} ${internship.company}`}
         />
@@ -72,7 +72,7 @@ export function InternshipCard({ internship, matchReason, matchPercentage, onSel
       <Separator />
       <CardFooter className="pt-6">
         <Button asChild className="w-full">
-            <Link href={`/internships/${internship.id}`}>View Details</Link>
+            <Link to={`/internships/${internship.id}`}>View Details</Link>
         </Button>
       </CardFooter>
     </>

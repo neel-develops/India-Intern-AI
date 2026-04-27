@@ -1,9 +1,8 @@
 
-'use client';
 
 import { useState } from 'react';
 import { Wand2, AlertTriangle } from 'lucide-react';
-import { suggestSuitableCandidates } from '@/ai/flows/suggest-suitable-candidates';
+import { suggestSuitableCandidates  } from '@/lib/api';
 import { studentProfiles as allStudentProfiles } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -61,7 +60,7 @@ export function SmartMatchCandidates() {
       
       if (result) {
         // Sort results by match score descending
-        const sortedResult = result.sort((a, b) => b.matchScore - a.matchScore);
+        const sortedResult = result.sort((a: SuggestSuitableCandidatesOutput[number], b: SuggestSuitableCandidatesOutput[number]) => b.matchScore - a.matchScore);
         setSuggestedCandidates(sortedResult);
       } else {
         setApiError('You have exceeded the daily limit for AI suggestions on the free plan. Please try again tomorrow.');

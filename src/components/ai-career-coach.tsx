@@ -1,15 +1,14 @@
 
-'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { Link, useSearchParams } from 'react-router-dom';
+
 import { GraduationCap, Send, User, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useStudentProfile } from '@/hooks/use-student-profile';
-import { chatWithCareerCoach } from '@/ai/flows/career-coach';
+import { chatWithCareerCoach  } from '@/lib/api';
 import type { Message } from '@/ai/flows/career-coach-types';
 import { Skeleton } from './ui/skeleton';
 import { Textarea } from './ui/textarea';
@@ -18,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { marked } from 'marked';
 
 export function AICareerCoach() {
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [conversation, setConversation] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -93,7 +92,7 @@ export function AICareerCoach() {
           <CardDescription>Please complete your profile to get personalized advice.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild><Link href="/profile">Create Profile</Link></Button>
+          <Button asChild><Link to="/profile">Create Profile</Link></Button>
         </CardContent>
       </Card>
     );
