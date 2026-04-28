@@ -1,17 +1,19 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useInternships } from '@/hooks/use-internships';
-import { useApplications } from '@/hooks/use-applications';
-import { useNotifications } from '@/hooks/use-notifications';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, User, Mail, Calendar, CheckCircle2, XCircle, Award, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import type { Application } from '@/lib/types';
+import {
+  subscribeToInternshipApplications,
+  fsUpdateApplicationStatus,
+} from '@/lib/firebase-db';
 
 const STATUS_COLORS: Record<string, string> = {
   Applied: 'bg-blue-500/20 text-blue-400 border-blue-400/30',
@@ -24,16 +26,25 @@ const STATUS_COLORS: Record<string, string> = {
 export default function RecruiterApplicantsPage() {
   const { id } = useParams<{ id: string }>();
   const { internships } = useInternships();
-  const { getApplicationsByInternship, updateApplicationStatus } = useApplications();
-  const { addNotification } = useNotifications();
-  const { user, userType } = useAuth();
   const { toast } = useToast();
 
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [appsLoading, setAppsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
+  // Real-time subscription for this internship's applications
+  useEffect(() => {
+    if (!id) return;
+    setAppsLoading(true);
+    const unsub = subscribeToInternshipApplications(id, data => {
+      setApplications(data);
+      setAppsLoading(false);
+    });
+    return () => unsub();
+  }, [id]);
+
   const internship = internships.find(i => i.id === id);
-  const applications = id ? getApplicationsByInternship(id) : [];
 
   const filtered = useMemo(() => {
     return applications.filter(app => {
@@ -43,18 +54,13 @@ export default function RecruiterApplicantsPage() {
     });
   }, [applications, search, statusFilter]);
 
-  const handleStatusChange = (app: Application, newStatus: Application['status']) => {
-    updateApplicationStatus(app.id, newStatus);
-    // Notify the student
-    addNotification({
-      id: `recruiter-${app.id}-${newStatus}`,
-      message: `Your application for ${internship?.title ?? 'an internship'} has been updated to: ${newStatus}`,
-      link: '/applications',
-    });
-    toast({
-      title: 'Status Updated',
-      description: `${app.studentEmail} → ${newStatus}`,
-    });
+  const handleStatusChange = async (app: Application, newStatus: Application['status']) => {
+    try {
+      await fsUpdateApplicationStatus(app.id, newStatus);
+      toast({ title: 'Status Updated', description: `${app.studentEmail} → ${newStatus}` });
+    } catch {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to update status.' });
+    }
   };
 
   if (!internship) {
@@ -76,7 +82,9 @@ export default function RecruiterApplicantsPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{internship.title}</h1>
-          <p className="text-muted-foreground">{applications.length} applicant{applications.length !== 1 ? 's' : ''}</p>
+          <p className="text-muted-foreground">
+            {appsLoading ? 'Loading…' : `${applications.length} applicant${applications.length !== 1 ? 's' : ''}`}
+          </p>
         </div>
       </div>
 
@@ -109,7 +117,7 @@ export default function RecruiterApplicantsPage() {
         </div>
       </div>
 
-      {/* Stats row */}
+      {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {statuses.map(s => {
           const count = applications.filter(a => a.status === s).length;
@@ -122,8 +130,12 @@ export default function RecruiterApplicantsPage() {
         })}
       </div>
 
-      {/* Applicants list */}
-      {filtered.length === 0 ? (
+      {/* List */}
+      {appsLoading ? (
+        <div className="flex justify-center py-12">
+          <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center space-y-3 bg-muted/30 rounded-2xl">
           <User className="h-10 w-10 text-muted-foreground" />
           <p className="font-medium">No applicants found</p>
@@ -154,40 +166,21 @@ export default function RecruiterApplicantsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 sm:ml-auto">
-                    <Button
-                      size="sm" variant="outline"
-                      className="text-yellow-400 border-yellow-400/30 hover:bg-yellow-400/10"
-                      onClick={() => handleStatusChange(app, 'In Review')}
-                      disabled={app.status === 'In Review'}
-                    >
+                    <Button size="sm" variant="outline" className="text-yellow-400 border-yellow-400/30 hover:bg-yellow-400/10"
+                      onClick={() => handleStatusChange(app, 'In Review')} disabled={app.status === 'In Review'}>
                       Review
                     </Button>
-                    <Button
-                      size="sm" variant="outline"
-                      className="text-purple-400 border-purple-400/30 hover:bg-purple-400/10"
-                      onClick={() => handleStatusChange(app, 'Interview')}
-                      disabled={app.status === 'Interview'}
-                    >
-                      <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-                      Shortlist
+                    <Button size="sm" variant="outline" className="text-purple-400 border-purple-400/30 hover:bg-purple-400/10"
+                      onClick={() => handleStatusChange(app, 'Interview')} disabled={app.status === 'Interview'}>
+                      <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />Shortlist
                     </Button>
-                    <Button
-                      size="sm" variant="outline"
-                      className="text-green-400 border-green-400/30 hover:bg-green-400/10"
-                      onClick={() => handleStatusChange(app, 'Offered')}
-                      disabled={app.status === 'Offered'}
-                    >
-                      <Award className="mr-1.5 h-3.5 w-3.5" />
-                      Hire
+                    <Button size="sm" variant="outline" className="text-green-400 border-green-400/30 hover:bg-green-400/10"
+                      onClick={() => handleStatusChange(app, 'Offered')} disabled={app.status === 'Offered'}>
+                      <Award className="mr-1.5 h-3.5 w-3.5" />Hire
                     </Button>
-                    <Button
-                      size="sm" variant="outline"
-                      className="text-red-400 border-red-400/30 hover:bg-red-400/10"
-                      onClick={() => handleStatusChange(app, 'Rejected')}
-                      disabled={app.status === 'Rejected'}
-                    >
-                      <XCircle className="mr-1.5 h-3.5 w-3.5" />
-                      Reject
+                    <Button size="sm" variant="outline" className="text-red-400 border-red-400/30 hover:bg-red-400/10"
+                      onClick={() => handleStatusChange(app, 'Rejected')} disabled={app.status === 'Rejected'}>
+                      <XCircle className="mr-1.5 h-3.5 w-3.5" />Reject
                     </Button>
                   </div>
                 </div>

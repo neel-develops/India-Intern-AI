@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { InternshipCard } from '@/components/internship-card';
 import { InternshipFilters, type Filters } from '@/components/internship-filters';
-import { internships as allInternships } from '@/lib/data';
+import { useInternships } from '@/hooks/use-internships';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Briefcase, Search, X } from 'lucide-react';
@@ -19,12 +19,14 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function InternshipsPage() {
+  // Use the hook — includes static AND recruiter-posted internships from Firestore
+  const { internships: allInternships, isLoading } = useInternships();
   const [filters, setFilters] = useState<Filters>({ domain: 'all', location: 'all', skills: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const uniqueDomains = useMemo(() => [...new Set(allInternships.map(i => i.domain))], []);
-  const uniqueLocations = useMemo(() => [...new Set(allInternships.map(i => i.location))], []);
+  const uniqueDomains = useMemo(() => [...new Set(allInternships.map(i => i.domain))], [allInternships]);
+  const uniqueLocations = useMemo(() => [...new Set(allInternships.map(i => i.location))], [allInternships]);
 
   const filteredInternships = useMemo(() => {
     return allInternships.filter((internship) => {
@@ -41,18 +43,11 @@ export default function InternshipsPage() {
         internship.skills.some(s => s.toLowerCase().includes(debouncedSearch.toLowerCase()));
       return domainMatch && locationMatch && skillsMatch && searchMatch;
     });
-  }, [filters, debouncedSearch]);
+  }, [allInternships, filters, debouncedSearch]);
 
-  const handleFilterChange = useCallback((newFilters: Filters) => {
-    setFilters(newFilters);
-  }, []);
-
+  const handleFilterChange = useCallback((newFilters: Filters) => setFilters(newFilters), []);
   const hasActiveFilters = filters.domain !== 'all' || filters.location !== 'all' || filters.skills !== '' || searchQuery !== '';
-
-  const clearAll = () => {
-    setFilters({ domain: 'all', location: 'all', skills: '' });
-    setSearchQuery('');
-  };
+  const clearAll = () => { setFilters({ domain: 'all', location: 'all', skills: '' }); setSearchQuery(''); };
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6 space-y-8">
@@ -66,10 +61,8 @@ export default function InternshipsPage() {
       </div>
 
       <SmartMatchInternships />
-      
       <Separator />
 
-      {/* Search Bar */}
       <div className="flex gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -83,8 +76,7 @@ export default function InternshipsPage() {
         </div>
         {hasActiveFilters && (
           <Button variant="outline" size="sm" onClick={clearAll} className="shrink-0 gap-1.5 h-11">
-            <X className="h-3.5 w-3.5" />
-            Clear all
+            <X className="h-3.5 w-3.5" /> Clear all
           </Button>
         )}
       </div>
@@ -96,12 +88,20 @@ export default function InternshipsPage() {
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-muted-foreground">
-            {filteredInternships.length} internship{filteredInternships.length !== 1 ? 's' : ''} found
-            {debouncedSearch && <span className="font-medium"> for "<span className="text-foreground">{debouncedSearch}</span>"</span>}
+            {isLoading ? 'Loading internships…' : (
+              <>
+                {filteredInternships.length} internship{filteredInternships.length !== 1 ? 's' : ''} found
+                {debouncedSearch && <span className="font-medium"> for "<span className="text-foreground">{debouncedSearch}</span>"</span>}
+              </>
+            )}
           </p>
         </div>
 
-        {filteredInternships.length > 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : filteredInternships.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredInternships.map((internship) => (
               <InternshipCard key={internship.id} internship={internship} />
@@ -109,12 +109,12 @@ export default function InternshipsPage() {
           </div>
         ) : (
           <Alert>
-              <Briefcase className="h-4 w-4" />
-              <AlertTitle>No Internships Found</AlertTitle>
-              <AlertDescription>
-                  No internships match your current filters.{' '}
-                  <button onClick={clearAll} className="underline text-primary">Clear all filters</button> to see all listings.
-              </AlertDescription>
+            <Briefcase className="h-4 w-4" />
+            <AlertTitle>No Internships Found</AlertTitle>
+            <AlertDescription>
+              No internships match your current filters.{' '}
+              <button onClick={clearAll} className="underline text-primary">Clear all filters</button> to see all listings.
+            </AlertDescription>
           </Alert>
         )}
       </div>

@@ -1,16 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useInternships } from '@/hooks/use-internships';
-import { useApplications } from '@/hooks/use-applications';
 import { useAuth } from '@/hooks/use-auth';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, Users, User, Mail, Briefcase, SlidersHorizontal } from 'lucide-react';
+import { Search, Users, Mail, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Application } from '@/lib/types';
+import { subscribeToRecruiterApplications } from '@/lib/firebase-db';
 
 const STATUS_COLORS: Record<string, string> = {
   Applied: 'bg-blue-500/20 text-blue-400',
@@ -22,10 +20,10 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function RecruiterCandidatesPage() {
   const { internships } = useInternships();
-  const { getAllApplications, updateApplicationStatus } = useApplications();
   const { user, userType, loading } = useAuth();
   const navigate = useNavigate();
 
+  const [allApps, setAllApps] = useState<Application[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -33,25 +31,32 @@ export default function RecruiterCandidatesPage() {
     if (!loading && (!user || userType !== 'industry')) navigate('/login');
   }, [user, userType, loading, navigate]);
 
-  const myInternshipIds = internships.map(i => i.id);
-  const allApps = getAllApplications().filter(a => myInternshipIds.includes(a.internshipId));
+  // Real-time subscription for all recruiter applications
+  useEffect(() => {
+    if (!internships.length) { setAllApps([]); return; }
+    const ids = internships.map(i => i.id);
+    const unsub = subscribeToRecruiterApplications(ids, setAllApps);
+    return () => unsub();
+  }, [internships]);
 
-  const enriched = useMemo(() => {
-    return allApps.map(app => ({
+  const statuses: Application['status'][] = ['Applied', 'In Review', 'Interview', 'Offered', 'Rejected'];
+
+  const enriched = useMemo(() =>
+    allApps.map(app => ({
       ...app,
       internshipTitle: internships.find(i => i.id === app.internshipId)?.title ?? 'Unknown',
-    }));
-  }, [allApps, internships]);
+    }))
+  , [allApps, internships]);
 
-  const filtered = useMemo(() => {
-    return enriched.filter(app => {
+  const filtered = useMemo(() =>
+    enriched.filter(app => {
       const matchSearch = search === '' || app.studentEmail.toLowerCase().includes(search.toLowerCase());
       const matchStatus = statusFilter === 'all' || app.status === statusFilter;
       return matchSearch && matchStatus;
-    });
-  }, [enriched, search, statusFilter]);
+    })
+  , [enriched, search, statusFilter]);
 
-  // Group by studentEmail to de-duplicate
+  // Group by studentEmail
   const byStudent = useMemo(() => {
     const map = new Map<string, typeof filtered>();
     for (const app of filtered) {
@@ -61,30 +66,21 @@ export default function RecruiterCandidatesPage() {
     return Array.from(map.entries());
   }, [filtered]);
 
-  const statuses: Application['status'][] = ['Applied', 'In Review', 'Interview', 'Offered', 'Rejected'];
-
   return (
     <div className="space-y-6">
       <div className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-          <Users className="h-7 w-7 text-violet-400" />
-          All Candidates
+          <Users className="h-7 w-7 text-violet-400" />All Candidates
         </h1>
         <p className="text-muted-foreground">
           {byStudent.length} unique candidate{byStudent.length !== 1 ? 's' : ''} across {internships.length} posting{internships.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by email..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="pl-9"
-          />
+          <Input placeholder="Search by email..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {['all', ...statuses].map(s => (

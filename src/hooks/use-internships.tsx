@@ -1,11 +1,17 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import type { Internship } from '@/lib/types';
 import { useAuth } from './use-auth';
 import { useIndustryProfile } from './use-industry-profile';
-import { internships as defaultInternships } from '@/lib/data';
+import {
+  seedInternshipsIfEmpty,
+  subscribeToAllInternships,
+  subscribeToRecruiterInternships,
+  fsAddInternship,
+  fsUpdateInternship,
+  fsDeleteInternship,
+} from '@/lib/firebase-db';
 
-const getStorageKey = (userId: string) => `internships-${userId}`;
+let _seedStarted = false;
 
 export function useInternships() {
   const { user, userType } = useAuth();
@@ -13,67 +19,57 @@ export function useInternships() {
   const [internships, setInternships] = useState<Internship[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Seed static internships to Firestore once per app session
   useEffect(() => {
-    // For students, just show all default internships
-    if (userType === 'student' || !user) {
-      setInternships(defaultInternships);
-      setIsLoading(false);
+    if (!_seedStarted) {
+      _seedStarted = true;
+      seedInternshipsIfEmpty();
+    }
+  }, []);
+
+  // Real-time subscription
+  useEffect(() => {
+    setIsLoading(true);
+    let unsub: () => void;
+    if (userType === 'industry' && user) {
+      // Recruiter sees only their own postings in manage view
+      unsub = subscribeToRecruiterInternships(user.uid, data => {
+        setInternships(data);
+        setIsLoading(false);
+      });
+    } else {
+      // Students + guests see all internships (static + recruiter-posted)
+      unsub = subscribeToAllInternships(data => {
+        setInternships(data);
+        setIsLoading(false);
+      });
+    }
+    return () => unsub?.();
+  }, [user, userType]);
+
+  const addInternship = useCallback(async (
+    newData: Omit<Internship, 'id' | 'image' | 'company'>
+  ) => {
+    if (!user || !industryProfile) {
+      console.error('Need user + industry profile to post internship');
       return;
     }
-
-    // For industry users, load their own internships from local storage
-    if (user && userType === 'industry') {
-      setIsLoading(true);
-      try {
-        const item = window.localStorage.getItem(getStorageKey(user.uid));
-        // If they have internships, load them. Otherwise, show default ones as an example.
-        setInternships(item ? JSON.parse(item) : defaultInternships);
-      } catch (error) {
-        console.error('Failed to load internships from local storage:', error);
-        setInternships(defaultInternships); // Fallback to default
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  }, [user, userType]);
-
-  const saveInternships = useCallback((updatedInternships: Internship[]) => {
-    if (user && userType === 'industry') {
-      try {
-        window.localStorage.setItem(getStorageKey(user.uid), JSON.stringify(updatedInternships));
-        setInternships(updatedInternships);
-      } catch (error) {
-        console.error('Failed to save internships to local storage:', error);
-      }
-    }
-  }, [user, userType]);
-
-  const addInternship = useCallback((newInternshipData: Omit<Internship, 'id' | 'image' | 'company'>) => {
-    if (!industryProfile) {
-        console.error("Cannot add internship without an industry profile.");
-        return;
-    }
-    const newInternship: Internship = {
-      ...newInternshipData,
-      id: crypto.randomUUID(),
+    await fsAddInternship({
+      ...newData,
       company: industryProfile.companyName,
-      image: `https://picsum.photos/seed/${Math.random()}/600/400`, // Placeholder image
-    };
-    const updatedInternships = [...internships, newInternship];
-    saveInternships(updatedInternships);
-  }, [internships, saveInternships, industryProfile]);
+      image: `https://picsum.photos/seed/${crypto.randomUUID()}/600/400`,
+      recruiterId: user.uid,
+    });
+  }, [user, industryProfile]);
 
-  const updateInternship = useCallback((updatedInternship: Internship) => {
-    const updatedInternships = internships.map(internship =>
-      internship.id === updatedInternship.id ? updatedInternship : internship
-    );
-    saveInternships(updatedInternships);
-  }, [internships, saveInternships]);
+  const updateInternship = useCallback(async (updated: Internship) => {
+    const { id, ...data } = updated;
+    await fsUpdateInternship(id, data);
+  }, []);
 
-  const deleteInternship = useCallback((internshipId: string) => {
-    const updatedInternships = internships.filter(internship => internship.id !== internshipId);
-    saveInternships(updatedInternships);
-  }, [internships, saveInternships]);
+  const deleteInternship = useCallback(async (internshipId: string) => {
+    await fsDeleteInternship(internshipId);
+  }, []);
 
   return { internships, addInternship, updateInternship, deleteInternship, isLoading };
 }

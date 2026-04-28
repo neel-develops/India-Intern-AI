@@ -1,12 +1,10 @@
-
-import { useParams } from 'react-router-dom';
-
-import { internships, companies } from '@/lib/data';
+import { useParams, Link } from 'react-router-dom';
+import { companies } from '@/lib/data';
+import { useInternships } from '@/hooks/use-internships';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Briefcase, MapPin, Cpu, Check, FileText, Bookmark, BookmarkCheck, Clock, IndianRupee } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useApplications } from '@/hooks/use-applications';
 import { useStudentProfile } from '@/hooks/use-student-profile';
 import { useToast } from '@/hooks/use-toast';
@@ -14,16 +12,26 @@ import { useNotifications } from '@/hooks/use-notifications';
 import { useAuth } from '@/hooks/use-auth';
 import { useSavedInternships } from '@/hooks/use-saved-internships';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 
 export default function InternshipDetailsPage() {
-  const params = useParams();
-  const { id } = params;
+  const { id } = useParams();
   const { user, userType } = useAuth();
+  const { internships, isLoading } = useInternships();
   const { profile } = useStudentProfile();
   const { applications, addApplication } = useApplications();
   const { addNotification } = useNotifications();
   const { toast } = useToast();
   const { isSaved, toggleSave } = useSavedInternships();
+  const [applying, setApplying] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-24">
+        <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const internship = internships.find((i) => i.id === id);
   const company = companies.find((c) => c.name === internship?.company);
@@ -41,7 +49,7 @@ export default function InternshipDetailsPage() {
   const saved = isSaved(internship.id);
   const isRecruiter = userType === 'industry';
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!user) {
       toast({ variant: 'destructive', title: 'Sign in required', description: 'Please log in to apply.' });
       return;
@@ -54,31 +62,30 @@ export default function InternshipDetailsPage() {
       toast({ variant: 'destructive', title: 'Profile required', description: 'Please complete your profile before applying.' });
       return;
     }
-    addApplication({
-      internshipId: internship.id,
-      studentEmail: user.email ?? user.uid,
-      status: 'Applied',
-      appliedDate: new Date().toISOString(),
-    });
-    addNotification({
-      message: `Your application for "${internship.title}" at ${internship.company} has been submitted.`,
-      link: '/applications',
-    });
-    toast({
-      title: '🎉 Application Sent!',
-      description: `You have successfully applied for the ${internship.title} position.`,
-    });
+    setApplying(true);
+    try {
+      await addApplication({
+        internshipId: internship.id,
+        studentEmail: user.email ?? user.uid,
+        status: 'Applied',
+        appliedDate: new Date().toISOString(),
+      });
+      addNotification({
+        message: `Your application for "${internship.title}" at ${internship.company} has been submitted.`,
+        link: '/applications',
+      });
+      toast({ title: '🎉 Application Sent!', description: `You applied for ${internship.title}.` });
+    } catch {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to submit application. Please try again.' });
+    } finally {
+      setApplying(false);
+    }
   };
 
   return (
     <div className="container mx-auto max-w-5xl py-8 space-y-8">
       <div className="relative h-64 w-full rounded-2xl overflow-hidden shadow-xl">
-        <img
-          src={internship.image}
-          alt={internship.title}
-          className="w-full h-full object-cover"
-          data-ai-hint={`${internship.domain} ${internship.company}`}
-        />
+        <img src={internship.image} alt={internship.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6">
           <h1 className="text-3xl font-bold text-white">{internship.title}</h1>
@@ -98,7 +105,6 @@ export default function InternshipDetailsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Main content */}
         <div className="md:col-span-2 space-y-8">
           <div className="flex flex-wrap gap-3">
             <Badge variant="outline" className="flex items-center gap-1 px-3 py-1.5 text-sm">
@@ -127,10 +133,9 @@ export default function InternshipDetailsPage() {
           <div>
             <h2 className="text-xl font-bold mb-3">Responsibilities</h2>
             <ul className="space-y-2">
-              {internship.responsibilities.map((resp, index) => (
-                <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                  <Check className="h-5 w-5 text-violet-400 mt-0.5 shrink-0" />
-                  <span>{resp}</span>
+              {internship.responsibilities.map((resp, i) => (
+                <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                  <Check className="h-5 w-5 text-violet-400 mt-0.5 shrink-0" /><span>{resp}</span>
                 </li>
               ))}
             </ul>
@@ -139,25 +144,21 @@ export default function InternshipDetailsPage() {
           <div>
             <h2 className="text-xl font-bold mb-3">Qualifications</h2>
             <ul className="space-y-2">
-              {internship.qualifications.map((qual, index) => (
-                <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                  <Check className="h-5 w-5 text-violet-400 mt-0.5 shrink-0" />
-                  <span>{qual}</span>
+              {internship.qualifications.map((qual, i) => (
+                <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                  <Check className="h-5 w-5 text-violet-400 mt-0.5 shrink-0" /><span>{qual}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
           <Card className="bg-card/70 backdrop-blur-sm">
             <CardHeader><CardTitle className="text-base">Skills Required</CardTitle></CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {internship.skills.map(skill => (
-                  <Badge key={skill} variant="secondary">{skill}</Badge>
-                ))}
+                {internship.skills.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
               </div>
             </CardContent>
           </Card>
@@ -190,9 +191,11 @@ export default function InternshipDetailsPage() {
                     size="lg"
                     className={cn('w-full', isApplied && 'opacity-80')}
                     onClick={handleApply}
-                    disabled={isApplied}
+                    disabled={isApplied || applying}
                   >
-                    {isApplied ? (
+                    {applying ? (
+                      <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />Submitting…</>
+                    ) : isApplied ? (
                       <><Check className="mr-2 h-4 w-4" />Application Submitted</>
                     ) : (
                       <><FileText className="mr-2 h-4 w-4" />Apply Now</>

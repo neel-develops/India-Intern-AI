@@ -1,27 +1,37 @@
 import { useAuth } from '@/hooks/use-auth';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { PlusCircle, Users, Briefcase, FileText, Bell, CheckCircle2, TrendingUp, BarChart2, Clock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlusCircle, Users, Briefcase, FileText, CheckCircle2, TrendingUp, Clock } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useInternships } from '@/hooks/use-internships';
 import { InfoCard } from '@/components/info-card';
-import { useApplications } from '@/hooks/use-applications';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import type { Application } from '@/lib/types';
+import { subscribeToRecruiterApplications } from '@/lib/firebase-db';
 
 export default function RecruiterDashboardPage() {
   const { user, userType, loading } = useAuth();
   const { internships, isLoading: internshipsLoading } = useInternships();
-  const { getAllApplications } = useApplications();
   const navigate = useNavigate();
 
+  const [allApps, setAllApps] = useState<Application[]>([]);
+  const [appsLoading, setAppsLoading] = useState(true);
+
   useEffect(() => {
-    if (!loading && (userType !== 'industry' || !user)) {
-      navigate('/login');
-    }
+    if (!loading && (userType !== 'industry' || !user)) navigate('/login');
   }, [user, userType, loading, navigate]);
+
+  // Real-time subscription to all applications for recruiter's internships
+  useEffect(() => {
+    if (!internships.length) { setAllApps([]); setAppsLoading(false); return; }
+    const ids = internships.map(i => i.id);
+    const unsub = subscribeToRecruiterApplications(ids, data => {
+      setAllApps(data);
+      setAppsLoading(false);
+    });
+    return () => unsub();
+  }, [internships]);
 
   if (loading || internshipsLoading || userType !== 'industry' || !user) {
     return (
@@ -31,16 +41,9 @@ export default function RecruiterDashboardPage() {
     );
   }
 
-  const allApps = getAllApplications();
-  const myInternshipIds = internships.map(i => i.id);
-  const myApps = allApps.filter(a => myInternshipIds.includes(a.internshipId));
-  const shortlisted = myApps.filter(a => a.status === 'Interview' || a.status === 'Offered').length;
-  const hired = myApps.filter(a => a.status === 'Offered').length;
-
-  // Get recent 3 apps with their internship title
-  const recentApps = [...myApps]
-    .sort((a, b) => new Date(b.appliedDate).getTime() - new Date(a.appliedDate).getTime())
-    .slice(0, 5);
+  const shortlisted = allApps.filter(a => a.status === 'Interview' || a.status === 'Offered').length;
+  const hired = allApps.filter(a => a.status === 'Offered').length;
+  const recentApps = [...allApps].slice(0, 5);
 
   const statusColors: Record<string, string> = {
     Applied: 'bg-blue-500/20 text-blue-400',
@@ -59,8 +62,7 @@ export default function RecruiterDashboardPage() {
         </div>
         <Button asChild size="lg" className="rounded-full">
           <Link to="/recruiter/internships/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Post Internship
+            <PlusCircle className="mr-2 h-4 w-4" />Post Internship
           </Link>
         </Button>
       </div>
@@ -68,7 +70,7 @@ export default function RecruiterDashboardPage() {
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <InfoCard title="Active Postings" value={internships.length} icon={<Briefcase />} description="Live internship listings." />
-        <InfoCard title="Total Applicants" value={myApps.length} icon={<Users />} description="Across all your postings." />
+        <InfoCard title="Total Applicants" value={allApps.length} icon={<Users />} description="Across all your postings." />
         <InfoCard title="Shortlisted" value={shortlisted} icon={<CheckCircle2 />} description="Moved to interview / offer." />
         <InfoCard title="Hired" value={hired} icon={<TrendingUp />} description="Offers accepted." />
       </div>
@@ -78,16 +80,14 @@ export default function RecruiterDashboardPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold tracking-tight">Active Postings</h2>
-            <Button variant="link" asChild className="text-sm">
-              <Link to="/recruiter/internships">View all →</Link>
-            </Button>
+            <Button variant="link" asChild className="text-sm"><Link to="/recruiter/internships">View all →</Link></Button>
           </div>
           {internships.length > 0 ? (
             <Card className="bg-card/70 backdrop-blur-sm">
               <CardContent className="p-0">
                 <div className="divide-y">
                   {internships.slice(0, 5).map(internship => {
-                    const appCount = myApps.filter(a => a.internshipId === internship.id).length;
+                    const appCount = allApps.filter(a => a.internshipId === internship.id).length;
                     return (
                       <div key={internship.id} className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-accent/30 transition-colors">
                         <div>
@@ -115,8 +115,7 @@ export default function RecruiterDashboardPage() {
               <h3 className="font-medium">No postings yet</h3>
               <Button asChild>
                 <Link to="/recruiter/internships/new">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Post your first internship
+                  <PlusCircle className="mr-2 h-4 w-4" />Post your first internship
                 </Link>
               </Button>
             </div>
@@ -128,7 +127,9 @@ export default function RecruiterDashboardPage() {
           <h2 className="text-xl font-bold tracking-tight">Recent Applications</h2>
           <Card className="bg-card/70 backdrop-blur-sm">
             <CardContent className="p-0">
-              {recentApps.length > 0 ? (
+              {appsLoading ? (
+                <div className="p-8 flex justify-center"><div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" /></div>
+              ) : recentApps.length > 0 ? (
                 <div className="divide-y">
                   {recentApps.map(app => {
                     const internship = internships.find(i => i.id === app.internshipId);
@@ -141,8 +142,7 @@ export default function RecruiterDashboardPage() {
                             {app.status}
                           </span>
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {new Date(app.appliedDate).toLocaleDateString()}
+                            <Clock className="h-3 w-3" />{new Date(app.appliedDate).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
