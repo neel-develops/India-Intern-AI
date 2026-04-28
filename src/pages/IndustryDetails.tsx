@@ -30,7 +30,7 @@ const industryRegisterSchema = z.object({
 type IndustryRegisterFormValues = z.infer<typeof industryRegisterSchema>;
 
 export default function IndustryRegisterPage() {
-  const { user, userType, signUpIndustryUser, signUpWithEmail, loading } = useAuth();
+  const { user, userType, signUpWithEmail, setUserType, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
@@ -57,23 +57,21 @@ export default function IndustryRegisterPage() {
 
   const handleSignUp = async (data: IndustryRegisterFormValues) => {
     try {
-      if (signUpIndustryUser) {
-        await signUpIndustryUser(data.email, data.password);
-      } else {
-        // Fallback to regular sign up if signUpIndustryUser is not defined
-        await signUpWithEmail(data.email, data.password);
-      }
+      await signUpWithEmail(data.email, data.password, data.name);
+      // Mark this user as industry type
+      setUserType('industry');
       toast({
         title: 'Registration Successful!',
-        description: 'Redirecting to your dashboard...'
+        description: 'Redirecting to your recruiter dashboard...'
       });
-      // The useEffect will handle the redirect
     } catch (error: any) {
       console.error(error);
       toast({
         variant: 'destructive',
         title: 'Sign Up Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: error.message?.includes('email-already-in-use')
+          ? 'This email is already registered. Please sign in instead.'
+          : error.message || 'An unexpected error occurred.',
       });
     }
   };
