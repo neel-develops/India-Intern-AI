@@ -140,7 +140,7 @@ export function AppShell() {
       {roleChip}
       <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
       {getNavItems().map((item) => (
-          <Link to={item.href}
+          <Link key={item.href} to={item.href}
               className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
               pathname === item.href && 'bg-accent text-primary font-medium'
@@ -154,7 +154,7 @@ export function AppShell() {
         <>
             <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
             {getAiTools().map((item) => (
-                <Link to={item.href}
+                <Link key={item.href} to={item.href}
                     className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
                     pathname === item.href && 'bg-accent text-primary font-medium'
@@ -257,7 +257,7 @@ export function AppShell() {
                   </Link>
                   <nav className="hidden md:flex gap-4">
                       {publicNavItems.map(item => (
-                          <Link to={item.href} className="text-muted-foreground hover:text-primary">{item.label}</Link>
+                          <Link key={item.href} to={item.href} className="text-muted-foreground hover:text-primary">{item.label}</Link>
                       ))}
                   </nav>
                 </div>
