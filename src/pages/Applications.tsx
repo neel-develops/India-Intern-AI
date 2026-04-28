@@ -1,132 +1,220 @@
-
+import { useMemo, useState } from 'react';
 import { useApplications } from '@/hooks/use-applications';
-import { useStudentProfile } from '@/hooks/use-student-profile';
-import { internships } from '@/lib/data';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-
+import { internships as allInternships } from '@/lib/data';
+import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Application } from '@/lib/types';
-import { Briefcase, Calendar, Info } from 'lucide-react';
+import {
+  Briefcase, Calendar, Info, FileText, Clock,
+  CheckCircle2, Award, XCircle, ArrowRight
+} from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { cn } from '@/lib/utils';
+
+const STATUS_CONFIG: Record<Application['status'], { color: string; bgColor: string; borderColor: string; icon: React.ReactNode; label: string }> = {
+  Applied:   { color: 'text-blue-400',   bgColor: 'bg-blue-500/15',   borderColor: 'border-blue-400/30',   icon: <Clock className="h-4 w-4" />,        label: 'Applied' },
+  'In Review': { color: 'text-yellow-400', bgColor: 'bg-yellow-500/15', borderColor: 'border-yellow-400/30', icon: <Clock className="h-4 w-4" />,        label: 'In Review' },
+  Interview: { color: 'text-purple-400', bgColor: 'bg-purple-500/15', borderColor: 'border-purple-400/30', icon: <CheckCircle2 className="h-4 w-4" />,  label: 'Interview' },
+  Offered:   { color: 'text-green-400',  bgColor: 'bg-green-500/15',  borderColor: 'border-green-400/30',  icon: <Award className="h-4 w-4" />,        label: 'Offered 🎉' },
+  Rejected:  { color: 'text-red-400',   bgColor: 'bg-red-500/15',    borderColor: 'border-red-400/30',    icon: <XCircle className="h-4 w-4" />,      label: 'Rejected' },
+};
+
+// Kanban-style columns
+const COLUMNS: Application['status'][] = ['Applied', 'In Review', 'Interview', 'Offered', 'Rejected'];
+
+type ViewMode = 'list' | 'board';
 
 export default function ApplicationsPage() {
   const { user } = useAuth();
-  const { profile } = useStudentProfile();
-  const { applications, updateApplicationStatus, isLoading } = useApplications();
+  const { applications, isLoading } = useApplications();
+  const [view, setView] = useState<ViewMode>('list');
+
+  const enriched = useMemo(() =>
+    applications
+      .map(app => ({
+        ...app,
+        internship: allInternships.find(i => i.id === app.internshipId),
+      }))
+      .sort((a, b) => new Date(b.appliedDate).getTime() - new Date(a.appliedDate).getTime()),
+    [applications]
+  );
 
   if (isLoading) {
-    return <div>Loading applications...</div>
-  }
-  
-  if (!user || !profile) {
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>View Your Applications</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-4">Please create or log into your profile to view your applications.</p>
-                <Button asChild><Link to="/profile">Go to Profile</Link></Button>
-            </CardContent>
-        </Card>
-    )
-  }
-
-  if (applications.length === 0) {
-    return (
-        <div className="text-center py-12 bg-muted/30 rounded-lg">
-            <Info className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No Applications Yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-                You haven't applied for any internships.
-            </p>
-            <Button asChild className="mt-6">
-                <Link to="/internships">Browse Internships</Link>
-            </Button>
-        </div>
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
     );
   }
 
-  const handleStatusChange = (applicationId: string, newStatus: Application['status']) => {
-    updateApplicationStatus(applicationId, newStatus);
-  };
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 bg-muted/30 rounded-2xl">
+        <FileText className="h-12 w-12 text-muted-foreground" />
+        <h3 className="text-lg font-medium">Sign in to view your applications</h3>
+        <Button asChild><Link to="/login">Sign In</Link></Button>
+      </div>
+    );
+  }
+
+  if (enriched.length === 0) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+            <FileText className="h-7 w-7 text-violet-400" />
+            My Applications
+          </h1>
+          <p className="text-muted-foreground mt-1">Track the status of your internship applications here.</p>
+        </div>
+        <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 bg-muted/30 rounded-2xl">
+          <Info className="h-12 w-12 text-muted-foreground" />
+          <h3 className="text-lg font-medium">No Applications Yet</h3>
+          <p className="text-sm text-muted-foreground">You haven't applied for any internships yet.</p>
+          <Button asChild>
+            <Link to="/internships">
+              <Briefcase className="mr-2 h-4 w-4" />
+              Browse Internships
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Summary counts
+  const counts = COLUMNS.reduce((acc, s) => {
+    acc[s] = enriched.filter(a => a.status === s).length;
+    return acc;
+  }, {} as Record<Application['status'], number>);
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
-      <div className="space-y-4 mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          My Applications
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Track the status of your internship applications here.
-        </p>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+            <FileText className="h-7 w-7 text-violet-400" />
+            My Applications
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {enriched.length} application{enriched.length !== 1 ? 's' : ''} submitted
+          </p>
+        </div>
+        {/* View toggle */}
+        <div className="flex items-center gap-2 rounded-lg border p-1 bg-card/60">
+          <button
+            onClick={() => setView('list')}
+            className={cn('px-3 py-1.5 rounded-md text-sm font-medium transition-colors', view === 'list' ? 'bg-violet-600 text-white' : 'text-muted-foreground hover:text-foreground')}
+          >
+            List
+          </button>
+          <button
+            onClick={() => setView('board')}
+            className={cn('px-3 py-1.5 rounded-md text-sm font-medium transition-colors', view === 'board' ? 'bg-violet-600 text-white' : 'text-muted-foreground hover:text-foreground')}
+          >
+            Board
+          </button>
+        </div>
       </div>
-      <div className="space-y-6">
-        {applications.map((app) => {
-          const internship = internships.find(i => i.id === app.internshipId);
-          if (!internship) return null;
 
-          const getStatusColor = (status: Application['status']) => {
-            switch(status) {
-                case 'Applied': return 'bg-blue-500';
-                case 'In Review': return 'bg-yellow-500';
-                case 'Interview': return 'bg-purple-500';
-                case 'Offered': return 'bg-green-500';
-                case 'Rejected': return 'bg-red-500';
-                default: return 'bg-gray-500';
-            }
-          }
-
-          return (
-            <Card key={app.id} className="overflow-hidden">
-              <div className="flex flex-col sm:flex-row">
-                <div className="relative h-48 sm:h-auto sm:w-48 shrink-0">
-                    <img src={internship.image} alt={internship.title}   data-ai-hint={`${internship.domain} ${internship.company}`}/>
-                </div>
-                <div className="p-6 flex-grow">
-                    <CardTitle className="mb-1">{internship.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 mb-4">
-                        <Briefcase className="h-4 w-4" /> {internship.company}
-                    </CardDescription>
-                    
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                        <Calendar className="h-4 w-4" /> Applied on {new Date(app.appliedDate).toLocaleDateString()}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex items-center gap-2">
-                             <span className="text-sm font-medium">Status:</span>
-                            <Badge className={`${getStatusColor(app.status)} text-white`}>{app.status}</Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Update Status:</span>
-                            <Select onValueChange={(value) => handleStatusChange(app.id, value as Application['status'])} defaultValue={app.status}>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Change status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Applied">Applied</SelectItem>
-                                    <SelectItem value="In Review">In Review</SelectItem>
-                                    <SelectItem value="Interview">Interview</SelectItem>
-                                    <SelectItem value="Offered">Offered</SelectItem>
-                                    <SelectItem value="Rejected">Rejected</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                </div>
-                 <div className="p-6 border-t sm:border-t-0 sm:border-l flex items-center">
-                    <Button asChild><Link to={`/internships/${internship.id}`}>View Details</Link></Button>
-                 </div>
-              </div>
-            </Card>
-          );
+      {/* Status summary pills */}
+      <div className="flex flex-wrap gap-2">
+        {COLUMNS.map(s => {
+          const cfg = STATUS_CONFIG[s];
+          return counts[s] > 0 ? (
+            <div key={s} className={cn('flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-medium', cfg.color, cfg.bgColor, cfg.borderColor)}>
+              {cfg.icon}
+              {counts[s]} {s}
+            </div>
+          ) : null;
         })}
       </div>
+
+      {view === 'list' ? (
+        /* ── List View ── */
+        <div className="space-y-4">
+          {enriched.map(({ id, status, appliedDate, internship, internshipId }) => {
+            if (!internship) return null;
+            const cfg = STATUS_CONFIG[status];
+            return (
+              <Card key={id} className={cn('bg-card/70 backdrop-blur-sm overflow-hidden transition-all hover:shadow-lg border-l-4', cfg.borderColor)}>
+                <CardContent className="p-0">
+                  <div className="flex flex-col sm:flex-row">
+                    <div className="relative h-32 sm:h-auto sm:w-40 shrink-0">
+                      <img
+                        src={internship.image}
+                        alt={internship.title}
+                        className="w-full h-full object-cover"
+                        data-ai-hint={`${internship.domain} ${internship.company}`}
+                      />
+                    </div>
+                    <div className="p-5 flex-grow flex flex-col justify-between gap-3">
+                      <div>
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-semibold text-base">{internship.title}</h3>
+                          <Badge variant="outline" className={cn('text-xs shrink-0', cfg.color, cfg.borderColor, cfg.bgColor)}>
+                            <span className="flex items-center gap-1">{cfg.icon}{cfg.label}</span>
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1"><Briefcase className="h-3.5 w-3.5" />{internship.company}</span>
+                          <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />Applied {new Date(appliedDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" asChild>
+                          <Link to={`/internships/${internshipId}`}>
+                            View Listing <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        /* ── Board View ── */
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {COLUMNS.map(col => {
+            const cfg = STATUS_CONFIG[col];
+            const colApps = enriched.filter(a => a.status === col);
+            return (
+              <div key={col} className="min-w-[240px] w-60 shrink-0 space-y-3">
+                <div className={cn('flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold', cfg.bgColor, cfg.color)}>
+                  {cfg.icon}
+                  <span>{col}</span>
+                  <span className="ml-auto bg-white/10 rounded-full px-2 py-0.5 text-xs">{colApps.length}</span>
+                </div>
+                {colApps.length === 0 ? (
+                  <div className="rounded-xl border border-dashed p-4 text-xs text-center text-muted-foreground">None</div>
+                ) : (
+                  colApps.map(({ id, appliedDate, internship, internshipId }) => {
+                    if (!internship) return null;
+                    return (
+                      <Card key={id} className="bg-card/70 backdrop-blur-sm hover:shadow-md transition-all">
+                        <CardContent className="p-3 space-y-2">
+                          <img src={internship.image} alt={internship.title} className="w-full h-24 object-cover rounded-lg" />
+                          <p className="text-sm font-semibold leading-tight">{internship.title}</p>
+                          <p className="text-xs text-muted-foreground">{internship.company}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(appliedDate).toLocaleDateString()}</p>
+                          <Button size="sm" variant="outline" className="w-full text-xs h-7" asChild>
+                            <Link to={`/internships/${internshipId}`}>View</Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 
 
+
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -21,7 +22,11 @@ import {
   MessageSquare,
   BarChart3,
   BrainCircuit,
-  GraduationCap
+  GraduationCap,
+  PlusCircle,
+  Users,
+  Bookmark,
+  ClipboardList,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -52,12 +57,11 @@ function useIsClient() {
 
 export function AppShell() {
   const pathname = useLocation().pathname;
-  const { user, loading } = useAuth();
+  const { user, userType, loading } = useAuth();
   const navigate = useNavigate();
   const isClient = useIsClient();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
-
 
   if (!isClient) {
     return (
@@ -77,6 +81,7 @@ export function AppShell() {
   const studentNavItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/internships', icon: Briefcase, label: 'Internships' },
+    { href: '/saved', icon: Bookmark, label: 'Saved' },
     { href: '/applications', icon: FileText, label: 'My Applications' },
     { href: '/profile', icon: User, label: 'My Profile' },
   ];
@@ -88,10 +93,30 @@ export function AppShell() {
      { href: '/career-coach', icon: GraduationCap, label: 'AI Career Coach' },
   ];
 
+  const recruiterNavItems = [
+    { href: '/recruiter', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/recruiter/internships', icon: Briefcase, label: 'My Postings' },
+    { href: '/recruiter/candidates', icon: Users, label: 'All Candidates' },
+    { href: '/recruiter/internships/new', icon: PlusCircle, label: 'Post New Job' },
+  ];
+
+  const recruiterAiTools = [
+    { href: '/recruiter/candidates', icon: Sparkles, label: 'AI Candidate Rank' },
+  ];
+
+  const isRecruiter = user && userType === 'industry';
+
   const getNavItems = () => {
-    if (!user) return publicNavItems.filter(item => item.href !== '/'); // Hide home from sidebar
+    if (!user) return publicNavItems.filter(item => item.href !== '/');
+    if (isRecruiter) return recruiterNavItems;
     return studentNavItems;
-  }
+  };
+
+  const getAiTools = () => {
+    if (!user) return [];
+    if (isRecruiter) return recruiterAiTools;
+    return studentAiTools;
+  };
   
   const sidebarHeader = (
     <Link to="/" className="flex flex-col items-start gap-2">
@@ -99,9 +124,20 @@ export function AppShell() {
       <p className="text-xs text-muted-foreground -mt-2">A project of Smart India Hackathon</p>
     </Link>
   );
+
+  const roleChip = user && (
+    <div className={cn(
+      'mx-4 mb-2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 w-fit',
+      isRecruiter ? 'bg-blue-500/20 text-blue-400' : 'bg-violet-500/20 text-violet-400'
+    )}>
+      {isRecruiter ? <Building2 className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
+      {isRecruiter ? 'Recruiter' : 'Student'}
+    </div>
+  );
   
   const sidebarNav = (
     <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+      {roleChip}
       <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
       {getNavItems().map((item) => (
           <Link to={item.href}
@@ -114,10 +150,10 @@ export function AppShell() {
               {item.label}
           </Link>
       ))}
-      {user && (
+      {user && getAiTools().length > 0 && (
         <>
             <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
-            {studentAiTools.map((item) => (
+            {getAiTools().map((item) => (
                 <Link to={item.href}
                     className={cn(
                     'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
@@ -211,7 +247,6 @@ export function AppShell() {
   const isPublicPage = ['/login', '/register', '/eligibility'].includes(pathname) || pathname.startsWith('/companies');
   const isLandingPage = pathname === '/';
 
-  // If user is not logged in and on a public page, or on landing page, show a simpler layout
   if ((!user && !loading) && (isLandingPage || isPublicPage)) {
     return (
         <div className="flex flex-col min-h-screen">
@@ -238,8 +273,6 @@ export function AppShell() {
     );
   }
 
-
-  // Main application layout for authenticated users
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
@@ -251,11 +284,7 @@ export function AppShell() {
             <header className="flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-lg px-4 lg:px-6 sticky top-0 z-30 py-4">
             <Sheet>
                 <SheetTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 md:hidden"
-                >
+                <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                     <PanelLeft className="h-5 w-5" />
                     <span className="sr-only">Toggle navigation menu</span>
                 </Button>

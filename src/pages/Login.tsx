@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, GraduationCap, Building2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
@@ -20,10 +21,13 @@ const GoogleIcon = () => (
   </svg>
 );
 
+type LoginRole = 'student' | 'industry';
+
 export default function LoginPage() {
-  const { user, signInWithEmail, signInWithGoogle, loading } = useAuth();
+  const { user, userType, signInWithEmail, signInWithGoogle, setUserType, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<LoginRole>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,15 +35,17 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(userType === 'industry' ? '/recruiter' : '/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, userType, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signInWithEmail(email, password);
+      setUserType(activeTab);
       toast({ title: 'Sign In Successful', description: 'Redirecting to your dashboard...' });
+      navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -55,13 +61,11 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      toast({ title: 'Signed in with Google!', description: 'Redirecting to your dashboard...' });
+      setUserType(activeTab);
+      toast({ title: 'Signed in with Google!', description: 'Redirecting...' });
+      navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Google Sign-In Failed',
-        description: error.message || 'Could not sign in with Google. Please try again.',
-      });
+      toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Please try again.' });
     } finally {
       setIsGoogleLoading(false);
     }
@@ -70,72 +74,85 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4">
       <Card className="w-full max-w-md bg-card/60 backdrop-blur-lg">
-        <form onSubmit={handleSignIn}>
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to find your perfect internship.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl">Welcome Back</CardTitle>
+          <CardDescription>Sign in to your IndiaIntern.ai account.</CardDescription>
+        </CardHeader>
+
+        {/* Role Tabs */}
+        <div className="px-6 pb-2">
+          <div className="flex gap-2 p-1 rounded-xl bg-muted/60">
+            <button
               type="button"
-              variant="outline"
-              className="w-full flex items-center gap-3"
-              onClick={handleGoogleSignIn}
-              disabled={isGoogleLoading || loading}
+              onClick={() => setActiveTab('student')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                activeTab === 'student'
+                  ? 'bg-background text-violet-400 shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <GraduationCap className="h-4 w-4" />
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('industry')}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                activeTab === 'industry'
+                  ? 'bg-background text-blue-400 shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Building2 className="h-4 w-4" />
+              Recruiter
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSignIn}>
+          <CardContent className="space-y-4 pt-2">
+            <Button
+              type="button" variant="outline" className="w-full flex items-center gap-3"
+              onClick={handleGoogleSignIn} disabled={isGoogleLoading || loading}
             >
               {isGoogleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
               Continue with Google
             </Button>
-
             <div className="relative">
               <Separator />
               <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-xs text-muted-foreground">OR</span>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="login-email">Email</Label>
-              <Input
-                id="login-email"
-                type="email"
-                placeholder="m@example.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input id="login-email" type="email" placeholder="m@example.com" required
+                value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="login-password">Password</Label>
               <div className="relative">
-                <Input
-                  id="login-password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
+                <Input id="login-password" type={showPassword ? 'text' : 'password'} required
+                  value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
+                <Button type="button" variant="ghost" size="icon"
                   className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
+                  onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button className="w-full rounded-full" type="submit" disabled={loading}>
+            <Button
+              className={cn('w-full rounded-full', activeTab === 'industry' ? 'bg-blue-600 hover:bg-blue-700' : '')}
+              type="submit" disabled={loading}
+            >
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {loading ? 'Signing in...' : 'Sign In with Email'}
+              {loading ? 'Signing in...' : `Sign In as ${activeTab === 'industry' ? 'Recruiter' : 'Student'}`}
             </Button>
             <p className="text-sm text-muted-foreground">
               Don't have an account?{' '}
-              <Link to="/register" className="text-secondary hover:underline font-medium">
-                Sign Up
-              </Link>
+              <Link to="/register" className="text-secondary hover:underline font-medium">Sign Up</Link>
             </p>
           </CardFooter>
         </form>
