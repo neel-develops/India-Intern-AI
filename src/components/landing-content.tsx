@@ -52,6 +52,9 @@ export function LandingContent() {
                   <Button asChild size="lg" className="rounded-full">
                     <Link to="/register">Get Started <ArrowRight className="ml-2" /></Link>
                   </Button>
+                  <Button asChild size="lg" variant="secondary" className="rounded-full">
+                    <Link to="/login">Log In</Link>
+                  </Button>
                   <Button asChild size="lg" variant="outline" className="rounded-full">
                     <Link to="/eligibility">Check Eligibility</Link>
                   </Button>

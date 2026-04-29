@@ -55,9 +55,35 @@ export function AICareerCoach() {
           skills: profile.skills.map(s => ({ name: s.name, proficiency: s.proficiency })),
           preferences: profile.preferences,
         },
-        history: newConversation,
       });
-      setConversation([...newConversation, { role: 'model', content: result.response }]);
+      
+      const markdownResponse = `
+### 📊 Skill Analysis
+**Strengths:** ${result.skillAnalysis.strengths.join(', ')}
+**Gaps to focus on:** ${result.skillAnalysis.gaps.join(', ')}
+
+### 🎯 Suggested Paths
+${result.suggestedPaths.map(p => `- **${p.path}**: ${p.reason}`).join('\n')}
+
+### 📚 Learning Plan
+${result.learningPlan.map(lp => `
+**${lp.skillToLearn}**
+Steps:
+${lp.steps.map(s => `- ${s}`).join('\n')}
+Resources:
+${lp.resources.map(r => `- [${r.name}](${r.link}) (${r.isFree ? 'Free' : 'Paid'})`).join('\n')}
+`).join('\n')}
+
+### 💡 Professional Development
+**Resume Tips:**
+${result.professionalDevelopment.resumeTips.map(t => `- ${t}`).join('\n')}
+**Interview Prep:**
+${result.professionalDevelopment.interviewPrep.map(t => `- ${t}`).join('\n')}
+**Networking:**
+${result.professionalDevelopment.networkingTips.map(t => `- ${t}`).join('\n')}
+`;
+
+      setConversation([...newConversation, { role: 'model', content: markdownResponse }]);
     } catch (error) {
       console.error('AI career coach error:', error);
       toast({
