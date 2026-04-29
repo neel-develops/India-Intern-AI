@@ -3,14 +3,16 @@
  * Calls the Gemini REST API directly — no backend server required.
  */
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+// Primary: from env (local dev). Fallback: hardcoded for production builds
+// where VITE_ vars may not be available at build time.
+const GEMINI_API_KEY =
+  (import.meta.env.VITE_GEMINI_API_KEY as string | undefined) ||
+  'AIzaSyDz9TM3YjZeeYeYBlY6JV6ZTvhMO_agrCQ';
+
 const MODEL = 'gemini-2.0-flash';
 const BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}`;
 
 function getApiKey(): string {
-  if (!GEMINI_API_KEY) {
-    throw new Error('VITE_GEMINI_API_KEY is not set. Please add it to your .env file and GitHub Secrets.');
-  }
   return GEMINI_API_KEY;
 }
 
