@@ -49,6 +49,8 @@ jobs:
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           # Backend API URL (your Railway deployment URL)
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          # Gemini API Key for AI features
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
         run: npm run build
 
       # Fix client-side routing on GitHub Pages:
