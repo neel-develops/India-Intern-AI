@@ -5,7 +5,7 @@
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
-const MODEL = 'mistralai/mistral-7b-instruct:free';
+const MODEL = 'google/gemma-2-9b-it:free';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
@@ -46,7 +46,7 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${key}`,
-      'HTTP-Referer': window.location.href, // Required by OpenRouter
+      'HTTP-Referer': 'https://neel-develops.github.io/India-Intern-AI/', // Static root for stability
       'X-Title': 'PM Internship Scheme' // Optional, for OpenRouter analytics
     },
     body: JSON.stringify(body),
