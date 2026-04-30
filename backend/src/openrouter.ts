@@ -4,7 +4,7 @@
  */
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemma-3-4b-it:free';
+const MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
 
 function getKey(): string {
   const key = process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;
@@ -29,13 +29,10 @@ export async function openRouterJson<T>(
     body: JSON.stringify({
       model: MODEL,
       messages: [
-        {
-          role: 'system',
-          content:
-            systemPrompt +
-            '\n\nIMPORTANT: Respond ONLY with valid JSON. No markdown, no backticks, no extra text.',
+        { 
+          role: 'user', 
+          content: `INSTRUCTIONS: ${systemPrompt}\n\nIMPORTANT: Respond ONLY with valid JSON. No markdown, no backticks, no extra text.\n\nUSER DATA: ${userPrompt}` 
         },
-        { role: 'user', content: userPrompt },
       ],
       temperature: 0.7,
     }),

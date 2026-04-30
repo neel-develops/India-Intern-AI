@@ -5,7 +5,7 @@
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
-const MODEL = 'google/gemma-3-4b-it:free';
+const MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
@@ -29,8 +29,10 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
   const body = {
     model: MODEL,
     messages: [
-      { role: 'system', content: systemPrompt + '\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.' },
-      { role: 'user', content: userPrompt }
+      { 
+        role: 'user', 
+        content: `INSTRUCTIONS: ${systemPrompt}\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.\n\nUSER DATA: ${userPrompt}` 
+      }
     ],
     // Note: We do not use response_format: { type: 'json_object' } because 
     // google/gemma-2-9b-it does not support structured outputs on OpenRouter.
