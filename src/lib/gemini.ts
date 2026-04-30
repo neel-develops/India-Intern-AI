@@ -5,7 +5,7 @@
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
-const MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
+const MODEL = 'google/gemini-flash-1.5-8b';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
