@@ -40,7 +40,10 @@ export function subscribeToAllInternships(cb: (data: Internship[]) => void): () 
   return onSnapshot(
     collection(db, COL.internships),
     snap => cb(snap.docs.map(d => ({ ...d.data(), id: d.id } as Internship))),
-    err => console.error('internships listener:', err)
+    err => {
+        console.error('internships listener:', err);
+        cb([]);
+    }
   );
 }
 
@@ -48,7 +51,10 @@ export function subscribeToRecruiterInternships(uid: string, cb: (data: Internsh
   const q = query(collection(db, COL.internships), where('recruiterId', '==', uid));
   return onSnapshot(q,
     snap => cb(snap.docs.map(d => ({ ...d.data(), id: d.id } as Internship))),
-    err => console.error('recruiter internships listener:', err)
+    err => {
+        console.error('recruiter internships listener:', err);
+        cb([]);
+    }
   );
 }
 
@@ -76,7 +82,10 @@ export function subscribeToStudentApplications(
       .map(d => ({ ...d.data(), id: d.id } as Application))
       .sort((a, b) => new Date(b.appliedDate).getTime() - new Date(a.appliedDate).getTime())
     ),
-    err => console.error('student apps listener:', err)
+    err => {
+        console.error('student apps listener:', err);
+        cb([]);
+    }
   );
 }
 
@@ -90,7 +99,10 @@ export function subscribeToInternshipApplications(
       .map(d => ({ ...d.data(), id: d.id } as Application))
       .sort((a, b) => new Date(b.appliedDate).getTime() - new Date(a.appliedDate).getTime())
     ),
-    err => console.error('internship apps listener:', err)
+    err => {
+        console.error('internship apps listener:', err);
+        cb([]);
+    }
   );
 }
 
@@ -113,7 +125,10 @@ export function subscribeToRecruiterApplications(
     return onSnapshot(q, snap => {
       store.set(idx, snap.docs.map(d => ({ ...d.data(), id: d.id } as Application)));
       emit();
-    }, err => console.error('recruiter apps listener:', err));
+    }, err => {
+        console.error('recruiter apps listener:', err);
+        cb([]);
+    });
   });
   return () => unsubs.forEach(u => u());
 }
@@ -154,7 +169,10 @@ export function subscribeToUserDocument(uid: string, cb: (data: UserDocument | n
         cb(null);
       }
     },
-    (err) => console.error('user doc listener:', err)
+    (err) => {
+        console.error('user doc listener:', err);
+        cb(null);
+    }
   );
 }
 
@@ -187,7 +205,10 @@ export function subscribeToUserNotifications(uid: string, cb: (data: Notificatio
       notifs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       cb(notifs);
     },
-    (err) => console.error('notifications listener:', err)
+    (err) => {
+        console.error('notifications listener:', err);
+        cb([]);
+    }
   );
 }
 
