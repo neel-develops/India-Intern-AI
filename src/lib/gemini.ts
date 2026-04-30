@@ -1,6 +1,6 @@
 /**
  * Direct API client for frontend AI calls.
- * Calls the OpenRouter API directly using the provided Gemma key.
+ * Last Build Trigger: 2026-04-30 21:50
  */
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
