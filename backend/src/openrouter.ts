@@ -4,7 +4,7 @@
  */
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemma-2-9b-it:free';
+const MODEL = 'mistralai/mistral-7b-instruct:free';
 
 function getKey(): string {
   const key = process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;

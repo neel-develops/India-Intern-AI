@@ -5,7 +5,7 @@
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
-const MODEL = 'google/gemma-2-9b-it:free';
+const MODEL = 'mistralai/mistral-7b-instruct:free';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
