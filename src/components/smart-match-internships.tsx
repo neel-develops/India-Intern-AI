@@ -16,18 +16,12 @@ import type { SuggestRelevantInternshipsOutput } from '@/ai/flows/suggest-releva
 import type { Internship } from '@/lib/types';
 import { Input } from './ui/input';
 
-interface SmartMatchInternshipsProps {
-    onInternshipSelect?: (internship: Internship) => void;
-    selectedInternshipId?: string;
-}
-
-type EnrichedInternship = Internship & { 
-    matchReason: string;
-    matchPercentage: number;
-};
+import { SmartMatchInternshipsProps, EnrichedInternship } from './smart-match-internships-types';
+import { useInternships } from '@/hooks/use-internships';
 
 export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId }: SmartMatchInternshipsProps) {
   const { profile, isLoading: isProfileLoading } = useStudentProfile();
+  const { internships: liveInternships, isLoading: isInternshipsLoading } = useInternships();
   const [suggestedInternships, setSuggestedInternships] = useState<EnrichedInternship[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -54,14 +48,17 @@ export function SmartMatchInternships({ onInternshipSelect, selectedInternshipId
         resumeText: profile.resumeSummary,
       };
 
+      // Use live internships for matching
+      const listingsToMatch = liveInternships.length > 0 ? liveInternships : allInternships;
+
       const result: SuggestRelevantInternshipsOutput = await suggestRelevantInternships({
         studentProfile: studentProfileForAI,
-        internshipListings: allInternships.map(i => ({...i, description: i.longDescription})),
+        internshipListings: listingsToMatch.map(i => ({...i, description: i.longDescription || i.description})),
       });
 
       if (result && result.length > 0) {
         const enrichedInternships = result.map(suggested => {
-          const originalInternship = allInternships.find(i => i.id === suggested.id);
+          const originalInternship = listingsToMatch.find(i => i.id === suggested.id);
           if (!originalInternship) return null;
           return {
             ...originalInternship,

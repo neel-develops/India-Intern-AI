@@ -27,24 +27,50 @@ export function useInternships() {
     }
   }, []);
 
-  // Real-time subscription
+  // Real-time subscription + Static Fallback
   useEffect(() => {
     setIsLoading(true);
     let unsub: () => void;
+    let fallbackTimeout: NodeJS.Timeout;
+
+    const fetchFallback = async () => {
+      try {
+        console.log('--- Fetching Static Fallback Internships ---');
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const jsonUrl = (baseUrl.endsWith('/') ? baseUrl : baseUrl + '/') + 'internships.json';
+        const res = await fetch(jsonUrl);
+        if (res.ok) {
+          const data = await res.json();
+          setInternships(prev => prev.length === 0 ? data : prev);
+        }
+      } catch (err) {
+        console.error('Fallback fetch failed:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     if (userType === 'industry' && user) {
-      // Recruiter sees only their own postings in manage view
       unsub = subscribeToRecruiterInternships(user.uid, data => {
         setInternships(data);
         setIsLoading(false);
       });
     } else {
-      // Students + guests see all internships (static + recruiter-posted)
       unsub = subscribeToAllInternships(data => {
-        setInternships(data);
-        setIsLoading(false);
+        if (data.length > 0) {
+          setInternships(data);
+          setIsLoading(false);
+        } else {
+          // If Firestore is empty, wait 3s then try fallback
+          fallbackTimeout = setTimeout(fetchFallback, 3000);
+        }
       });
     }
-    return () => unsub?.();
+
+    return () => {
+      unsub?.();
+      if (fallbackTimeout) clearTimeout(fallbackTimeout);
+    };
   }, [user, userType]);
 
   const addInternship = useCallback(async (

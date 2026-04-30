@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Frontend Developer Intern",
+    "company": "Razorpay",
+    "location": "Bangalore",
+    "stipend": "₹25,000/month",
+    "duration": "3 months",
+    "skills": ["React", "JavaScript", "CSS"],
+    "applyLink": "https://razorpay.com/careers"
+  },
+  {
+    "id": "2",
+    "title": "ML Intern",
+    "company": "Swiggy",
+    "location": "Hyderabad (Remote)",
+    "stipend": "₹20,000/month",
+    "duration": "2 months",
+    "skills": ["Python", "TensorFlow", "Pandas"],
+    "applyLink": "https://bytes.swiggy.com/careers"
+  },
+  {
+    "id": "3",
+    "title": "Full Stack Intern",
+    "company": "Zomato",
+    "location": "Gurgaon",
+    "stipend": "₹30,000/month",
+    "duration": "6 months",
+    "skills": ["Node.js", "React", "MongoDB"],
+    "applyLink": "https://zomato.com/careers"
+  },
+  {
+    "id": "4",
+    "title": "Backend Intern",
+    "company": "PhonePe",
+    "location": "Bangalore",
+    "stipend": "₹25,000/month",
+    "duration": "3 months",
+    "skills": ["Java", "Spring Boot", "MySQL"],
+    "applyLink": "https://phonepe.com/careers"
+  },
+  {
+    "id": "5",
+    "title": "Data Science Intern",
+    "company": "Flipkart",
+    "location": "Bangalore",
+    "stipend": "₹20,000/month",
+    "duration": "4 months",
+    "skills": ["Python", "SQL", "Machine Learning"],
+    "applyLink": "https://flipkart.com/careers"
+  },
+  {
+    "id": "6",
+    "title": "Product Design Intern",
+    "company": "CRED",
+    "location": "Bangalore",
+    "stipend": "₹35,000/month",
+    "duration": "6 months",
+    "skills": ["Figma", "UI/UX", "Prototyping"],
+    "applyLink": "https://cred.club/careers"
+  }
+]
