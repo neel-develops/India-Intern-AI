@@ -13,12 +13,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@genkit-ai/core": "^1.33.0",
-    "@genkit-ai/googleai": "^1.28.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "genkit": "^1.33.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {

@@ -1,82 +1,40 @@
-
-
-/**
- * @fileOverview AI flow to suggest suitable student candidates for an internship for the PM Internship Scheme.
- *
- * - suggestSuitableCandidates - A function that suggests suitable candidates for an internship.
- */
-
-import {ai} from '../genkit';
-import { SuggestSuitableCandidatesInputSchema, SuggestSuitableCandidatesOutputSchema } from './suggest-suitable-candidates-types';
+import { openRouterJson } from '../openrouter';
 import type { SuggestSuitableCandidatesInput, SuggestSuitableCandidatesOutput } from './suggest-suitable-candidates-types';
-import { googleAI } from '@genkit-ai/googleai';
-
-const prompt = ai.definePrompt({
-  name: 'suggestSuitableCandidatesPrompt',
-  input: {schema: SuggestSuitableCandidatesInputSchema},
-  output: {schema: SuggestSuitableCandidatesOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are an AI recruiter for the PM Internship Scheme. Your task is to identify the best student candidates for a given internship based on merit and affirmative action principles.
-
-  **Internship Description:**
-  {{{internshipDescription}}}
-
-  **Student Profiles:**
-  {{#each studentProfiles}}
-  ---
-  Student Name: {{this.personalInfo.name}}
-  Skills: {{#each this.skills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}
-  Resume Summary: {{this.resumeSummary}}
-  Social Category: {{this.affirmativeAction.socialCategory}}
-  From Aspirational District: {{this.affirmativeAction.isFromAspirationalDistrict}}
-  Has Participated Before: {{this.affirmativeAction.hasParticipatedBefore}}
-  {{/each}}
-
-  **Your Task:**
-  Evaluate each student against the internship description and provide the output as a single, valid JSON array of candidate objects, ranked by their final match score.
-
-  For each student, provide:
-  - A \`matchScore\` (0-100) reflecting a holistic evaluation of skills, qualifications, and affirmative action criteria.
-  - An array of \`reasons\` explaining the score. These reasons must clearly state how the student's profile matches and explicitly mention any affirmative action criteria that influenced the decision.
-
-  **Affirmative Action Weighting (in order of importance):**
-  1.  Give significant preference to candidates from **aspirational districts**.
-  2.  Give preference to candidates from under-represented **social categories** (SC, ST, OBC, EWS).
-  3.  Give lower preference to candidates who have **participated in the scheme before**.
-
-  Your entire response must be a single, valid JSON array. Do not add any text before or after the JSON.
-  `,
-});
-
-const suggestSuitableCandidatesFlow = ai.defineFlow(
-  {
-    name: 'suggestSuitableCandidatesFlow',
-    inputSchema: SuggestSuitableCandidatesInputSchema,
-    outputSchema: SuggestSuitableCandidatesOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
-
 
 export async function suggestSuitableCandidates(
-  input: SuggestSuitableCandidatesInput
+  input: SuggestSuitableCandidatesInput,
 ): Promise<SuggestSuitableCandidatesOutput> {
-    try {
-        return await suggestSuitableCandidatesFlow(input);
-    } catch (error: any) {
-        console.error('Error in suggestSuitableCandidates flow:', error);
-        // Return fallback mock data instead of throwing an error for demo purposes
-        console.warn('AI failed or API key invalid. Returning fallback mock data.');
-        if (input.studentProfiles && input.studentProfiles.length > 0) {
-            return input.studentProfiles.map((p, index) => ({
-                studentName: p.personalInfo.name,
-                matchScore: Math.max(10, 95 - (index * 15)),
-                reasons: ["Strong matching skills (Mock generated).", "Meets basic criteria."]
-            })).sort((a, b) => b.matchScore - a.matchScore).slice(0, 5);
-        }
-        return [];
-    }
+  const students = input.studentProfiles.slice(0, 15);
+
+  const system = `You are an AI recruiter for the PM Internship Scheme. Evaluate candidates based on merit and affirmative action principles.
+
+Affirmative Action Priority (highest to lowest):
+1. Candidates from aspirational districts
+2. Under-represented social categories (SC, ST, OBC, EWS)
+3. Lower preference for candidates who participated before`;
+
+  const user = `Rank these students for the internship and return a JSON ARRAY:
+[
+  {"studentName": "...", "matchScore": 85, "reasons": ["reason1", "reason2"]}
+]
+
+Return top matches sorted by matchScore descending.
+
+Internship requirements:
+${input.internshipDescription}
+
+Candidates:
+${students.map((s: any) => `Name: ${s.personalInfo.name} | Skills: ${s.skills?.map((sk: any) => sk.name).join(', ')} | Category: ${s.affirmativeAction?.socialCategory} | Aspirational District: ${s.affirmativeAction?.isFromAspirationalDistrict}`).join('\n')}`;
+
+  try {
+    const result = await openRouterJson<SuggestSuitableCandidatesOutput>(system, user);
+    return Array.isArray(result) ? result.sort((a, b) => b.matchScore - a.matchScore).slice(0, 5) : [];
+  } catch (error: any) {
+    console.error('suggestSuitableCandidates error:', error.message);
+    return students.slice(0, 5).map((p: any, idx: number) => ({
+      studentName: p.personalInfo.name,
+      matchScore: Math.max(10, 95 - idx * 15),
+      reasons: ['Meets basic criteria.'],
+    }));
+  }
 }

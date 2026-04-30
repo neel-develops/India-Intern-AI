@@ -1,78 +1,39 @@
+import { openRouterChat } from '../openrouter';
+import type { CareerCoachInput } from './career-coach-types';
 
-/**
- * @fileOverview A Genkit flow that acts as a professional career advisor for students.
- */
+type MessageLike = { role: 'user' | 'model'; content: string };
+type CareerCoachChatInput = CareerCoachInput & { history?: MessageLike[] };
 
-import {ai} from '../genkit';
-import { googleAI } from '@genkit-ai/googleai';
-import { CareerCoachInputSchema, CareerCoachOutputSchema } from './career-coach-types';
-import type { CareerCoachInput, CareerCoachOutput, Message } from './career-coach-types';
-import { z } from 'zod';
+export async function chatWithCareerCoach(input: CareerCoachChatInput): Promise<{ response: string }> {
+  const profile = input.studentProfile;
 
-const CareerCoachChatInputSchema = z.object({
-  studentProfile: CareerCoachInputSchema.shape.studentProfile,
-  history: z.array(z.object({
-    role: z.enum(['user', 'model']),
-    content: z.string(),
-  })).optional().describe("The history of the conversation so far."),
-});
-type CareerCoachChatInput = z.infer<typeof CareerCoachChatInputSchema>;
+  const system = `You are a professional, friendly, and encouraging AI career advisor for Indian college students seeking internships.
 
+Student Profile:
+- Name: ${profile.personalInfo.name}
+- Education: ${profile.personalInfo.degree || 'Not specified'} in ${profile.personalInfo.stream || 'Not specified'}
+- Skills: ${profile.skills.map((s: any) => `${s.name} (${s.proficiency}/5)`).join(', ')}
+- Career Interests: ${profile.preferences?.domain || 'Not specified'}
 
-const CareerCoachChatOutputSchema = z.object({
-  response: z.string().describe("The career coach's response."),
-});
-type CareerCoachChatOutput = z.infer<typeof CareerCoachChatOutputSchema>;
+Format your response with markdown for readability (bold headers, bullet points for lists).`;
 
+  const history = (input.history || []).map((h: any) => ({
+    role: (h.role === 'model' ? 'assistant' : 'user') as 'user' | 'assistant',
+    content: h.content,
+  }));
 
-const prompt = ai.definePrompt({
-  name: 'careerCoachChatPrompt',
-  input: {schema: CareerCoachChatInputSchema},
-  output: {schema: CareerCoachChatOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are a professional, friendly, and encouraging AI career advisor. Your goal is to provide practical and personalized advice to students.
+  const lastUserMsg = history.filter(h => h.role === 'user').pop()?.content
+    || 'Hello, I need career guidance.';
 
-  You are having a conversation with a student. Use their profile information as context for your answers.
+  const historyWithoutLast = history.slice(0, -1);
 
-  **Student Profile:**
-  - Name: {{{studentProfile.personalInfo.name}}}
-  - Education: {{{studentProfile.personalInfo.degree}}} in {{{studentProfile.personalInfo.stream}}}
-  - Skills: {{#each studentProfile.skills}}{{this.name}} (Proficiency: {{this.proficiency}}/5){{#unless @last}}, {{/unless}}{{/each}}
-  - Career Interests: Domain of {{{studentProfile.preferences.domain}}}
-
-  **Conversation History**:
-  {{#each history}}
-    **{{role}}**: {{content}}
-  {{/each}}
-
-  **Your Task**:
-  Based on the conversation history and the student's profile, provide a helpful and encouraging response to their latest message. If the user asks for a learning plan, provide a detailed plan with actionable steps and links to accessible online resources (prioritize free or low-cost options and ensure URLs are valid).
-  
-  Format your response with markdown for readability (e.g., use bolding for headers, bullet points for lists).
-  `,
-});
-
-
-const careerCoachChatFlow = ai.defineFlow(
-  {
-    name: 'careerCoachChatFlow',
-    inputSchema: CareerCoachChatInputSchema,
-    outputSchema: CareerCoachChatOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  try {
+    const response = await openRouterChat(system, historyWithoutLast, lastUserMsg);
+    return { response };
+  } catch (error: any) {
+    console.error('chatWithCareerCoach error:', error.message);
+    return {
+      response: "I'm here to help with your career journey! Could you tell me more about what you're looking for? (AI temporarily unavailable)",
+    };
   }
-);
-
-export async function chatWithCareerCoach(
-  input: CareerCoachChatInput
-): Promise<CareerCoachChatOutput> {
-   try {
-        return await careerCoachChatFlow(input);
-    } catch (error: any) {
-        console.error('Error in careerCoachChatFlow:', error);
-        console.warn('AI failed or API key invalid. Returning fallback mock data.');
-        return { response: "This is a mock response because the AI API key is invalid or quota exceeded. I'm here to help you with your career! What specific questions do you have?" };
-    }
 }

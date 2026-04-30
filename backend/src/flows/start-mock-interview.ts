@@ -1,74 +1,44 @@
-
-/**
- * @fileOverview A Genkit flow that conducts a mock interview with a student.
- */
-
-import {ai} from '../genkit';
-import { googleAI } from '@genkit-ai/googleai';
-import { StartMockInterviewInputSchema, StartMockInterviewOutputSchema } from './start-mock-interview-types';
+import { openRouterJson } from '../openrouter';
 import type { StartMockInterviewInput, StartMockInterviewOutput } from './start-mock-interview-types';
 
-const prompt = ai.definePrompt({
-  name: 'mockInterviewPrompt',
-  input: {schema: StartMockInterviewInputSchema},
-  output: {schema: StartMockInterviewOutputSchema},
-  model: googleAI.model('gemini-1.5-flash'),
-  prompt: `You are an expert technical interviewer for IndiaIntern.ai. Your task is to conduct a mock interview with a user for the PM Internship Scheme.
-
-  **Interview Topic**: The user has selected the skill: **{{skill}}**.
-
-  **Your Instructions**:
-
-  1.  **Review the Conversation History**:
-      - If the history is empty, this is the start of the interview. You MUST begin by greeting the candidate professionally, stating the purpose of the interview is to assess their skills in **{{skill}}**, and then asking your first question.
-      - If the history is NOT empty, the interview is in progress.
-
-  2.  **Interview Flow**:
-      a.  If the user has provided an answer, you MUST first provide brief, constructive **feedback** on their previous response.
-      b.  After giving feedback, ask the next logical question.
-      c.  Ask a total of 5 questions that gradually increase in difficulty.
-
-  3.  **Concluding the Interview**: After the user answers the 5th question:
-      a.  Set the \`interviewFinished\` flag to \`true\`.
-      b.  Do NOT ask any more questions. Instead, use the 'response' field to say something like "Thank you, that concludes our interview. Here is your feedback."
-      c.  Provide the final evaluation: a \`finalScore\` (out of 10), a paragraph of \`overallFeedback\`, and a list of 2-3 specific \`improvementTips\`.
-
-  **Maintain a professional and encouraging tone.**
-
-  ---
-  **Conversation History**:
-  {{#each history}}
-    **{{role}}**: {{content}}
-  {{/each}}
-  ---
-
-  Based on the history, continue the interview. Your entire response must be a single, valid JSON object that strictly adheres to the output schema.
-  `,
-});
-
-const mockInterviewFlow = ai.defineFlow(
-  {
-    name: 'mockInterviewFlow',
-    inputSchema: StartMockInterviewInputSchema,
-    outputSchema: StartMockInterviewOutputSchema,
-  },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
-  }
-);
-
 export async function startMockInterview(
-  input: StartMockInterviewInput
+  input: StartMockInterviewInput,
 ): Promise<StartMockInterviewOutput> {
-    try {
-      return await mockInterviewFlow(input);
-    } catch (error: any) {
-        console.error('Error in mockInterviewFlow:', error);
-        console.warn('AI failed or API key invalid. Returning fallback mock data.');
-        return {
-            response: "This is a mock response because the AI API key is invalid. Thank you for your answer! Here is the next question: Can you explain a difficult problem you solved recently?",
-            interviewFinished: false,
-        };
-    }
+  const history = input.history || [];
+  const isStart = history.length === 0;
+  const questionCount = history.filter((h: any) => h.role === 'model').length;
+  const isFinishing = questionCount >= 5;
+
+  const system = `You are a professional technical interviewer conducting a mock interview for the PM Internship Scheme.
+Interview topic: ${input.skill}
+Total questions: 5 (gradually increasing in difficulty)
+${isFinishing ? 'The interview is now complete. Give final evaluation.' : 'Ask one focused question at a time. Provide brief feedback on the previous answer before your next question.'}
+IMPORTANT: Respond ONLY with valid JSON.`;
+
+  const historyText = history.map((h: any) => `${h.role}: ${h.content}`).join('\n');
+
+  const user = `${isStart ? `Start the mock interview for: ${input.skill}. Greet the candidate and ask your first question.` : `Continue based on this conversation history:\n${historyText}`}
+
+Return a JSON object with EXACTLY these fields:
+{
+  "response": "your question or closing statement",
+  "feedback": "feedback on previous answer (empty string if first question)",
+  "interviewFinished": ${isFinishing},
+  "finalScore": ${isFinishing ? 'a number 0-10' : 'null'},
+  "overallFeedback": ${isFinishing ? '"paragraph summary"' : 'null'},
+  "improvementTips": ${isFinishing ? '["tip1", "tip2"]' : 'null'}
+}`;
+
+  try {
+    return await openRouterJson<StartMockInterviewOutput>(system, user);
+  } catch (error: any) {
+    console.error('startMockInterview error:', error.message);
+    return {
+      response: isStart
+        ? `Welcome! Let's begin your mock interview on ${input.skill}. Can you start by explaining what ${input.skill} means to you?`
+        : 'Thank you for your answer! Here is the next question: Can you describe a challenge you solved using your skills?',
+      feedback: '',
+      interviewFinished: false,
+    };
+  }
 }
