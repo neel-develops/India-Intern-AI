@@ -5,7 +5,7 @@
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
-const MODEL = 'openrouter/free';
+const MODEL = 'mistralai/mistral-7b-instruct:free';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
@@ -59,6 +59,7 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
   }
 
   const data = await res.json();
+  console.log('Full OpenRouter Response:', data);
   const text: string = data?.choices?.[0]?.message?.content ?? '';
   
   // Debug log to see exactly what the AI is saying
