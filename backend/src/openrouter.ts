@@ -4,7 +4,7 @@
  */
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemma-2-9b-it';
+const MODEL = 'google/gemma-2-9b-it:free';
 
 function getKey(): string {
   const key = process.env.OPENROUTER_API_KEY || process.env.GEMINI_API_KEY;
@@ -37,7 +37,6 @@ export async function openRouterJson<T>(
         },
         { role: 'user', content: userPrompt },
       ],
-      response_format: { type: 'json_object' },
       temperature: 0.7,
     }),
   });
