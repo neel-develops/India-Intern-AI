@@ -10,6 +10,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { fsGetUserDocument, fsUpdateUserDocument } from '../lib/firebase-db';
 import { useNavigate } from 'react-router-dom';
 
 type UserType = 'student' | 'industry' | null;
@@ -27,8 +28,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const getUserTypeKey = (uid: string) => `userType-${uid}`;
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [userType, setUserTypeState] = useState<UserType>(null);
@@ -36,11 +35,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const stored = localStorage.getItem(getUserTypeKey(currentUser.uid)) as UserType;
-        setUserTypeState(stored || 'student');
+        try {
+          const doc = await fsGetUserDocument(currentUser.uid);
+          setUserTypeState(doc?.userType || 'student');
+        } catch (e) {
+          console.error("Error fetching user doc", e);
+          setUserTypeState('student');
+        }
       } else {
         setUserTypeState(null);
       }
@@ -49,9 +53,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const setUserType = (type: UserType) => {
+  const setUserType = async (type: UserType) => {
     if (user && type) {
-      localStorage.setItem(getUserTypeKey(user.uid), type);
+      await fsUpdateUserDocument(user.uid, { userType: type }).catch(console.error);
     }
     setUserTypeState(type);
   };

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './use-auth';
-
-const getStorageKey = (userId: string) => `saved-internships-${userId}`;
+import { subscribeToUserDocument, fsUpdateUserDocument } from '@/lib/firebase-db';
 
 export function useSavedInternships() {
   const { user } = useAuth();
@@ -9,24 +8,22 @@ export function useSavedInternships() {
 
   useEffect(() => {
     if (user) {
-      try {
-        const item = window.localStorage.getItem(getStorageKey(user.uid));
-        setSavedIds(item ? JSON.parse(item) : []);
-      } catch {
-        setSavedIds([]);
-      }
+      const unsub = subscribeToUserDocument(user.uid, (data) => {
+        setSavedIds(data?.savedInternships || []);
+      });
+      return () => unsub();
     } else {
       setSavedIds([]);
     }
   }, [user]);
 
-  const persist = useCallback((ids: string[]) => {
+  const persist = useCallback(async (ids: string[]) => {
     if (!user) return;
     try {
-      window.localStorage.setItem(getStorageKey(user.uid), JSON.stringify(ids));
-      setSavedIds(ids);
+      await fsUpdateUserDocument(user.uid, { savedInternships: ids });
+      // No need to setSavedIds here because the subscription will update it
     } catch {
-      console.error('Failed to save bookmarks');
+      console.error('Failed to save bookmarks to Firestore');
     }
   }, [user]);
 

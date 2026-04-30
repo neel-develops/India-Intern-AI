@@ -1,15 +1,13 @@
-
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import type { Notification } from '@/lib/types';
 import { useAuth } from './use-auth';
-
-const getStorageKey = (userId: string) => `notifications-${userId}`;
+import { subscribeToUserNotifications, fsAddNotification, fsUpdateNotification } from '@/lib/firebase-db';
 
 interface NotificationsContextType {
     notifications: Notification[];
-    addNotification: (newNotification: Omit<Notification, 'id' | 'date' | 'read'> & { id?: string }) => void;
-    markAsRead: (notificationId: string) => void;
-    markAllAsRead: () => void;
+    addNotification: (newNotification: Omit<Notification, 'id' | 'date' | 'read'> & { id?: string }) => Promise<void>;
+    markAsRead: (notificationId: string) => Promise<void>;
+    markAllAsRead: () => Promise<void>;
     isLoading: boolean;
 }
 
@@ -23,60 +21,50 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user) {
         setIsLoading(true);
-        try {
-          const item = window.localStorage.getItem(getStorageKey(user.uid));
-          if (item) {
-            setNotifications(JSON.parse(item));
-          } else {
-            setNotifications([]);
-          }
-        } catch (error) {
-          console.error('Failed to load notifications:', error);
-          setNotifications([]);
-        } finally {
+        const unsub = subscribeToUserNotifications(user.uid, (data) => {
+            setNotifications(data);
             setIsLoading(false);
-        }
+        });
+        return () => unsub();
     } else {
         setNotifications([]);
         setIsLoading(false);
     }
   }, [user]);
 
-  const saveNotifications = useCallback((updatedNotifications: Notification[]) => {
-    if (user) {
-        try {
-          // Sort by date descending before saving
-          const sorted = updatedNotifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-          window.localStorage.setItem(getStorageKey(user.uid), JSON.stringify(sorted));
-          setNotifications(sorted);
-        } catch (error) {
-          console.error('Failed to save notifications to local storage:', error);
+  const addNotification = useCallback(async (newNotification: Omit<Notification, 'id' | 'date' | 'read'> & { id?: string }) => {
+    if (!user) return;
+    try {
+        const notificationWithDefaults: Omit<Notification, 'id'> = {
+            date: new Date().toISOString(),
+            read: false,
+            message: newNotification.message,
+            link: newNotification.link,
         }
+        await fsAddNotification(user.uid, notificationWithDefaults);
+    } catch (error) {
+        console.error('Failed to add notification to Firestore:', error);
+    }
+  }, [user]);
+  
+  const markAsRead = useCallback(async (notificationId: string) => {
+    if (!user) return;
+    try {
+        await fsUpdateNotification(user.uid, notificationId, { read: true });
+    } catch (error) {
+        console.error('Failed to mark notification as read in Firestore:', error);
     }
   }, [user]);
 
-  const addNotification = useCallback((newNotification: Omit<Notification, 'id' | 'date' | 'read'> & { id?: string }) => {
-    const notificationWithDefaults: Notification = {
-        id: newNotification.id || crypto.randomUUID(),
-        date: new Date().toISOString(),
-        read: false,
-        ...newNotification,
+  const markAllAsRead = useCallback(async () => {
+    if (!user) return;
+    try {
+        const unread = notifications.filter(n => !n.read);
+        await Promise.all(unread.map(n => fsUpdateNotification(user.uid, n.id, { read: true })));
+    } catch (error) {
+        console.error('Failed to mark all notifications as read in Firestore:', error);
     }
-    const updatedNotifications = [notificationWithDefaults, ...notifications];
-    saveNotifications(updatedNotifications);
-  }, [notifications, saveNotifications]);
-  
-  const markAsRead = useCallback((notificationId: string) => {
-    const updatedNotifications = notifications.map(n => 
-        n.id === notificationId ? { ...n, read: true } : n
-    );
-    saveNotifications(updatedNotifications);
-  }, [notifications, saveNotifications]);
-
-  const markAllAsRead = useCallback(() => {
-    const updatedNotifications = notifications.map(n => ({...n, read: true}));
-    saveNotifications(updatedNotifications);
-  }, [notifications, saveNotifications]);
+  }, [user, notifications]);
 
   const value = { notifications, addNotification, markAsRead, markAllAsRead, isLoading };
 

@@ -1,47 +1,41 @@
-
-
 import { useState, useCallback, createContext, useContext, ReactNode, useEffect } from 'react';
 import type { StudentProfile } from '@/lib/types';
 import { useAuth } from '@/hooks/use-auth';
+import { subscribeToUserDocument, fsUpdateUserDocument } from '@/lib/firebase-db';
 
 interface StudentProfileContextType {
   profile: StudentProfile | null;
-  saveProfile: (userId: string, newProfile: StudentProfile) => void;
+  saveProfile: (userId: string, newProfile: StudentProfile) => Promise<void>;
   isLoading: boolean;
   clearProfile: () => void;
 }
 
 const StudentProfileContext = createContext<StudentProfileContextType | undefined>(undefined);
 
-const getStorageKey = (userId: string) => `student-profile-${userId}`;
-
 export const StudentProfileProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadProfile = useCallback((userId: string) => {
-    setIsLoading(true);
-    if (typeof window !== 'undefined') {
-        const item = window.localStorage.getItem(getStorageKey(userId));
-        setProfile(item ? JSON.parse(item) : null);
-    }
-    setIsLoading(false);
-  }, []);
-
   useEffect(() => {
     if (user) {
-      loadProfile(user.uid);
+      setIsLoading(true);
+      const unsub = subscribeToUserDocument(user.uid, (data) => {
+        setProfile(data?.studentProfile || null);
+        setIsLoading(false);
+      });
+      return () => unsub();
     } else {
       setProfile(null);
       setIsLoading(false);
     }
-  }, [user, loadProfile]);
+  }, [user]);
 
-  const saveProfile = useCallback((userId: string, newProfile: StudentProfile) => {
-    if (typeof window !== 'undefined') {
-        window.localStorage.setItem(getStorageKey(userId), JSON.stringify(newProfile));
-        setProfile(newProfile);
+  const saveProfile = useCallback(async (userId: string, newProfile: StudentProfile) => {
+    try {
+      await fsUpdateUserDocument(userId, { studentProfile: newProfile });
+    } catch (error) {
+      console.error('Failed to save student profile to Firestore:', error);
     }
   }, []);
 

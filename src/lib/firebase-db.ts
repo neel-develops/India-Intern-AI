@@ -4,12 +4,13 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { internships as defaultInternships } from './data';
-import type { Internship, Application } from './types';
+import type { Internship, Application, StudentProfile, IndustryProfile, Notification } from './types';
 
 const COL = {
   internships: 'internships',
   applications: 'applications',
   meta: '_meta',
+  users: 'users',
 } as const;
 
 // ─── One-time seed ────────────────────────────────────────────────────────────
@@ -131,4 +132,70 @@ export async function fsAddApplication(data: Omit<Application, 'id'>): Promise<v
 
 export async function fsUpdateApplicationStatus(id: string, status: Application['status']): Promise<void> {
   await updateDoc(doc(db, COL.applications, id), { status });
+}
+
+// ─── Users & Profiles ─────────────────────────────────────────────────────────
+
+export interface UserDocument {
+  userType?: 'student' | 'industry' | null;
+  studentProfile?: StudentProfile | null;
+  industryProfile?: IndustryProfile | null;
+  savedInternships?: string[];
+  updatedAt?: any;
+}
+
+export function subscribeToUserDocument(uid: string, cb: (data: UserDocument | null) => void): () => void {
+  return onSnapshot(
+    doc(db, COL.users, uid),
+    (snap) => {
+      if (snap.exists()) {
+        cb(snap.data() as UserDocument);
+      } else {
+        cb(null);
+      }
+    },
+    (err) => console.error('user doc listener:', err)
+  );
+}
+
+export async function fsUpdateUserDocument(uid: string, data: Partial<UserDocument>): Promise<void> {
+  const userRef = doc(db, COL.users, uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) {
+    await setDoc(userRef, { ...data, updatedAt: serverTimestamp() });
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await updateDoc(userRef, { ...data as any, updatedAt: serverTimestamp() });
+  }
+}
+
+export async function fsGetUserDocument(uid: string): Promise<UserDocument | null> {
+  const snap = await getDoc(doc(db, COL.users, uid));
+  if (snap.exists()) return snap.data() as UserDocument;
+  return null;
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+
+export function subscribeToUserNotifications(uid: string, cb: (data: Notification[]) => void): () => void {
+  const notificationsRef = collection(db, COL.users, uid, 'notifications');
+  return onSnapshot(
+    notificationsRef,
+    (snap) => {
+      const notifs = snap.docs.map(d => ({ ...d.data(), id: d.id } as Notification));
+      // Sort descending by date
+      notifs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      cb(notifs);
+    },
+    (err) => console.error('notifications listener:', err)
+  );
+}
+
+export async function fsAddNotification(uid: string, data: Omit<Notification, 'id'>): Promise<void> {
+  await addDoc(collection(db, COL.users, uid, 'notifications'), data);
+}
+
+export async function fsUpdateNotification(uid: string, notifId: string, data: Partial<Notification>): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await updateDoc(doc(db, COL.users, uid, 'notifications', notifId), data as any);
 }
