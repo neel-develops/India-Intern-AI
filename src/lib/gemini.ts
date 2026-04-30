@@ -60,10 +60,15 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
   const data = await res.json();
   const text: string = data?.choices?.[0]?.message?.content ?? '';
   
+  // Debug log to see exactly what the AI is saying
+  console.log('Raw AI Response:', text);
+  
   try {
-    return JSON.parse(text) as T;
+    // Clean common model artifacts like markdown code blocks
+    const cleanedText = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(cleanedText) as T;
   } catch {
-    // Try to extract JSON from text if model added extra text like "Here is the JSON:"
+    // Fallback: extract anything that looks like JSON
     const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
     if (jsonMatch) return JSON.parse(jsonMatch[0]) as T;
     throw new Error(`Model returned non-JSON response: ${text.slice(0, 200)}`);
