@@ -28,9 +28,9 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
       { role: 'system', content: systemPrompt + '\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.' },
       { role: 'user', content: userPrompt }
     ],
-    // Some models on OpenRouter support response_format: { type: "json_object" }
-    // but relying on the prompt is safer for all models.
-    response_format: { type: 'json_object' },
+    // Note: We do not use response_format: { type: 'json_object' } because 
+    // google/gemma-2-9b-it does not support structured outputs on OpenRouter.
+    // The system prompt explicitly enforces JSON.
     temperature: 0.7,
   };
 
