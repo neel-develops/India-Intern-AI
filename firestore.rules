@@ -4,8 +4,7 @@ service cloud.firestore {
 
     // ── Internships ────────────────────────────────────────────────────────────
     // Anyone can read internships (public job board)
-    // Only authenticated recruiters can create/edit/delete their OWN postings
-    // Static seed docs (recruiterId == null) can be written once during seeding
+    // Only authenticated users can create/edit/delete their OWN postings
     match /internships/{internshipId} {
       allow read: if true;
       allow create: if request.auth != null;
@@ -16,21 +15,30 @@ service cloud.firestore {
 
     // ── Applications ──────────────────────────────────────────────────────────
     // Students can create applications for themselves
-    // Students can read their own applications
-    // Anyone authenticated can read applications (recruiters see all for their internships)
-    // Only authenticated users can update status
+    // Authenticated users can read / update status
     match /applications/{applicationId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
         && request.resource.data.studentEmail == request.auth.token.email;
       allow update: if request.auth != null;
-      allow delete: if false; // Applications cannot be deleted
+      allow delete: if false;
     }
 
     // ── Meta (seeding flag) ────────────────────────────────────────────────────
     match /_meta/{docId} {
       allow read: if true;
-      allow write: if true; // Allow seeding; restrict further if needed
+      allow write: if true;
+    }
+
+    // ── Users & Profiles ───────────────────────────────────────────────────────
+    // Each user can read and write ONLY their own document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Notifications subcollection — same owner-only rule
+      match /notifications/{notifId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }

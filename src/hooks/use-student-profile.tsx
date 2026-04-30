@@ -36,6 +36,7 @@ export const StudentProfileProvider = ({ children }: { children: ReactNode }) =>
       await fsUpdateUserDocument(userId, { studentProfile: newProfile });
     } catch (error) {
       console.error('Failed to save student profile to Firestore:', error);
+      throw error; // re-throw so the form can show an error toast
     }
   }, []);
 

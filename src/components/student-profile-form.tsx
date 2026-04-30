@@ -56,7 +56,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface StudentProfileFormProps {
   profile: StudentProfile | null;
-  onSave: (data: StudentProfile) => void;
+  onSave: (data: StudentProfile) => Promise<void>;
   userEmail: string;
 }
 
@@ -93,12 +93,8 @@ export function StudentProfileForm({ profile, onSave, userEmail }: StudentProfil
     name: "skills",
   });
 
-  function onSubmit(data: ProfileFormValues) {
-    onSave(data as StudentProfile);
-    toast({
-      title: 'Profile Saved',
-      description: 'Your profile has been updated successfully.',
-    });
+  async function onSubmit(data: ProfileFormValues) {
+    await onSave(data as StudentProfile);
   }
 
   return (
