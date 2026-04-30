@@ -31,14 +31,15 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
     messages: [
       { 
         role: 'user', 
-        content: `INSTRUCTIONS: ${systemPrompt}\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.\n\nUSER DATA: ${userPrompt}` 
+        content: `Instructions: ${systemPrompt}\n\nInput Data: ${userPrompt}`
       }
     ],
-    // Note: We do not use response_format: { type: 'json_object' } because 
-    // google/gemma-2-9b-it does not support structured outputs on OpenRouter.
-    // The system prompt explicitly enforces JSON.
-    temperature: 0.7,
+    temperature: 0.1,
+    max_tokens: 1000
   };
+
+  console.log('--- AI Request Started ---');
+  console.log('Model:', MODEL);
 
   const res = await fetch(BASE_URL, {
     method: 'POST',
