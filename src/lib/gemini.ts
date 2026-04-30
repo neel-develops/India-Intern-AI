@@ -9,10 +9,14 @@ const MODEL = 'google/gemma-3-4b-it:free';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
-  if (!OPENROUTER_API_KEY) {
-    throw new Error('OpenRouter API key is missing.');
+  const key = OPENROUTER_API_KEY;
+  if (!key) {
+    console.error('VITE_GEMINI_API_KEY is undefined in environment');
+    throw new Error('OpenRouter API key is missing. Please set VITE_GEMINI_API_KEY.');
   }
-  return OPENROUTER_API_KEY;
+  // Safe debug log for the user to verify key presence
+  console.log('Using OpenRouter Key starting with:', key.slice(0, 8) + '...', '(length: ' + key.length + ')');
+  return key;
 }
 
 /**
