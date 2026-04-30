@@ -3,7 +3,7 @@
  * Calls the OpenRouter API directly using the provided Gemma key.
  */
 
-const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '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';
+const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
 const MODEL = 'google/gemma-2-9b-it';
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
