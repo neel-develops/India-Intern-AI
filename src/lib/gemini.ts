@@ -1,71 +1,71 @@
 /**
- * Direct Gemini API client for frontend AI calls.
- * Calls the Gemini REST API directly — no backend server required.
+ * Direct API client for frontend AI calls.
+ * Calls the OpenRouter API directly using the provided Gemma key.
  */
 
-// Primary: from env (local dev). Fallback: hardcoded for production builds
-// where VITE_ vars may not be available at build time.
-const GEMINI_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '';
+const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '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';
 
-const MODEL = 'gemini-2.0-flash';
-const BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}`;
+const MODEL = 'google/gemma-2-9b-it';
+const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 function getApiKey(): string {
-  if (!GEMINI_API_KEY) {
-    throw new Error('Gemini API key is missing. Please add VITE_GEMINI_API_KEY to your .env file.');
+  if (!OPENROUTER_API_KEY) {
+    throw new Error('OpenRouter API key is missing.');
   }
-  return GEMINI_API_KEY;
+  return OPENROUTER_API_KEY;
 }
 
 /**
- * Call Gemini generateContent endpoint and expect a JSON response.
- * The prompt should instruct the model to return valid JSON.
+ * Call OpenRouter API and expect a JSON response.
+ * We prompt the Gemma model to return only valid JSON.
  */
 export async function geminiJson<T>(systemPrompt: string, userPrompt: string): Promise<T> {
   const key = getApiKey();
-  const url = `${BASE_URL}:generateContent?key=${key}`;
 
   const body = {
-    contents: [
-      { role: 'user', parts: [{ text: userPrompt }] },
+    model: MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt + '\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.' },
+      { role: 'user', content: userPrompt }
     ],
-    systemInstruction: {
-      parts: [{ text: systemPrompt + '\n\nIMPORTANT: Respond ONLY with valid JSON. Do not include markdown code blocks, backticks, or any text outside the JSON object.' }],
-    },
-    generationConfig: {
-      responseMimeType: 'application/json',
-      temperature: 0.7,
-      maxOutputTokens: 8192,
-    },
+    // Some models on OpenRouter support response_format: { type: "json_object" }
+    // but relying on the prompt is safer for all models.
+    response_format: { type: 'json_object' },
+    temperature: 0.7,
   };
 
-  const res = await fetch(url, {
+  const res = await fetch(BASE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': window.location.href, // Required by OpenRouter
+      'X-Title': 'PM Internship Scheme' // Optional, for OpenRouter analytics
+    },
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: { message: res.statusText } }));
     const msg = err?.error?.message || res.statusText;
-    throw new Error(`Gemini API error: ${msg}`);
+    throw new Error(`OpenRouter API error: ${msg}`);
   }
 
   const data = await res.json();
-  const text: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const text: string = data?.choices?.[0]?.message?.content ?? '';
   
   try {
     return JSON.parse(text) as T;
   } catch {
-    // Try to extract JSON from text if model added extra text
+    // Try to extract JSON from text if model added extra text like "Here is the JSON:"
     const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
     if (jsonMatch) return JSON.parse(jsonMatch[0]) as T;
-    throw new Error(`Gemini returned non-JSON response: ${text.slice(0, 200)}`);
+    throw new Error(`Model returned non-JSON response: ${text.slice(0, 200)}`);
   }
 }
 
 /**
- * Call Gemini for a conversational chat response (plain text).
+ * Call OpenRouter for a conversational chat response (plain text).
  */
 export async function geminiChat(
   systemPrompt: string,
@@ -73,33 +73,39 @@ export async function geminiChat(
   userMessage: string,
 ): Promise<string> {
   const key = getApiKey();
-  const url = `${BASE_URL}:generateContent?key=${key}`;
 
-  const contents = [
-    ...history.map(h => ({ role: h.role, parts: [{ text: h.content }] })),
-    { role: 'user', parts: [{ text: userMessage }] },
+  // Map Gemini roles to OpenAI roles (model -> assistant)
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history.map(h => ({
+      role: h.role === 'model' ? 'assistant' : 'user',
+      content: h.content
+    })),
+    { role: 'user', content: userMessage }
   ];
 
   const body = {
-    contents,
-    systemInstruction: { parts: [{ text: systemPrompt }] },
-    generationConfig: {
-      temperature: 0.8,
-      maxOutputTokens: 4096,
-    },
+    model: MODEL,
+    messages,
+    temperature: 0.8,
   };
 
-  const res = await fetch(url, {
+  const res = await fetch(BASE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': window.location.href,
+      'X-Title': 'PM Internship Scheme'
+    },
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: { message: res.statusText } }));
-    throw new Error(`Gemini API error: ${err?.error?.message || res.statusText}`);
+    throw new Error(`OpenRouter API error: ${err?.error?.message || res.statusText}`);
   }
 
   const data = await res.json();
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  return data?.choices?.[0]?.message?.content ?? '';
 }
