@@ -1,6 +1,6 @@
 /**
  * Direct API client for frontend AI calls.
- * Last Build Trigger: 2026-05-01 11:30 (Model ID Fix)
+ * Last Build Trigger: 2026-05-01 11:35 (Timeout & Reliability)
  */
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
@@ -10,8 +10,7 @@ const MODELS = [
   'meta-llama/llama-3.3-70b-instruct:free',
   'google/gemini-flash-1.5-8b:free',
   'microsoft/phi-3-mini-128k-instruct:free',
-  'mistralai/mistral-7b-instruct:free',
-  'qwen/qwen-2.5-72b-instruct:free'
+  'mistralai/mistral-7b-instruct:free'
 ];
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -19,7 +18,6 @@ const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 function getApiKey(): string {
   const key = OPENROUTER_API_KEY;
   if (!key) {
-    console.error('VITE_GEMINI_API_KEY is undefined in environment');
     throw new Error('OpenRouter API key is missing. Please set VITE_GEMINI_API_KEY.');
   }
   return key;
@@ -32,25 +30,27 @@ function sleep(ms: number) {
 }
 
 /**
- * Call OpenRouter API with retries, model rotation, and exponential backoff.
+ * Call OpenRouter API with retries, model rotation, and timeout.
  */
 export async function geminiJson<T>(systemPrompt: string, userPrompt: string): Promise<T> {
   const cacheKey = JSON.stringify({ systemPrompt, userPrompt });
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey) as T;
-  }
+  if (cache.has(cacheKey)) return cache.get(cacheKey) as T;
 
   const key = getApiKey();
-  const maxRetriesPerModel = 1; 
+  const maxRetriesPerModel = 0; 
 
   for (const model of MODELS) {
     let delay = 1000;
     console.log(`--- AI Request: Trying ${model} ---`);
 
     for (let attempt = 0; attempt <= maxRetriesPerModel; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
       try {
         const res = await fetch(BASE_URL, {
           method: 'POST',
+          signal: controller.signal,
           headers: { 
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${key}`,
@@ -69,30 +69,16 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
           }),
         });
 
-        if (res.status === 429) {
-          console.warn(`Rate limited (429) on ${model}. Switching model or retrying...`);
-          if (attempt < maxRetriesPerModel) {
-            await sleep(delay);
-            delay *= 2;
-            continue;
-          }
-          break; // Try next model
-        }
+        clearTimeout(timeoutId);
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: { message: res.statusText } }));
-          const msg = err?.error?.message || res.statusText;
-          console.error(`Model ${model} failed (${res.status}):`, msg);
-          if (msg.includes('Provider returned error') || res.status === 400 || res.status === 500) {
-            break; // Upstream failure, try next model
-          }
-          throw new Error(msg);
+        if (res.status === 429 || !res.ok) {
+          console.warn(`Model ${model} failed (${res.status}). Switching...`);
+          break; // Switch to next model
         }
 
         const data = await res.json();
         const text: string = data?.choices?.[0]?.message?.content ?? '';
-        
-        if (!text) throw new Error('Empty response from AI');
+        if (!text) throw new Error('Empty response');
 
         const cleanedText = text.replace(/```json|```/g, '').trim();
         let result: T;
@@ -100,7 +86,7 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
           result = JSON.parse(cleanedText) as T;
         } catch {
           const jsonMatch = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-          if (!jsonMatch) throw new Error('AI response did not contain valid JSON');
+          if (!jsonMatch) throw new Error('Invalid JSON');
           result = JSON.parse(jsonMatch[0]) as T;
         }
 
@@ -108,16 +94,14 @@ export async function geminiJson<T>(systemPrompt: string, userPrompt: string): P
         return result;
 
       } catch (err: any) {
-        console.error(`Error with ${model}:`, err.message);
-        if (attempt < maxRetriesPerModel) {
-          await sleep(delay);
-          delay *= 2;
-        }
+        clearTimeout(timeoutId);
+        console.error(`Error with ${model}:`, err.name === 'AbortError' ? 'Timeout' : err.message);
+        break; // Fail fast, move to next model
       }
     }
   }
   
-  throw new Error('OpenRouter API error: All available free models are currently busy or rate-limited. Please try again in a few minutes.');
+  throw new Error('OpenRouter API error: All available free models are currently busy. Please try again in a moment.');
 }
 
 /**
@@ -130,8 +114,10 @@ export async function geminiChat(
 ): Promise<string> {
   const key = getApiKey();
   
-  // Try models in rotation for chat too
   for (const model of MODELS) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
     try {
       const messages = [
         { role: 'system', content: systemPrompt },
@@ -144,32 +130,28 @@ export async function geminiChat(
 
       const res = await fetch(BASE_URL, {
         method: 'POST',
+        signal: controller.signal,
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${key}`,
           'HTTP-Referer': 'https://neel-develops.github.io/India-Intern-AI/',
           'X-Title': 'PM Internship Scheme'
         },
-        body: JSON.stringify({
-          model: model,
-          messages,
-          temperature: 0.7,
-        }),
+        body: JSON.stringify({ model: model, messages, temperature: 0.7 }),
       });
 
-      if (res.status === 429 || !res.ok) {
-        console.warn(`Chat model ${model} failed (${res.status}). Trying next...`);
-        continue;
-      }
+      clearTimeout(timeoutId);
+      if (!res.ok) continue;
 
       const data = await res.json();
       const content = data?.choices?.[0]?.message?.content;
       if (content) return content;
     } catch (err) {
-      console.error(`Chat error with ${model}, trying next...`);
+      clearTimeout(timeoutId);
+      console.error(`Chat error with ${model}`);
     }
   }
 
-  throw new Error('OpenRouter API error: Service is temporarily unavailable. Please try again later.');
+  throw new Error('OpenRouter API error: Service busy. Please try again later.');
 }
 
