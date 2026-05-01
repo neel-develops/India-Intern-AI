@@ -6,6 +6,7 @@ import {
   seedInternshipsIfEmpty,
   subscribeToAllInternships,
   subscribeToRecruiterInternships,
+  subscribeToCompanyInternships,
   fsAddInternship,
   fsUpdateInternship,
   fsDeleteInternship,
@@ -30,7 +31,7 @@ export function useInternships() {
   // Real-time subscription + Static Fallback
   useEffect(() => {
     setIsLoading(true);
-    let unsub: () => void;
+    let unsub: (() => void) | undefined;
     let fallbackTimeout: NodeJS.Timeout;
 
     const fetchFallback = async () => {
@@ -53,19 +54,19 @@ export function useInternships() {
     if (userType === 'industry' && user) {
       if (industryProfile?.companyName) {
         // Filter by company name so all recruiters from same company see the same list
-        unsub = subscribeToCompanyInternships(industryProfile.companyName, data => {
+        unsub = subscribeToCompanyInternships(industryProfile.companyName, (data: Internship[]) => {
           setInternships(data);
           setIsLoading(false);
         });
       } else {
         // Fallback to specific recruiter ID if profile not yet loaded or company name missing
-        unsub = subscribeToRecruiterInternships(user.uid, data => {
+        unsub = subscribeToRecruiterInternships(user.uid, (data: Internship[]) => {
           setInternships(data);
           setIsLoading(false);
         });
       }
     } else {
-      unsub = subscribeToAllInternships(data => {
+      unsub = subscribeToAllInternships((data: Internship[]) => {
         if (data.length > 0) {
           setInternships(data);
           setIsLoading(false);
@@ -91,8 +92,8 @@ export function useInternships() {
     }
     await fsAddInternship({
       ...newData,
-      company: industryProfile.companyName,
-      image: `https://picsum.photos/seed/${crypto.randomUUID()}/600/400`,
+      company: industryProfile.companyName || 'Unknown Company',
+      image: `https://picsum.photos/seed/${Math.random()}/600/400`,
       recruiterId: user.uid,
     });
   }, [user, industryProfile]);

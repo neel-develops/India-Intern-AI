@@ -2,16 +2,17 @@ import { useAuth } from '@/hooks/use-auth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Users, Briefcase, FileText, CheckCircle2, TrendingUp, Clock } from 'lucide-react';
+import { PlusCircle, Users, Briefcase, FileText, CheckCircle2, TrendingUp, Clock, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useInternships } from '@/hooks/use-internships';
 import { InfoCard } from '@/components/info-card';
 import { cn } from '@/lib/utils';
 import type { Application } from '@/lib/types';
-import { subscribeToRecruiterApplications } from '@/lib/firebase-db';
+import { subscribeToCompanyApplications } from '@/lib/firebase-db';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 
 export default function RecruiterDashboardPage() {
-  const { user, userType, loading } = useAuth();
+  const { user, userType, loading: authLoading } = useAuth();
   const { profile: industryProfile, isLoading: profileLoading } = useIndustryProfile();
   const { internships, isLoading: internshipsLoading } = useInternships();
   const navigate = useNavigate();
@@ -20,21 +21,32 @@ export default function RecruiterDashboardPage() {
   const [appsLoading, setAppsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && (userType !== 'industry' || !user)) navigate('/login');
-  }, [user, userType, loading, navigate]);
+    if (!authLoading && (userType !== 'industry' || !user)) {
+      navigate('/login');
+    }
+  }, [user, userType, authLoading, navigate]);
 
-  // Real-time subscription to all applications for recruiter's internships
+  // Real-time subscription to all applications for recruiter's company
   useEffect(() => {
-    if (!internships.length) { setAllApps([]); setAppsLoading(false); return; }
-    const ids = internships.map(i => i.id);
-    const unsub = subscribeToRecruiterApplications(ids, data => {
+    if (!industryProfile?.companyName) { 
+      if (!profileLoading) {
+        setAllApps([]); 
+        setAppsLoading(false);
+      }
+      return; 
+    }
+    
+    setAppsLoading(true);
+    const unsub = subscribeToCompanyApplications(industryProfile.companyName, (data: Application[]) => {
       setAllApps(data);
       setAppsLoading(false);
     });
-    return () => unsub();
-  }, [internships]);
+    return () => {
+      if (unsub) unsub();
+    };
+  }, [industryProfile, profileLoading]);
 
-  if (loading || internshipsLoading || profileLoading || userType !== 'industry' || !user) {
+  if (authLoading || internshipsLoading || profileLoading || userType !== 'industry' || !user) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
         <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
@@ -45,11 +57,11 @@ export default function RecruiterDashboardPage() {
   if (!industryProfile?.companyName) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center space-y-6">
-        <Building className="h-16 w-16 text-muted-foreground" />
+        <Building2 className="h-16 w-16 text-muted-foreground" />
         <div className="space-y-2">
           <h2 className="text-2xl font-bold">Complete Your Recruiter Profile</h2>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Please set your company name to start managing internships and viewing applications.
+            Please set your company name in settings to start managing internships and viewing applications.
           </p>
         </div>
         <Button asChild className="rounded-full px-8">
@@ -59,8 +71,8 @@ export default function RecruiterDashboardPage() {
     );
   }
 
-  const shortlisted = allApps.filter(a => a.status === 'Interview' || a.status === 'Offered').length;
-  const hired = allApps.filter(a => a.status === 'Offered').length;
+  const shortlistedCount = allApps.filter(a => a.status === 'Interview' || a.status === 'Offered').length;
+  const hiredCount = allApps.filter(a => a.status === 'Offered').length;
   const recentApps = [...allApps].slice(0, 5);
 
   const statusColors: Record<string, string> = {
@@ -76,10 +88,10 @@ export default function RecruiterDashboardPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">
-            {industryProfile?.companyName ? `${industryProfile.companyName} Dashboard` : 'Recruiter Dashboard'}
+            {industryProfile.companyName} Dashboard
           </h1>
           <p className="text-muted-foreground">
-            Welcome back, {user?.displayName?.split(' ')[0] || 'Recruiter'}. Manage your company's postings.
+            Welcome back, {user.displayName?.split(' ')[0] || 'Recruiter'}.
           </p>
         </div>
         <Button asChild size="lg" className="rounded-full">
@@ -89,16 +101,14 @@ export default function RecruiterDashboardPage() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <InfoCard title="Active Postings" value={internships.length} icon={<Briefcase />} description="Live internship listings." />
-        <InfoCard title="Total Applicants" value={allApps.length} icon={<Users />} description="Across all your postings." />
-        <InfoCard title="Shortlisted" value={shortlisted} icon={<CheckCircle2 />} description="Moved to interview / offer." />
-        <InfoCard title="Hired" value={hired} icon={<TrendingUp />} description="Offers accepted." />
+        <InfoCard title="Active Postings" value={internships.length} icon={<Briefcase className="h-4 w-4" />} description="Live internship listings." />
+        <InfoCard title="Total Applicants" value={allApps.length} icon={<Users className="h-4 w-4" />} description="Across all postings." />
+        <InfoCard title="Shortlisted" value={shortlistedCount} icon={<CheckCircle2 className="h-4 w-4" />} description="Interview / Offer." />
+        <InfoCard title="Hired" value={hiredCount} icon={<TrendingUp className="h-4 w-4" />} description="Offers accepted." />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Active Internships */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold tracking-tight">Active Postings</h2>
@@ -144,7 +154,6 @@ export default function RecruiterDashboardPage() {
           )}
         </div>
 
-        {/* Recent Applications */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold tracking-tight">Recent Applications</h2>
           <Card className="bg-card/70 backdrop-blur-sm">

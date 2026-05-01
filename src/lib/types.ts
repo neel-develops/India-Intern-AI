@@ -19,6 +19,8 @@ export interface Internship {
   image: string;
   stipend?: number;
   duration?: string;
+  recruiterId?: string | null;
+  createdAt?: any;
 }
 
 export interface StudentProfile {
@@ -82,11 +84,19 @@ export interface Notification {
 
 export interface IndustryProfile {
     uid?: string;
-    name: string;
-    email: string;
-    companyName: string;
-    position: string;
+    name?: string;
+    email?: string;
+    companyName?: string;
+    position?: string;
     website?: string;
     description?: string;
     createdAt?: string;
+}
+
+export interface UserDocument {
+  userType?: 'student' | 'industry' | null;
+  studentProfile?: StudentProfile | null;
+  industryProfile?: IndustryProfile | null;
+  savedInternships?: string[];
+  updatedAt?: any;
 }

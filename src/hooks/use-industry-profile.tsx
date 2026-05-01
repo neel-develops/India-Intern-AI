@@ -1,6 +1,7 @@
-import { useState, useCallback, createContext, useContext, ReactNode } from 'react';
+import { useState, useCallback, createContext, useContext, ReactNode, useEffect } from 'react';
 import type { IndustryProfile } from '@/lib/types';
 import { fsGetUserDocument, fsUpdateUserDocument } from '@/lib/firebase-db';
+import { useAuth } from './use-auth';
 
 interface IndustryProfileContextType {
   profile: IndustryProfile | null;
@@ -42,6 +43,18 @@ export const IndustryProfileProvider = ({ children }: { children: ReactNode }) =
     setProfile(null);
     setIsLoading(false);
   }, []);
+
+  const { user, userType } = useAuth();
+
+  useEffect(() => {
+    if (user && userType === 'industry') {
+      loadProfileForUser(user.uid);
+    } else if (!user) {
+      clearProfile();
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, userType, loadProfileForUser, clearProfile]);
 
   return (
     <IndustryProfileContext.Provider value={{ profile, saveProfile, isLoading, loadProfileForUser, clearProfile }}>

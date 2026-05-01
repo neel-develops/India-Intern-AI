@@ -1,10 +1,10 @@
 import {
   collection, doc, setDoc, addDoc, updateDoc, deleteDoc,
-  onSnapshot, query, where, getDoc, getDocs, serverTimestamp,
+  onSnapshot, query, where, getDoc, getDocs, serverTimestamp, orderBy,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { internships as defaultInternships } from './data';
-import type { Internship, Application, StudentProfile, IndustryProfile, Notification } from './types';
+import type { Internship, Application, StudentProfile, IndustryProfile, Notification, UserDocument } from './types';
 
 const COL = {
   internships: 'internships',
@@ -117,7 +117,6 @@ export function subscribeToInternshipApplications(
   );
 }
 
-// Firestore 'in' supports max 30 items — chunk for safety
 export function subscribeToRecruiterApplications(
   internshipIds: string[],
   cb: (data: Application[]) => void
@@ -164,7 +163,6 @@ export function subscribeToCompanyApplications(
 }
 
 export async function fsAddApplication(data: Omit<Application, 'id'>): Promise<void> {
-  // Deduplication check
   const q = query(
     collection(db, COL.applications),
     where('internshipId', '==', data.internshipId),
@@ -180,14 +178,6 @@ export async function fsUpdateApplicationStatus(id: string, status: Application[
 }
 
 // ─── Users & Profiles ─────────────────────────────────────────────────────────
-
-export interface UserDocument {
-  userType?: 'student' | 'industry' | null;
-  studentProfile?: StudentProfile | null;
-  industryProfile?: IndustryProfile | null;
-  savedInternships?: string[];
-  updatedAt?: any;
-}
 
 export function subscribeToUserDocument(uid: string, cb: (data: UserDocument | null) => void): () => void {
   return onSnapshot(
@@ -231,7 +221,6 @@ export function subscribeToUserNotifications(uid: string, cb: (data: Notificatio
     notificationsRef,
     (snap) => {
       const notifs = snap.docs.map(d => ({ ...d.data(), id: d.id } as Notification));
-      // Sort descending by date
       notifs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       cb(notifs);
     },

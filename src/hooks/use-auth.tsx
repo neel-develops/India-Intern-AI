@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { subscribeToUserDocument, fsUpdateUserDocument } from '../lib/firebase-db';
+import type { UserDocument } from '../lib/types';
 import { useNavigate } from 'react-router-dom';
 
 type UserType = 'student' | 'industry' | null;
@@ -23,7 +24,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, pass: string, displayName?: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
-  setUserType: (type: UserType) => void;
+  setUserType: (type: UserType, profileData?: Partial<UserDocument>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,8 +46,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         unsubDoc = subscribeToUserDocument(currentUser.uid, (doc) => {
           if (doc) {
             setUserTypeState(doc.userType || 'student');
-          } else {
-            // Document doesn't exist yet, wait for manual setUserType
           }
         });
       } else {
@@ -66,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (user && type) {
       await fsUpdateUserDocument(user.uid, { 
         userType: type,
-        ...profileData 
+        ...(profileData || {})
       }).catch(console.error);
     }
     setUserTypeState(type);

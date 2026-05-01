@@ -1,5 +1,3 @@
-
-
 import { useAuth } from '@/hooks/use-auth';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -9,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Building } from 'lucide-react';
+import { Eye, EyeOff, Building2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -92,7 +90,7 @@ export default function IndustryRegisterPage() {
             <form onSubmit={form.handleSubmit(handleSignUp)}>
             <CardHeader className="text-center">
                 <CardTitle className="text-2xl flex items-center justify-center gap-2">
-                    <Building /> Join as an Industry Partner
+                    <Building2 /> Join as an Industry Partner
                 </CardTitle>
                 <CardDescription>Register your company to post internships and discover top talent.</CardDescription>
             </CardHeader>
