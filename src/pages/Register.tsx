@@ -59,8 +59,7 @@ export default function RegisterPage() {
       return;
     }
     try {
-      const credential = await signUpWithEmail(email, password, name);
-      const newUser = credential.user;
+      const newUser = await signUpWithEmail(email, password, name);
       if (selectedRole && newUser) {
         const profileData = selectedRole === 'industry' ? {
           industryProfile: { companyName, position: 'Recruiter' }
@@ -85,8 +84,7 @@ export default function RegisterPage() {
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
     try {
-      const credential = await signInWithGoogle();
-      const newUser = credential.user;
+      const newUser = await signInWithGoogle();
       if (selectedRole && newUser) {
         await setUserType(selectedRole, {}, newUser.uid);
         await waitForRole(newUser.uid, selectedRole);
