@@ -19,21 +19,16 @@ efficiently.
 
 ## ❗ Problem Statement
 
-The PM Internship Scheme receives thousands of applications from students across India, including those from rural, tribal, and underserved regions.
-
-### Key Challenges:
-
-* Limited exposure to available internship opportunities
-* Lack of proper career guidance
-* Skill-opportunity mismatch
-
-### Impact:
-
-These challenges result in:
-
-* Misaligned applications
-* Reduced chances of selection
-* Missed opportunities for deserving candidates
+The PM Internship Scheme receives thousands of applications from students across India, including
+rural and underserved regions.
+Key Challenges:
+- Limited exposure to internship opportunities
+- Lack of career guidance
+- Skill-opportunity mismatch
+Impact:
+- Misaligned applications
+- Lower selection chances
+- Missed opportunities for deserving candidates
 
 ---
 
