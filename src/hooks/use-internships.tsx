@@ -51,10 +51,19 @@ export function useInternships() {
     };
 
     if (userType === 'industry' && user) {
-      unsub = subscribeToRecruiterInternships(user.uid, data => {
-        setInternships(data);
-        setIsLoading(false);
-      });
+      if (industryProfile?.companyName) {
+        // Filter by company name so all recruiters from same company see the same list
+        unsub = subscribeToCompanyInternships(industryProfile.companyName, data => {
+          setInternships(data);
+          setIsLoading(false);
+        });
+      } else {
+        // Fallback to specific recruiter ID if profile not yet loaded or company name missing
+        unsub = subscribeToRecruiterInternships(user.uid, data => {
+          setInternships(data);
+          setIsLoading(false);
+        });
+      }
     } else {
       unsub = subscribeToAllInternships(data => {
         if (data.length > 0) {
@@ -71,7 +80,7 @@ export function useInternships() {
       unsub?.();
       if (fallbackTimeout) clearTimeout(fallbackTimeout);
     };
-  }, [user, userType]);
+  }, [user, userType, industryProfile]);
 
   const addInternship = useCallback(async (
     newData: Omit<Internship, 'id' | 'image' | 'company'>

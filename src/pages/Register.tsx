@@ -32,6 +32,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedRole, setSelectedRole] = useState<Role>(null);
   const [name, setName] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -58,7 +59,12 @@ export default function RegisterPage() {
     }
     try {
       await signUpWithEmail(email, password, name);
-      if (selectedRole) await setUserType(selectedRole);
+      if (selectedRole) {
+        const profileData = selectedRole === 'industry' ? {
+          industryProfile: { companyName, position: 'Recruiter' }
+        } : {};
+        await setUserType(selectedRole, profileData);
+      }
       toast({ title: 'Account Created!', description: `Welcome to IndiaIntern.ai as a ${selectedRole === 'industry' ? 'Recruiter' : 'Student'}!` });
       setTimeout(() => {
         navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
@@ -184,9 +190,16 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="reg-name">Full Name</Label>
-                <Input id="reg-name" type="text" placeholder={selectedRole === 'industry' ? 'Company Rep Name' : 'Ravi Kumar'}
-                  value={name} onChange={(e) => setName(e.target.value)} />
+                <Input id="reg-name" type="text" placeholder={selectedRole === 'industry' ? 'e.g. John Doe' : 'Ravi Kumar'}
+                  value={name} onChange={(e) => setName(e.target.value)} required />
               </div>
+              {selectedRole === 'industry' && (
+                <div className="space-y-2">
+                  <Label htmlFor="reg-company">Company Name</Label>
+                  <Input id="reg-company" type="text" placeholder="e.g. Infosys, TCS" required
+                    value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="reg-email">Email</Label>
                 <Input id="reg-email" type="email" placeholder="m@example.com" required

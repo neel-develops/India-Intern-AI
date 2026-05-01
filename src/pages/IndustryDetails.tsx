@@ -58,12 +58,21 @@ export default function IndustryRegisterPage() {
   const handleSignUp = async (data: IndustryRegisterFormValues) => {
     try {
       await signUpWithEmail(data.email, data.password, data.name);
-      // Mark this user as industry type
-      setUserType('industry');
+      // Mark this user as industry type and save their profile
+      await setUserType('industry', {
+        industryProfile: {
+          companyName: data.companyName,
+          position: data.position,
+        }
+      });
+      // Note: We need the user to be logged in to save the document.
+      // AuthProvider handles the subscription.
       toast({
         title: 'Registration Successful!',
         description: 'Redirecting to your recruiter dashboard...'
       });
+      // Small delay to ensure Firestore sync
+      setTimeout(() => navigate('/recruiter'), 500);
     } catch (error: any) {
       console.error(error);
       toast({

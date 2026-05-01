@@ -58,6 +58,17 @@ export function subscribeToRecruiterInternships(uid: string, cb: (data: Internsh
   );
 }
 
+export function subscribeToCompanyInternships(companyName: string, cb: (data: Internship[]) => void): () => void {
+  const q = query(collection(db, COL.internships), where('company', '==', companyName));
+  return onSnapshot(q,
+    snap => cb(snap.docs.map(d => ({ ...d.data(), id: d.id } as Internship))),
+    err => {
+        console.error('company internships listener:', err);
+        cb([]);
+    }
+  );
+}
+
 export async function fsAddInternship(data: Omit<Internship, 'id'> & { recruiterId: string }): Promise<void> {
   await addDoc(collection(db, COL.internships), { ...data, createdAt: serverTimestamp() });
 }

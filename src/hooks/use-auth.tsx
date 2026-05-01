@@ -62,9 +62,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const setUserType = async (type: UserType) => {
+  const setUserType = async (type: UserType, profileData?: Partial<UserDocument>) => {
     if (user && type) {
-      await fsUpdateUserDocument(user.uid, { userType: type }).catch(console.error);
+      await fsUpdateUserDocument(user.uid, { 
+        userType: type,
+        ...profileData 
+      }).catch(console.error);
     }
     setUserTypeState(type);
   };

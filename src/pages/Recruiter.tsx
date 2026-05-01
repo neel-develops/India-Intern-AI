@@ -12,6 +12,7 @@ import { subscribeToRecruiterApplications } from '@/lib/firebase-db';
 
 export default function RecruiterDashboardPage() {
   const { user, userType, loading } = useAuth();
+  const { profile: industryProfile, isLoading: profileLoading } = useIndustryProfile();
   const { internships, isLoading: internshipsLoading } = useInternships();
   const navigate = useNavigate();
 
@@ -33,10 +34,27 @@ export default function RecruiterDashboardPage() {
     return () => unsub();
   }, [internships]);
 
-  if (loading || internshipsLoading || userType !== 'industry' || !user) {
+  if (loading || internshipsLoading || profileLoading || userType !== 'industry' || !user) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
         <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!industryProfile?.companyName) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center space-y-6">
+        <Building className="h-16 w-16 text-muted-foreground" />
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold">Complete Your Recruiter Profile</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Please set your company name to start managing internships and viewing applications.
+          </p>
+        </div>
+        <Button asChild className="rounded-full px-8">
+          <Link to="/settings">Complete Profile</Link>
+        </Button>
       </div>
     );
   }
@@ -57,8 +75,12 @@ export default function RecruiterDashboardPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Recruiter Dashboard</h1>
-          <p className="text-muted-foreground">Manage your postings and find top talent.</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {industryProfile?.companyName ? `${industryProfile.companyName} Dashboard` : 'Recruiter Dashboard'}
+          </h1>
+          <p className="text-muted-foreground">
+            Welcome back, {user?.displayName?.split(' ')[0] || 'Recruiter'}. Manage your company's postings.
+          </p>
         </div>
         <Button asChild size="lg" className="rounded-full">
           <Link to="/recruiter/internships/new">
