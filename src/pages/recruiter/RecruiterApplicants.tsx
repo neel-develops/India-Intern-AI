@@ -154,7 +154,7 @@ export default function RecruiterApplicantsPage() {
                       <div className="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center">
                         <User className="h-4 w-4 text-violet-400" />
                       </div>
-                      <p className="font-semibold">{app.studentEmail.split('@')[0]}</p>
+                      <p className="font-semibold">{app.studentName || app.studentEmail.split('@')[0]}</p>
                       <Badge variant="outline" className={cn('text-xs', STATUS_COLORS[app.status])}>
                         {app.status}
                       </Badge>

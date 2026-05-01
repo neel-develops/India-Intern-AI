@@ -9,6 +9,8 @@ import { Search, Users, Mail, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Application } from '@/lib/types';
 import { subscribeToRecruiterApplications } from '@/lib/firebase-db';
+import { subscribeToCompanyApplications } from '@/lib/firebase-db';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 
 const STATUS_COLORS: Record<string, string> = {
   Applied: 'bg-blue-500/20 text-blue-400',
@@ -21,6 +23,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default function RecruiterCandidatesPage() {
   const { internships } = useInternships();
   const { user, userType, loading } = useAuth();
+  const { profile: industryProfile, isLoading: profileLoading } = useIndustryProfile();
   const navigate = useNavigate();
 
   const [allApps, setAllApps] = useState<Application[]>([]);
@@ -31,13 +34,12 @@ export default function RecruiterCandidatesPage() {
     if (!loading && (!user || userType !== 'industry')) navigate('/login');
   }, [user, userType, loading, navigate]);
 
-  // Real-time subscription for all recruiter applications
+  // Real-time subscription for all company applications
   useEffect(() => {
-    if (!internships.length) { setAllApps([]); return; }
-    const ids = internships.map(i => i.id);
-    const unsub = subscribeToRecruiterApplications(ids, setAllApps);
+    if (!industryProfile?.companyName) return;
+    const unsub = subscribeToCompanyApplications(industryProfile.companyName, setAllApps);
     return () => unsub();
-  }, [internships]);
+  }, [industryProfile?.companyName]);
 
   const statuses: Application['status'][] = ['Applied', 'In Review', 'Interview', 'Offered', 'Rejected'];
 
@@ -116,7 +118,7 @@ export default function RecruiterCandidatesPage() {
                     <span className="text-white font-bold text-sm">{email[0].toUpperCase()}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate">{email.split('@')[0]}</p>
+                    <p className="font-semibold truncate">{apps[0]?.studentName || email.split('@')[0]}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Mail className="h-3 w-3" />{email}
                     </p>

@@ -144,6 +144,25 @@ export function subscribeToRecruiterApplications(
   return () => unsubs.forEach(u => u());
 }
 
+export function subscribeToCompanyApplications(
+  companyName: string,
+  cb: (data: Application[]) => void
+): () => void {
+  const q = query(
+    collection(db, COL.applications),
+    where('companyName', '==', companyName),
+    orderBy('appliedDate', 'desc')
+  );
+  
+  return onSnapshot(q, (snap) => {
+    const apps = snap.docs.map(doc => ({ ...doc.data(), id: doc.id } as Application));
+    cb(apps);
+  }, (err) => {
+    console.error('Company applications listener error:', err);
+    cb([]);
+  });
+}
+
 export async function fsAddApplication(data: Omit<Application, 'id'>): Promise<void> {
   // Deduplication check
   const q = query(

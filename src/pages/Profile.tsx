@@ -1,16 +1,19 @@
 import { StudentProfileForm } from '@/components/student-profile-form';
+import { IndustryProfileForm } from '@/components/industry-profile-form';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import { useAuth } from '@/hooks/use-auth';
-import type { StudentProfile } from '@/lib/types';
+import type { StudentProfile, IndustryProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth();
-  const { profile, saveProfile, isLoading: profileLoading } = useStudentProfile();
+  const { user, userType, loading: authLoading } = useAuth();
+  const { profile: studentProfile, saveProfile: saveStudentProfile, isLoading: studentLoading } = useStudentProfile();
+  const { profile: industryProfile, saveProfile: saveIndustryProfile, isLoading: industryLoading } = useIndustryProfile();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -20,27 +23,29 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, navigate]);
 
-  const handleSave = async (data: StudentProfile) => {
+  const handleSaveStudent = async (data: StudentProfile) => {
     if (!user) return;
     try {
-      await saveProfile(user.uid, data);
-      toast({
-        title: 'Profile Saved ✅',
-        description: 'Your profile has been updated successfully.',
-      });
+      await saveStudentProfile(user.uid, data);
+      toast({ title: 'Profile Saved ✅', description: 'Your profile has been updated successfully.' });
     } catch (err: any) {
-      console.error('Profile save error:', err);
-      toast({
-        title: 'Save Failed ❌',
-        description: err?.message?.includes('permission')
-          ? 'Permission denied — please sign out and sign back in, then try again.'
-          : 'Could not save your profile. Please try again.',
-        variant: 'destructive',
-      });
+      toast({ variant: 'destructive', title: 'Save Failed ❌', description: 'Could not save profile.' });
     }
   };
 
-  if (authLoading || profileLoading) {
+  const handleSaveIndustry = async (data: IndustryProfile) => {
+    if (!user) return;
+    try {
+      await saveIndustryProfile(user.uid, data);
+      toast({ title: 'Profile Saved ✅', description: 'Your recruiter profile has been updated successfully.' });
+    } catch (err: any) {
+      toast({ variant: 'destructive', title: 'Save Failed ❌', description: 'Could not save profile.' });
+    }
+  };
+
+  const isLoading = authLoading || (userType === 'student' ? studentLoading : industryLoading);
+
+  if (isLoading) {
     return (
       <div className="container mx-auto max-w-4xl py-8 space-y-8">
         <Skeleton className="h-10 w-1/3" />
@@ -62,19 +67,35 @@ export default function ProfilePage() {
     );
   }
 
+  const isIndustry = userType === 'industry';
+  const hasProfile = isIndustry ? !!industryProfile : !!studentProfile;
+
   return (
     <div className="container mx-auto max-w-4xl py-8">
       <div className="space-y-2 mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
-          {profile ? 'Your Profile' : 'Create Your Profile'}
+          {hasProfile ? 'Your Profile' : 'Create Your Profile'}
         </h1>
         <p className="text-muted-foreground">
-          {profile
-            ? 'Keep your profile updated to get the best internship matches.'
-            : 'Complete your profile to start finding internships.'}
+          {isIndustry
+            ? 'Update your company and professional details.'
+            : 'Keep your profile updated to get the best internship matches.'}
         </p>
       </div>
-      <StudentProfileForm profile={profile} onSave={handleSave} userEmail={user.email || ''} />
+      
+      {isIndustry ? (
+        <IndustryProfileForm 
+          profile={industryProfile} 
+          onSave={handleSaveIndustry} 
+          userEmail={user.email || ''} 
+        />
+      ) : (
+        <StudentProfileForm 
+          profile={studentProfile} 
+          onSave={handleSaveStudent} 
+          userEmail={user.email || ''} 
+        />
+      )}
     </div>
   );
 }

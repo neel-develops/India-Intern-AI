@@ -66,7 +66,10 @@ export default function InternshipDetailsPage() {
     try {
       await addApplication({
         internshipId: internship.id,
+        internshipTitle: internship.title,
+        companyName: internship.company,
         studentEmail: user.email ?? user.uid,
+        studentName: profile?.personalInfo?.name || user.displayName || 'Student',
         status: 'Applied',
         appliedDate: new Date().toISOString(),
       });

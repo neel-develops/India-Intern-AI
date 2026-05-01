@@ -65,6 +65,9 @@ export interface Application {
     id: string;
     internshipId: string;
     studentEmail: string;
+    studentName?: string;
+    internshipTitle?: string;
+    companyName?: string;
     status: 'Applied' | 'In Review' | 'Interview' | 'Offered' | 'Rejected';
     appliedDate: string;
 }
