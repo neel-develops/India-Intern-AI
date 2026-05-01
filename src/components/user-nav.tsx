@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import { useStudentProfile } from '@/hooks/use-student-profile';
+import { useIndustryProfile } from '@/hooks/use-industry-profile';
 import type { User } from 'firebase/auth';
 
 interface UserNavProps {
@@ -25,14 +26,18 @@ function getInitials(name: string) {
 }
 
 export function UserNav({ user }: UserNavProps) {
-  const { signOut: logOut } = useAuth();
+  const { userType, signOut: logOut } = useAuth();
   const { profile: studentProfile } = useStudentProfile();
+  const { profile: industryProfile } = useIndustryProfile();
 
   if (!user) {
     return null;
   }
   
-  const userName = studentProfile?.personalInfo?.name || user.displayName || 'User';
+  const userName = userType === 'industry' 
+    ? (user.displayName || 'Recruiter')
+    : (studentProfile?.personalInfo?.name || user.displayName || 'Student');
+    
   const userEmail = user.email || 'No email';
   const userAvatar = user.photoURL;
 
@@ -56,17 +61,30 @@ export function UserNav({ user }: UserNavProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        {userType === 'industry' ? (
+          <>
+            <DropdownMenuItem asChild>
+                <Link to="/recruiter">Recruiter Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+                <Link to="/recruiter/internships">My Postings</Link>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <>
+            <DropdownMenuItem asChild>
+                <Link to="/profile">My Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+                <Link to="/applications">My Applications</Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuItem asChild>
-            <Link to="/profile">Profile</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-            <Link to="/applications">My Applications</Link>
-        </DropdownMenuItem>
-         <DropdownMenuItem asChild>
-            <Link to="/settings">Settings</Link>
+            <Link to="/settings">Account Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => logOut()}>
+        <DropdownMenuItem onClick={() => logOut()} className="text-red-500 focus:text-red-500">
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

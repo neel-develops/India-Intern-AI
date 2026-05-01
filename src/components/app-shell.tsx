@@ -55,13 +55,20 @@ function useIsClient() {
   return isClient
 }
 
-export function AppShell() {
+export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry' }) {
   const pathname = useLocation().pathname;
   const { user, userType, loading } = useAuth();
   const navigate = useNavigate();
   const isClient = useIsClient();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  useEffect(() => {
+    if (!loading && user && allowedRole && userType && userType !== allowedRole) {
+      // Role mismatch redirect
+      navigate(userType === 'industry' ? '/recruiter' : '/dashboard');
+    }
+  }, [loading, user, userType, allowedRole, navigate]);
 
   if (!isClient) {
     return (
@@ -299,7 +306,36 @@ export function AppShell() {
                 {headerContent}
             </div>
             </header>
-            <main className="flex-1 p-4 sm:p-6 bg-muted/20">
+            <main className="flex-1 p-4 sm:p-6 bg-muted/20 relative">
+                {user && !userType && !loading && (
+                    <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
+                        <div className="max-w-md w-full space-y-8 text-center">
+                            <div className="space-y-2">
+                                <h2 className="text-3xl font-bold tracking-tight">Complete Your Setup</h2>
+                                <p className="text-muted-foreground">Please choose your role to continue to IndiaIntern.ai</p>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                <Button 
+                                    size="lg" 
+                                    className="h-24 text-lg gap-4 rounded-2xl bg-violet-600 hover:bg-violet-700"
+                                    onClick={() => setUserType('student')}
+                                >
+                                    <GraduationCap className="h-8 w-8" />
+                                    I am a Student
+                                </Button>
+                                <Button 
+                                    size="lg" 
+                                    variant="outline"
+                                    className="h-24 text-lg gap-4 rounded-2xl border-2 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-400"
+                                    onClick={() => setUserType('industry')}
+                                >
+                                    <Building2 className="h-8 w-8" />
+                                    I am a Recruiter
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <Outlet />
             </main>
             <Footer />

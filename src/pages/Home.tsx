@@ -6,14 +6,18 @@ import { useEffect } from 'react';
 import { LandingContent } from '@/components/landing-content';
 
 export default function HomePage() {
-    const { user, loading } = useAuth();
+    const { user, userType, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!loading && user) {
-            navigate('/dashboard');
+            if (userType === 'industry') {
+                navigate('/recruiter');
+            } else if (userType === 'student') {
+                navigate('/dashboard');
+            }
         }
-    }, [user, loading, navigate]);
+    }, [user, userType, loading, navigate]);
 
     if (loading) {
         return (

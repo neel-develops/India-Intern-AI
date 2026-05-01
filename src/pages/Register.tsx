@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/use-auth';
+import { auth } from '@/lib/firebase';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -58,17 +59,17 @@ export default function RegisterPage() {
       return;
     }
     try {
-      await signUpWithEmail(email, password, name);
-      if (selectedRole) {
+      const { user } = await signUpWithEmail(email, password, name);
+      if (selectedRole && auth.currentUser) {
         const profileData = selectedRole === 'industry' ? {
           industryProfile: { companyName, position: 'Recruiter' }
         } : {};
         await setUserType(selectedRole, profileData);
+        // CRITICAL FIX: Wait for the database to confirm the role before navigating
+        await waitForRole(auth.currentUser.uid, selectedRole);
       }
       toast({ title: 'Account Created!', description: `Welcome to IndiaIntern.ai as a ${selectedRole === 'industry' ? 'Recruiter' : 'Student'}!` });
-      setTimeout(() => {
-        navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
-      }, 500);
+      navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -84,11 +85,12 @@ export default function RegisterPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      if (selectedRole) await setUserType(selectedRole);
+      if (selectedRole && auth.currentUser) {
+        await setUserType(selectedRole);
+        await waitForRole(auth.currentUser.uid, selectedRole);
+      }
       toast({ title: 'Account Created!', description: 'Welcome to IndiaIntern.ai!' });
-      setTimeout(() => {
-        navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
-      }, 500);
+      navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Google Sign-Up Failed', description: error.message || 'Please try again.' });
     } finally {

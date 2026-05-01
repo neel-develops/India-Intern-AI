@@ -51,8 +51,8 @@ export default function App() {
         <Route path="/register" element={<Register />} />
 
         {/* All routes inside AppShell (sidebar + header) */}
-        <Route element={<AppShell />}>
-          {/* ── Student Routes ── */}
+        {/* ── Student Routes ── */}
+        <Route element={<AppShell allowedRole="student" />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/internships" element={<Internships />} />
           <Route path="/internships/:id" element={<InternshipsDetails />} />
@@ -61,20 +61,14 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
-
-          {/* ── Student AI Tools ── */}
           <Route path="/resume-analyser" element={<ResumeAnalyser />} />
           <Route path="/skill-gap-visualizer" element={<SkillGapVisualizer />} />
           <Route path="/career-coach" element={<CareerCoach />} />
           <Route path="/mock-interview" element={<MockInterview />} />
+        </Route>
 
-          {/* ── Public / Shared ── */}
-          <Route path="/companies" element={<Companies />} />
-          <Route path="/companies/:id" element={<CompaniesDetails />} />
-          <Route path="/eligibility" element={<Eligibility />} />
-          <Route path="/industry/:id" element={<IndustryDetails />} />
-
-          {/* ── Recruiter Routes ── */}
+        {/* ── Recruiter Routes ── */}
+        <Route element={<AppShell allowedRole="industry" />}>
           <Route path="/recruiter" element={<Recruiter />} />
           <Route path="/recruiter/:id" element={<RecruiterDetails />} />
           <Route path="/recruiter/internships" element={<RecruiterInternships />} />
@@ -82,6 +76,14 @@ export default function App() {
           <Route path="/recruiter/internships/:id/edit" element={<RecruiterPostNew />} />
           <Route path="/recruiter/internships/:id/applicants" element={<RecruiterApplicants />} />
           <Route path="/recruiter/candidates" element={<RecruiterCandidates />} />
+        </Route>
+
+        {/* ── Public / Shared ── */}
+        <Route element={<AppShell />}>
+          <Route path="/companies" element={<Companies />} />
+          <Route path="/companies/:id" element={<CompaniesDetails />} />
+          <Route path="/eligibility" element={<Eligibility />} />
+          <Route path="/industry/:id" element={<IndustryDetails />} />
         </Route>
       </Routes>
     </Suspense>

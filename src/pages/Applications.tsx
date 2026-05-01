@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import type { Application } from '@/lib/types';
 import {
   Briefcase, Calendar, Info, FileText, Clock,
-  CheckCircle2, Award, XCircle, ArrowRight
+  CheckCircle2, Award, XCircle, ArrowRight, Video
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
@@ -169,6 +169,13 @@ export default function ApplicationsPage() {
                             View Listing <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                           </Link>
                         </Button>
+                        {status === 'Interview' && enriched.find(a => a.id === id)?.interviewLink && (
+                          <Button size="sm" className="bg-violet-600 hover:bg-violet-700" asChild>
+                            <a href={enriched.find(a => a.id === id)?.interviewLink} target="_blank" rel="noopener noreferrer">
+                              <Video className="mr-1.5 h-3.5 w-3.5" />Join Interview
+                            </a>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

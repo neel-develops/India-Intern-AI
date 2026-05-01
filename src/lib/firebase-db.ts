@@ -173,8 +173,12 @@ export async function fsAddApplication(data: Omit<Application, 'id'>): Promise<v
   await addDoc(collection(db, COL.applications), { ...data, createdAt: serverTimestamp() });
 }
 
+export async function fsUpdateApplication(id: string, data: Partial<Application>): Promise<void> {
+  await updateDoc(doc(db, COL.applications, id), data);
+}
+
 export async function fsUpdateApplicationStatus(id: string, status: Application['status']): Promise<void> {
-  await updateDoc(doc(db, COL.applications, id), { status });
+  await fsUpdateApplication(id, { status });
 }
 
 // ─── Users & Profiles ─────────────────────────────────────────────────────────
@@ -238,4 +242,24 @@ export async function fsAddNotification(uid: string, data: Omit<Notification, 'i
 export async function fsUpdateNotification(uid: string, notifId: string, data: Partial<Notification>): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await updateDoc(doc(db, COL.users, uid, 'notifications', notifId), data as any);
+}
+
+export async function fsGetUserByEmail(email: string): Promise<{uid: string, doc: UserDocument} | null> {
+  const q = query(collection(db, COL.users), where('studentProfile.personalInfo.email', '==', email));
+  const snap = await getDocs(q);
+  if (snap.empty) {
+    // Try industry profile email too just in case
+    const q2 = query(collection(db, COL.users), where('industryProfile.email', '==', email));
+    const snap2 = await getDocs(q2);
+    if (snap2.empty) return null;
+    return { uid: snap2.docs[0].id, doc: snap2.docs[0].data() as UserDocument };
+  }
+  return { uid: snap.docs[0].id, doc: snap.docs[0].data() as UserDocument };
+}
+
+export async function fsAddNotificationByEmail(email: string, data: Omit<Notification, 'id'>): Promise<void> {
+  const user = await fsGetUserByEmail(email);
+  if (user) {
+    await fsAddNotification(user.uid, data);
+  }
 }

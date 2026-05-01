@@ -39,11 +39,13 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmail(email, password);
-      // Ensure the userType is set in Firestore for this session
-      await setUserType(activeTab);
+      // We don't call setUserType here anymore because it overwrites the existing role in Firestore.
+      // Instead, we just navigate based on the selected tab for immediate feedback, 
+      // but the useAuth hook will soon fetch the real role from Firestore.
       toast({ title: 'Sign In Successful', description: 'Redirecting to your dashboard...' });
-      // Short delay to allow subscription to catch up if needed
+      
       setTimeout(() => {
+        // We'll navigate to the chosen tab, but useAuth will correct us if the role is different.
         navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
       }, 500);
     } catch (error: any) {
@@ -61,7 +63,7 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      await setUserType(activeTab);
+      // We don't call setUserType here anymore to avoid overwriting existing roles.
       toast({ title: 'Signed in with Google!', description: 'Redirecting...' });
       setTimeout(() => {
         navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');

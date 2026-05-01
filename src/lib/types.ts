@@ -72,6 +72,7 @@ export interface Application {
     companyName?: string;
     status: 'Applied' | 'In Review' | 'Interview' | 'Offered' | 'Rejected';
     appliedDate: string;
+  interviewLink?: string;
 }
 
 export interface Notification {
