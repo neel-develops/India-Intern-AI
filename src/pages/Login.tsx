@@ -43,9 +43,13 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await signInWithEmail(email, password);
-      setUserType(activeTab);
+      // Ensure the userType is set in Firestore for this session
+      await setUserType(activeTab);
       toast({ title: 'Sign In Successful', description: 'Redirecting to your dashboard...' });
-      navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
+      // Short delay to allow subscription to catch up if needed
+      setTimeout(() => {
+        navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
+      }, 500);
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -61,9 +65,11 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      setUserType(activeTab);
+      await setUserType(activeTab);
       toast({ title: 'Signed in with Google!', description: 'Redirecting...' });
-      navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
+      setTimeout(() => {
+        navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
+      }, 500);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Please try again.' });
     } finally {

@@ -62,9 +62,11 @@ export default function RegisterPage() {
     }
     try {
       await signUpWithEmail(email, password, name);
-      if (selectedRole) setUserType(selectedRole);
+      if (selectedRole) await setUserType(selectedRole);
       toast({ title: 'Account Created!', description: `Welcome to IndiaIntern.ai as a ${selectedRole === 'industry' ? 'Recruiter' : 'Student'}!` });
-      navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
+      setTimeout(() => {
+        navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
+      }, 500);
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -80,9 +82,11 @@ export default function RegisterPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      if (selectedRole) setUserType(selectedRole);
+      if (selectedRole) await setUserType(selectedRole);
       toast({ title: 'Account Created!', description: 'Welcome to IndiaIntern.ai!' });
-      navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
+      setTimeout(() => {
+        navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
+      }, 500);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Google Sign-Up Failed', description: error.message || 'Please try again.' });
     } finally {

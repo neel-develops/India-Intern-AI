@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { fsGetUserDocument, fsUpdateUserDocument } from '../lib/firebase-db';
+import { subscribeToUserDocument, fsUpdateUserDocument } from '../lib/firebase-db';
 import { useNavigate } from 'react-router-dom';
 
 type UserType = 'student' | 'industry' | null;
@@ -35,22 +35,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let unsubDoc: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      
       if (currentUser) {
-        try {
-          const doc = await fsGetUserDocument(currentUser.uid);
+        // Subscribe to user document for real-time role/profile updates
+        unsubDoc = subscribeToUserDocument(currentUser.uid, (doc) => {
           setUserTypeState(doc?.userType || 'student');
-        } catch (e) {
-          console.error("Error fetching user doc", e);
-          setUserTypeState('student');
-        }
+        });
       } else {
         setUserTypeState(null);
+        if (unsubDoc) unsubDoc();
       }
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribe();
+      if (unsubDoc) unsubDoc();
+    };
   }, []);
 
   const setUserType = async (type: UserType) => {
