@@ -52,19 +52,33 @@ export function useInternships() {
     };
 
     if (userType === 'industry' && user) {
-      if (industryProfile?.companyName) {
-        // Filter by company name so all recruiters from same company see the same list
-        unsub = subscribeToCompanyInternships(industryProfile.companyName, (data: Internship[]) => {
-          setInternships(data);
-          setIsLoading(false);
+      // For recruiters, we subscribe to ALL internships but filter locally to ensure
+      // they always see their own posts AND posts from their company.
+      // We use fuzzy matching for company names to handle abbreviations (e.g., 'TCS' matching 'Tata Consultancy Services').
+      unsub = subscribeToAllInternships((data: Internship[]) => {
+        const filtered = data.filter(i => {
+          // 1. Direct ownership
+          if (i.recruiterId === user.uid) return true;
+          
+          // 2. Company name matching (fuzzy)
+          if (industryProfile?.companyName) {
+            const recCo = industryProfile.companyName.toLowerCase().trim();
+            const jobCo = i.company.toLowerCase().trim();
+            
+            // Match if either is contained in the other (e.g., "TCS" in "TATA CONSULTANCY SERVICES LIMITED")
+            // Or if they are exact matches
+            if (recCo === jobCo || jobCo.includes(recCo) || recCo.includes(jobCo)) return true;
+            
+            // Match common abbreviations (manual check for TCS/Tata)
+            if (recCo === 'tcs' && jobCo.includes('tata consultancy services')) return true;
+            if (recCo === 'reliance' && jobCo.includes('reliance industries')) return true;
+          }
+          
+          return false;
         });
-      } else {
-        // Fallback to specific recruiter ID if profile not yet loaded or company name missing
-        unsub = subscribeToRecruiterInternships(user.uid, (data: Internship[]) => {
-          setInternships(data);
-          setIsLoading(false);
-        });
-      }
+        setInternships(filtered);
+        setIsLoading(false);
+      });
     } else {
       unsub = subscribeToAllInternships((data: Internship[]) => {
         if (data.length > 0) {
@@ -86,13 +100,13 @@ export function useInternships() {
   const addInternship = useCallback(async (
     newData: Omit<Internship, 'id' | 'image' | 'company'>
   ) => {
-    if (!user || !industryProfile) {
-      console.error('Need user + industry profile to post internship');
+    if (!user) {
+      console.error('Need user to post internship');
       return;
     }
     await fsAddInternship({
       ...newData,
-      company: industryProfile.companyName || 'Unknown Company',
+      company: industryProfile?.companyName || 'Unknown Company',
       image: `https://picsum.photos/seed/${Math.random()}/600/400`,
       recruiterId: user.uid,
     });

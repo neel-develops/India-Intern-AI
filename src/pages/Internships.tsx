@@ -31,7 +31,8 @@ export default function InternshipsPage() {
   const filteredInternships = useMemo(() => {
     return allInternships.filter((internship) => {
       const domainMatch = filters.domain === 'all' || internship.domain === filters.domain;
-      const locationMatch = filters.location === 'all' || internship.location === filters.location;
+      const locationMatch = filters.location === 'all' || 
+        internship.location.toLowerCase().includes(filters.location.toLowerCase());
       const skillsMatch = filters.skills.trim() === '' ||
         filters.skills.toLowerCase().split(',').every(skill =>
           internship.skills.some(is => is.toLowerCase().includes(skill.trim()))

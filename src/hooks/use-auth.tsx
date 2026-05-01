@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
+  UserCredential,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { subscribeToUserDocument, fsUpdateUserDocument, fsGetUserDocument } from '../lib/firebase-db';
@@ -20,11 +21,11 @@ interface AuthContextType {
   user: User | null;
   userType: UserType;
   loading: boolean;
-  signInWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, displayName?: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<UserCredential>;
+  signUpWithEmail: (email: string, pass: string, displayName?: string) => Promise<UserCredential>;
+  signInWithGoogle: () => Promise<UserCredential>;
   signOut: () => Promise<void>;
-  setUserType: (type: UserType, profileData?: Partial<UserDocument>) => Promise<void>;
+  setUserType: (type: UserType, profileData?: Partial<UserDocument>, uid?: string) => Promise<void>;
   waitForRole: (uid: string, targetRole: UserType) => Promise<void>;
 }
 
@@ -85,10 +86,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const setUserType = async (type: UserType, profileData?: Partial<UserDocument>) => {
-    if (user && type) {
+  const setUserType = async (type: UserType, profileData?: Partial<UserDocument>, uid?: string) => {
+    const targetUid = uid || user?.uid || auth.currentUser?.uid;
+    if (targetUid && type) {
       try {
-        await fsUpdateUserDocument(user.uid, { 
+        await fsUpdateUserDocument(targetUid, { 
           userType: type,
           ...(profileData || {})
         });
@@ -103,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, pass);
+      return await signInWithEmailAndPassword(auth, email, pass);
     } finally {
       // setLoading(false) is handled by onAuthStateChanged
     }
@@ -116,6 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (displayName) {
         await updateProfile(cred.user, { displayName });
       }
+      return cred;
     } finally {
       // setLoading(false) is handled by onAuthStateChanged
     }
@@ -125,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      return await signInWithPopup(auth, provider);
     } finally {
       // setLoading(false) is handled by onAuthStateChanged
     }

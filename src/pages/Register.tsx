@@ -59,14 +59,15 @@ export default function RegisterPage() {
       return;
     }
     try {
-      const { user } = await signUpWithEmail(email, password, name);
-      if (selectedRole && auth.currentUser) {
+      const credential = await signUpWithEmail(email, password, name);
+      const newUser = credential.user;
+      if (selectedRole && newUser) {
         const profileData = selectedRole === 'industry' ? {
           industryProfile: { companyName, position: 'Recruiter' }
         } : {};
-        await setUserType(selectedRole, profileData);
+        await setUserType(selectedRole, profileData, newUser.uid);
         // CRITICAL FIX: Wait for the database to confirm the role before navigating
-        await waitForRole(auth.currentUser.uid, selectedRole);
+        await waitForRole(newUser.uid, selectedRole);
       }
       toast({ title: 'Account Created!', description: `Welcome to IndiaIntern.ai as a ${selectedRole === 'industry' ? 'Recruiter' : 'Student'}!` });
       navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');
@@ -84,10 +85,11 @@ export default function RegisterPage() {
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
     try {
-      await signInWithGoogle();
-      if (selectedRole && auth.currentUser) {
-        await setUserType(selectedRole);
-        await waitForRole(auth.currentUser.uid, selectedRole);
+      const credential = await signInWithGoogle();
+      const newUser = credential.user;
+      if (selectedRole && newUser) {
+        await setUserType(selectedRole, {}, newUser.uid);
+        await waitForRole(newUser.uid, selectedRole);
       }
       toast({ title: 'Account Created!', description: 'Welcome to IndiaIntern.ai!' });
       navigate(selectedRole === 'industry' ? '/recruiter' : '/dashboard');

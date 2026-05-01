@@ -54,23 +54,6 @@ export default function RecruiterDashboardPage() {
     );
   }
 
-  if (!industryProfile?.companyName) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center space-y-6">
-        <Building2 className="h-16 w-16 text-muted-foreground" />
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold">Complete Your Recruiter Profile</h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Please set your company name in settings to start managing internships and viewing applications.
-          </p>
-        </div>
-        <Button asChild className="rounded-full px-8">
-          <Link to="/settings">Complete Profile</Link>
-        </Button>
-      </div>
-    );
-  }
-
   const shortlistedCount = allApps.filter(a => a.status === 'Interview' || a.status === 'Offered').length;
   const hiredCount = allApps.filter(a => a.status === 'Offered').length;
   const recentApps = [...allApps].slice(0, 5);
@@ -83,12 +66,28 @@ export default function RecruiterDashboardPage() {
     Rejected: 'bg-red-500/20 text-red-400',
   };
 
+  const hasNoCompany = !industryProfile?.companyName;
+
   return (
     <div className="space-y-8">
+      {hasNoCompany && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Building2 className="h-5 w-5 text-yellow-500" />
+            <p className="text-sm text-yellow-200/80">
+              <span className="font-bold text-yellow-500">Profile Incomplete:</span> Set your company name in settings to link your postings and view applicants correctly.
+            </p>
+          </div>
+          <Button asChild variant="outline" size="sm" className="rounded-full border-yellow-500/50 hover:bg-yellow-500/10">
+            <Link to="/settings">Complete Profile</Link>
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">
-            {industryProfile.companyName} Dashboard
+            {industryProfile?.companyName || 'Recruiter'} Dashboard
           </h1>
           <p className="text-muted-foreground">
             Welcome back, {user.displayName?.split(' ')[0] || 'Recruiter'}.
