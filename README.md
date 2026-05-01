@@ -9,10 +9,12 @@
 
 ## 📌 Overview
 
-India Intern AI is an intelligent internship matching platform designed to bridge the gap between students and the right career opportunities. Built under the Smart India Hackathon initiative, this platform leverages AI to recommend internships based on user profiles, skills, and interests.
-
-The system aims to simplify internship discovery while helping recruiters find the most suitable candidates efficiently.
-
+India Intern AI is an AI-powered internship recommendation platform built for the Smart India
+Hackathon.
+It intelligently connects students with relevant opportunities using skill-based matching, profile insights,
+and AI-driven recommendations.
+The platform simplifies internship discovery while enabling recruiters to identify the right talent
+efficiently.
 ---
 
 ## ❗ Problem Statement
