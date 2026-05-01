@@ -39,11 +39,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      navigate(user ? (selectedRole === 'industry' ? '/recruiter' : '/dashboard') : '/dashboard');
-    }
-  }, [user, navigate, selectedRole]);
+  // Remove auto-redirect useEffect to prevent race conditions
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);

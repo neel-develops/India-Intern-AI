@@ -33,11 +33,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      navigate(userType === 'industry' ? '/recruiter' : '/dashboard');
-    }
-  }, [user, userType, navigate]);
+  // Remove auto-redirect useEffect to prevent race conditions with manual login redirect
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

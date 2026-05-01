@@ -43,7 +43,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (currentUser) {
         // Subscribe to user document for real-time role/profile updates
         unsubDoc = subscribeToUserDocument(currentUser.uid, (doc) => {
-          setUserTypeState(doc?.userType || 'student');
+          if (doc) {
+            setUserTypeState(doc.userType || 'student');
+          } else {
+            // Document doesn't exist yet, wait for manual setUserType
+          }
         });
       } else {
         setUserTypeState(null);

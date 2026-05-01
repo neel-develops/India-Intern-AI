@@ -108,14 +108,16 @@ export function AppShell() {
 
   const getNavItems = () => {
     if (!user) return publicNavItems.filter(item => item.href !== '/');
-    if (isRecruiter) return recruiterNavItems;
-    return studentNavItems;
+    if (userType === 'industry') return recruiterNavItems;
+    if (userType === 'student') return studentNavItems;
+    return []; // Wait for userType to be set
   };
 
   const getAiTools = () => {
     if (!user) return [];
-    if (isRecruiter) return recruiterAiTools;
-    return studentAiTools;
+    if (userType === 'industry') return recruiterAiTools;
+    if (userType === 'student') return studentAiTools;
+    return [];
   };
   
   const sidebarHeader = (
@@ -125,13 +127,13 @@ export function AppShell() {
     </Link>
   );
 
-  const roleChip = user && (
+  const roleChip = user && userType && (
     <div className={cn(
       'mx-4 mb-2 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 w-fit',
-      isRecruiter ? 'bg-blue-500/20 text-blue-400' : 'bg-violet-500/20 text-violet-400'
+      userType === 'industry' ? 'bg-blue-500/20 text-blue-400' : 'bg-violet-500/20 text-violet-400'
     )}>
-      {isRecruiter ? <Building2 className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
-      {isRecruiter ? 'Recruiter' : 'Student'}
+      {userType === 'industry' ? <Building2 className="h-3 w-3" /> : <GraduationCap className="h-3 w-3" />}
+      {userType === 'industry' ? 'Recruiter' : 'Student'}
     </div>
   );
   
