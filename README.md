@@ -1,29 +1,134 @@
-# IndiaIntern.ai - PM Internship Scheme Portal
+# 🚀 India Intern AI
 
-This is a prototype web application for the "IndiaIntern.ai" platform, developed as a project for the Smart India Hackathon. The platform serves as a centralized portal for the Prime Minister's Internship Scheme, connecting talented students with premier training opportunities at India's top companies and institutions.
+## 🧠 AI-Based Internship Recommendation Engine
 
-## Key Features
+**PS ID:** 25034
+**Title:** AI-Based Internship Recommendation Engine for PM Internship Scheme
 
-- **AI-Powered Matchmaking:** Utilizes generative AI to match students with suitable internships based on their profiles, skills, and preferences. It also helps recruiters find the best candidates for their openings.
-- **Comprehensive Listings:** A detailed database of internships and participating companies/institutions.
-- **Student Profiles:** Allows students to create and manage detailed profiles, including academic information, skills, and eligibility for the scheme.
-- **Application Tracking:** Students can apply for internships and track the status of their applications.
-- **Recruiter Dashboard:** A dedicated interface for recruiters to find and evaluate potential candidates.
-- **Modern Tech Stack:** Built with Next.js, React, TypeScript, and Tailwind CSS for a fast, modern, and responsive user experience.
-- **GenAI Integration:** Powered by Google's Genkit for all generative AI functionalities.
+---
 
-## Getting Started
+## 📌 Overview
 
-The application is designed to be run within the Firebase Studio environment.
+India Intern AI is an intelligent internship matching platform designed to bridge the gap between students and the right career opportunities. Built under the Smart India Hackathon initiative, this platform leverages AI to recommend internships based on user profiles, skills, and interests.
 
-1.  **Student Journey**:
-    - Register for an account.
-    - Complete your profile with personal, academic, and skill-based information.
-    - Use the "Smart Match" feature on the dashboard to get AI-powered internship recommendations.
-    - Browse and filter all available training programs.
-    - Apply for internships and track them in the "My Applications" section.
+The system aims to simplify internship discovery while helping recruiters find the most suitable candidates efficiently.
 
-2.  **Recruiter Journey**:
-    - Navigate to the `/recruiter` page.
-    - Use the AI-powered "Find Top Talent" feature by pasting an internship description to get a ranked list of suitable candidates.
-    - Browse the full talent pool of student profiles.
+---
+
+## ❗ Problem Statement
+
+The PM Internship Scheme receives thousands of applications from students across India, including those from rural, tribal, and underserved regions.
+
+### Key Challenges:
+
+* Limited exposure to available internship opportunities
+* Lack of proper career guidance
+* Skill-opportunity mismatch
+
+### Impact:
+
+These challenges result in:
+
+* Misaligned applications
+* Reduced chances of selection
+* Missed opportunities for deserving candidates
+
+---
+
+## 💡 Our Solution
+
+India Intern AI addresses these challenges through:
+
+### 🔍 AI-Powered Matching
+
+Recommends internships based on:
+
+* Skills
+* Interests
+* Profile data
+
+### 📊 Resume Analyzer
+
+Provides feedback and insights to improve resumes.
+
+### 📈 Skill Gap Analysis
+
+Identifies missing skills required for target roles.
+
+### 🤖 AI Career Coach
+
+Guides users with personalized career advice.
+
+### 🎯 Recruiter Dashboard
+
+* Post internships
+* Manage applications
+* View candidate insights
+
+---
+
+## ✨ Key Features
+
+* Smart internship recommendations
+* Student & recruiter dashboards
+* Resume analysis using AI
+* Skill gap visualization
+* Mock interview system
+* Clean and modern UI
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** React.js
+* **Backend:** Node.js
+* **Database:** (Add your DB here e.g., MongoDB / Firebase)
+* **AI Integration:** (Add tools/models used)
+* **Deployment:** GitHub Pages / Vercel / Netlify
+
+---
+
+## 📷 Screenshots
+
+👉 Add screenshots of:
+
+* Dashboard
+* Internship listings
+* Resume analyzer
+* Recruiter panel
+
+---
+
+## 👥 Team Members
+
+* Neel Sonawane
+* Sahil Lale
+* Sanika Madrewar
+* Hrishikesh Tarade
+* Atharva Kulkarni
+* Anushka Hardikar
+
+---
+
+## 🎯 Vision
+
+To create an inclusive platform that empowers every student across India — regardless of background — to access the right opportunities and build a successful career.
+
+---
+
+## 🚀 Future Scope
+
+* Advanced AI recommendation models
+* Integration with government schemes
+* Mobile application
+* Real-time mentorship system
+
+---
+
+## 📬 Contact
+
+For queries or collaboration, feel free to reach out.
+
+---
+
+⭐ If you like this project, consider giving it a star!
