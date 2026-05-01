@@ -34,7 +34,9 @@ Impact:
 
 ## 💡 Our Solution
 
-India Intern AI addresses these challenges through:
+India Intern AI solves this problem using intelligent automation and AI-powered insights.
+Core Approach:- Skill-based internship recommendations- Profile-driven matching- Data-backed career insights
+The platform ensures better alignment between student capabilities and industry opportunities
 
 ### 🔍 AI-Powered Matching
 
