@@ -15,6 +15,8 @@ export default function HomePage() {
                 navigate('/recruiter');
             } else if (userType === 'student') {
                 navigate('/dashboard');
+            } else if (userType === null) {
+                navigate('/choose-role');
             }
         }
     }, [user, userType, loading, navigate]);

@@ -32,6 +32,7 @@ const RecruiterInternships = lazy(() => import('./pages/recruiter/RecruiterInter
 const RecruiterPostNew = lazy(() => import('./pages/recruiter/RecruiterPostNew'));
 const RecruiterApplicants = lazy(() => import('./pages/recruiter/RecruiterApplicants'));
 const RecruiterCandidates = lazy(() => import('./pages/recruiter/RecruiterCandidates'));
+const ChooseRole = lazy(() => import('./pages/ChooseRole'));
 
 function PageLoader() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/choose-role" element={<ChooseRole />} />
 
         {/* All routes inside AppShell (sidebar + header) */}
         {/* ── Student Routes ── */}

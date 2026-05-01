@@ -24,30 +24,27 @@ const GoogleIcon = () => (
 type LoginRole = 'student' | 'industry';
 
 export default function LoginPage() {
-  const { user, userType, signInWithEmail, signInWithGoogle, setUserType, loading } = useAuth();
+  const { user, userType, signInWithEmail, signInWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<LoginRole>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  // Remove auto-redirect useEffect to prevent race conditions with manual login redirect
+  // Auto-navigate when userType is resolved
+  useEffect(() => {
+    if (user && userType && !loading) {
+      const destination = userType === 'industry' ? '/recruiter' : '/dashboard';
+      navigate(destination, { replace: true });
+    }
+  }, [user, userType, loading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signInWithEmail(email, password);
-      // We don't call setUserType here anymore because it overwrites the existing role in Firestore.
-      // Instead, we just navigate based on the selected tab for immediate feedback, 
-      // but the useAuth hook will soon fetch the real role from Firestore.
-      toast({ title: 'Sign In Successful', description: 'Redirecting to your dashboard...' });
-      
-      setTimeout(() => {
-        // We'll navigate to the chosen tab, but useAuth will correct us if the role is different.
-        navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
-      }, 500);
+      toast({ title: 'Sign In Successful', description: 'Checking your profile...' });
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -63,11 +60,7 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      // We don't call setUserType here anymore to avoid overwriting existing roles.
       toast({ title: 'Signed in with Google!', description: 'Redirecting...' });
-      setTimeout(() => {
-        navigate(activeTab === 'industry' ? '/recruiter' : '/dashboard');
-      }, 500);
     } catch (error: any) {
       toast({ variant: 'destructive', title: 'Google Sign-In Failed', description: error.message || 'Please try again.' });
     } finally {
@@ -77,69 +70,41 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4">
-      <Card className="w-full max-w-md bg-card/60 backdrop-blur-lg">
+      <Card className="w-full max-w-md bg-card/60 backdrop-blur-lg border-2">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your IndiaIntern.ai account.</CardDescription>
+          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+          <CardDescription>Sign in to access your IndiaIntern.ai dashboard.</CardDescription>
         </CardHeader>
 
-        {/* Role Tabs */}
-        <div className="px-6 pb-2">
-          <div className="flex gap-2 p-1 rounded-xl bg-muted/60">
-            <button
-              type="button"
-              onClick={() => setActiveTab('student')}
-              className={cn(
-                'flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                activeTab === 'student'
-                  ? 'bg-background text-violet-400 shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <GraduationCap className="h-4 w-4" />
-              Student
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('industry')}
-              className={cn(
-                'flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                activeTab === 'industry'
-                  ? 'bg-background text-blue-400 shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <Building2 className="h-4 w-4" />
-              Recruiter
-            </button>
-          </div>
-        </div>
-
         <form onSubmit={handleSignIn}>
-          <CardContent className="space-y-4 pt-2">
+          <CardContent className="space-y-4 pt-4">
             <Button
-              type="button" variant="outline" className="w-full flex items-center gap-3"
+              type="button" variant="outline" className="w-full h-12 flex items-center gap-3 rounded-full transition-all hover:bg-muted/50"
               onClick={handleGoogleSignIn} disabled={isGoogleLoading || loading}
             >
               {isGoogleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
               Continue with Google
             </Button>
-            <div className="relative">
+            
+            <div className="relative py-2">
               <Separator />
-              <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-card px-2 text-xs text-muted-foreground">OR</span>
+              <span className="absolute left-1/2 -translate-x-1/2 -top-1 bg-card px-3 text-xs text-muted-foreground font-medium uppercase tracking-wider">or</span>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="login-email">Email</Label>
+              <Label htmlFor="login-email">Email Address</Label>
               <Input id="login-email" type="email" placeholder="m@example.com" required
-                value={email} onChange={(e) => setEmail(e.target.value)} />
+                value={email} onChange={(e) => setEmail(e.target.value)} 
+                className="bg-background/50 border-border/50 focus:border-primary/50"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="login-password">Password</Label>
               <div className="relative">
                 <Input id="login-password" type={showPassword ? 'text' : 'password'} required
-                  value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
+                  value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10 bg-background/50 border-border/50 focus:border-primary/50" />
                 <Button type="button" variant="ghost" size="icon"
-                  className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
@@ -148,15 +113,21 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button
-              className={cn('w-full rounded-full', activeTab === 'industry' ? 'bg-blue-600 hover:bg-blue-700' : '')}
+              className="w-full h-12 rounded-full font-semibold text-lg transition-all shadow-lg"
               type="submit" disabled={loading}
             >
-              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {loading ? 'Signing in...' : `Sign In as ${activeTab === 'industry' ? 'Recruiter' : 'Student'}`}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Signing you in...
+                </>
+              ) : (
+                'Sign In to Dashboard'
+              )}
             </Button>
             <p className="text-sm text-muted-foreground">
               Don't have an account?{' '}
-              <Link to="/register" className="text-secondary hover:underline font-medium">Sign Up</Link>
+              <Link to="/register" className="text-primary hover:underline font-bold">Create Account</Link>
             </p>
           </CardFooter>
         </form>

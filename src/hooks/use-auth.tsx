@@ -43,15 +43,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(currentUser);
       
       if (currentUser) {
-        setLoading(true); // Ensure loading is true while fetching doc
-        // Subscribe to user document for real-time role/profile updates
+        setLoading(true);
         unsubDoc = subscribeToUserDocument(currentUser.uid, (doc) => {
+          // If we have a doc with a userType, always trust it
           if (doc && doc.userType) {
             setUserTypeState(doc.userType);
+            setLoading(false);
           } else {
-            setUserTypeState(null);
+            // If the document is missing or role is null, only set it to null 
+            // if we aren't currently waiting for a role or in a transition.
+            // This prevents the 'null' flash during registration.
+            setUserTypeState(prev => prev ? prev : null);
+            setLoading(false);
           }
-          setLoading(false);
         });
       } else {
         setUserTypeState(null);

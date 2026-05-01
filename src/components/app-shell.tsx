@@ -64,6 +64,10 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
   const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
+    if (!loading && user && !userType && pathname !== '/choose-role') {
+      navigate('/choose-role');
+    }
+
     const isAllowed = !allowedRole || 
       (Array.isArray(allowedRole) ? allowedRole.includes(userType as any) : userType === allowedRole);
 
@@ -71,7 +75,7 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
       // Role mismatch redirect
       navigate(userType === 'industry' ? '/recruiter' : '/dashboard');
     }
-  }, [loading, user, userType, allowedRole, navigate]);
+  }, [loading, user, userType, allowedRole, navigate, pathname]);
 
   if (!isClient) {
     return (
@@ -121,7 +125,7 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
     if (!user) return publicNavItems.filter(item => item.href !== '/');
     if (userType === 'industry') return recruiterNavItems;
     if (userType === 'student') return studentNavItems;
-    return []; // Wait for userType to be set
+    return []; 
   };
 
   const getAiTools = () => {
@@ -151,33 +155,42 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
   const sidebarNav = (
     <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
       {roleChip}
-      <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
-      {getNavItems().map((item) => (
-          <Link key={item.href} to={item.href}
-              className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
-              pathname === item.href && 'bg-accent text-primary font-medium'
-              )}
-          >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-          </Link>
-      ))}
-      {user && getAiTools().length > 0 && (
+      {userType && (
         <>
-            <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
-            {getAiTools().map((item) => (
-                <Link key={item.href} to={item.href}
-                    className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
-                    pathname === item.href && 'bg-accent text-primary font-medium'
-                    )}
-                >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                </Link>
-            ))}
+          <p className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Main Menu</p>
+          {getNavItems().map((item) => (
+              <Link key={item.href} to={item.href}
+                  className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+                  pathname === item.href && 'bg-accent text-primary font-medium'
+                  )}
+              >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+              </Link>
+          ))}
+          {getAiTools().length > 0 && (
+            <>
+                <p className="px-3 pt-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
+                {getAiTools().map((item) => (
+                    <Link key={item.href} to={item.href}
+                        className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-accent',
+                        pathname === item.href && 'bg-accent text-primary font-medium'
+                        )}
+                    >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                    </Link>
+                ))}
+            </>
+          )}
         </>
+      )}
+      {!userType && user && !loading && (
+        <div className="px-3 py-4 text-center space-y-2">
+          <p className="text-xs text-muted-foreground">Please select your role to continue</p>
+        </div>
       )}
     </nav>
   );
@@ -311,35 +324,6 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
             </div>
             </header>
             <main className="flex-1 p-4 sm:p-6 bg-muted/20 relative">
-                {user && !userType && !loading && (
-                    <div className="absolute inset-0 z-50 bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
-                        <div className="max-w-md w-full space-y-8 text-center">
-                            <div className="space-y-2">
-                                <h2 className="text-3xl font-bold tracking-tight">Complete Your Setup</h2>
-                                <p className="text-muted-foreground">Please choose your role to continue to IndiaIntern.ai</p>
-                            </div>
-                            <div className="grid grid-cols-1 gap-4">
-                                <Button 
-                                    size="lg" 
-                                    className="h-24 text-lg gap-4 rounded-2xl bg-violet-600 hover:bg-violet-700"
-                                    onClick={() => setUserType('student')}
-                                >
-                                    <GraduationCap className="h-8 w-8" />
-                                    I am a Student
-                                </Button>
-                                <Button 
-                                    size="lg" 
-                                    variant="outline"
-                                    className="h-24 text-lg gap-4 rounded-2xl border-2 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-400"
-                                    onClick={() => setUserType('industry')}
-                                >
-                                    <Building2 className="h-8 w-8" />
-                                    I am a Recruiter
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
                 <Outlet />
             </main>
             <Footer />
