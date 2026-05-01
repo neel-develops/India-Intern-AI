@@ -1,16 +1,17 @@
 /**
  * Direct API client for frontend AI calls.
- * Last Build Trigger: 2026-04-30 22:45 (Resilience Update)
+ * Last Build Trigger: 2026-05-01 11:30 (Model ID Fix)
  */
 
 const OPENROUTER_API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined);
 
 const MODELS = [
-  'google/gemini-flash-1.5-exp:free',
+  'openrouter/free',
   'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemini-flash-1.5-8b:free',
+  'microsoft/phi-3-mini-128k-instruct:free',
   'mistralai/mistral-7b-instruct:free',
-  'google/gemini-2.0-flash-exp:free',
-  'openrouter/auto-free'
+  'qwen/qwen-2.5-72b-instruct:free'
 ];
 
 const BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
