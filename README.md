@@ -114,7 +114,9 @@ Guides users with personalized career advice.
 
 ## 🎯 Vision
 
-To create an inclusive platform that empowers every student across India — regardless of background — to access the right opportunities and build a successful career.
+To build an inclusive platform that empowers students across India to access the right opportunities
+regardless of their background.
+Future Scope:- Advanced AI recommendation models- Mobile application- Government scheme integrations- Real-time mentorship syste
 
 ---
 
