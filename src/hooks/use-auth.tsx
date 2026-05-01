@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { subscribeToUserDocument, fsUpdateUserDocument } from '../lib/firebase-db';
+import { subscribeToUserDocument, fsUpdateUserDocument, fsGetUserDocument } from '../lib/firebase-db';
 import type { UserDocument } from '../lib/types';
 import { useNavigate } from 'react-router-dom';
 

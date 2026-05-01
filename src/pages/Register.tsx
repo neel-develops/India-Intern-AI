@@ -25,7 +25,7 @@ const GoogleIcon = () => (
 type Role = 'student' | 'industry' | null;
 
 export default function RegisterPage() {
-  const { user, signUpWithEmail, signInWithGoogle, setUserType, loading } = useAuth();
+  const { user, signUpWithEmail, signInWithGoogle, setUserType, waitForRole, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 

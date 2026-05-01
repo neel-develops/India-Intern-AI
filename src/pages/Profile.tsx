@@ -74,7 +74,9 @@ export default function ProfilePage() {
     <div className="container mx-auto max-w-4xl py-8">
       <div className="space-y-2 mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
-          {hasProfile ? 'Your Profile' : 'Create Your Profile'}
+          {isIndustry 
+            ? (hasProfile ? 'Recruiter Profile' : 'Create Recruiter Profile')
+            : (hasProfile ? 'Your Profile' : 'Create Your Profile')}
         </h1>
         <p className="text-muted-foreground">
           {isIndustry

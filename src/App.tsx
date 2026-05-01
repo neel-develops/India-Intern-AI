@@ -58,7 +58,6 @@ export default function App() {
           <Route path="/internships/:id" element={<InternshipsDetails />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/saved" element={<SavedInternships />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/resume-analyser" element={<ResumeAnalyser />} />
@@ -76,6 +75,11 @@ export default function App() {
           <Route path="/recruiter/internships/:id/edit" element={<RecruiterPostNew />} />
           <Route path="/recruiter/internships/:id/applicants" element={<RecruiterApplicants />} />
           <Route path="/recruiter/candidates" element={<RecruiterCandidates />} />
+        </Route>
+
+        {/* ── Shared Authenticated Routes ── */}
+        <Route element={<AppShell allowedRole={['student', 'industry'] as any} />}>
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* ── Public / Shared ── */}

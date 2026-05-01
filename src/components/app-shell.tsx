@@ -55,7 +55,7 @@ function useIsClient() {
   return isClient
 }
 
-export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry' }) {
+export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry' | ('student' | 'industry')[] }) {
   const pathname = useLocation().pathname;
   const { user, userType, loading } = useAuth();
   const navigate = useNavigate();
@@ -64,7 +64,10 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
   const unreadCount = notifications.filter(n => !n.read).length;
 
   useEffect(() => {
-    if (!loading && user && allowedRole && userType && userType !== allowedRole) {
+    const isAllowed = !allowedRole || 
+      (Array.isArray(allowedRole) ? allowedRole.includes(userType as any) : userType === allowedRole);
+
+    if (!loading && user && userType && !isAllowed) {
       // Role mismatch redirect
       navigate(userType === 'industry' ? '/recruiter' : '/dashboard');
     }
@@ -105,6 +108,7 @@ export function AppShell({ allowedRole }: { allowedRole?: 'student' | 'industry'
     { href: '/recruiter/internships', icon: Briefcase, label: 'My Postings' },
     { href: '/recruiter/candidates', icon: Users, label: 'All Candidates' },
     { href: '/recruiter/internships/new', icon: PlusCircle, label: 'Post New Job' },
+    { href: '/profile', icon: User, label: 'My Profile' },
   ];
 
   const recruiterAiTools = [

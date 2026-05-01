@@ -67,6 +67,9 @@ export function UserNav({ user }: UserNavProps) {
                 <Link to="/recruiter">Recruiter Dashboard</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
+                <Link to="/profile">My Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
                 <Link to="/recruiter/internships">My Postings</Link>
             </DropdownMenuItem>
           </>
