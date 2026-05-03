@@ -87,17 +87,6 @@ Guides users with personalized career advice.
 
 ---
 
-## 📷 Screenshots
-
-👉 Add screenshots of:
-
-* Dashboard
-* Internship listings
-* Resume analyzer
-* Recruiter panel
-
----
-
 ## 👥 Team Members
 
 * Neel Sonawane
